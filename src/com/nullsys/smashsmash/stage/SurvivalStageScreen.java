@@ -134,7 +134,6 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
 	spriteBatch.setProjectionMatrix(camera.projection);
 	getCamera().update();
-	getCamera().zoom = .5f;
 
 	spriteBatch.begin();
 	renderStage(spriteBatch);
