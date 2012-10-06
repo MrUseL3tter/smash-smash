@@ -86,12 +86,9 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
     @Override
     public void onTouchDown(float x, float y, int pointer, int button) {
-	System.out.println("X " + x + "\t" + y);
 	Vector2 position = new Vector2(x, y);
 	position.x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
 	position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
-
-	System.out.println(position);
 
 	boolean touchedACoin = inputToCoins(position.x, position.y, pointer);
 	boolean touchedAnAlien = !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
@@ -195,12 +192,6 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
 	multiplier *= User.hasEffect(BonusEffect.SCORE_FRENZY) ? 3 : 1;
 	score += alien.scoreValue * multiplier;
-
-	//	if (multiplier > 1) {
-	//	    hud.combosFlyout.text = "x" + multiplier;
-	//	    hud.combosFlyout.position.set(0, 562f);
-	//	    hud.combosFlyout.color.set(Color.GREEN);
-	//	}
     }
 
     private int getVisibleAliens() {

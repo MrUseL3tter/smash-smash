@@ -1,11 +1,17 @@
 package com.nullsys.smashsmash;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Art {
+
+    static AssetManager assetManager;
 
     public static Texture bonusEffects;
     public static Texture lawnBackground1;
@@ -66,5 +72,20 @@ public class Art {
 	pinwheel.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	blackFill = assetManager.get("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
 	blackFill.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+    }
+
+    private static AssetManager getAssetManager() {
+	if (assetManager == null) {
+	    Resolution[] resolutions = { new Resolution(480, 320, ".480320"), new Resolution(800, 480, ".800480"), new Resolution(856, 480, ".856480"), new Resolution(1280, 800, ".1280800") };
+	    ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
+
+	    assetManager = new AssetManager();
+	    assetManager.setLoader(Texture.class, new TextureLoader(resolver));
+
+	    Texture.setAssetManager(assetManager);
+
+	    return assetManager;
+	} else
+	    return assetManager;
     }
 }
