@@ -299,16 +299,17 @@ public class HeadsUpDisplay {
 	streakName.render(spriteBatch);
 	missLabel.render(spriteBatch);
 
-	for (int i = 0; i < ready.length; i++)
-	    ready[i].render(spriteBatch);
-	for (int i = 0; i < seconds.length; i++)
-	    seconds[i].render(spriteBatch);
-	for (int i = 0; i < smash.length; i++)
-	    smash[i].render(spriteBatch);
+	// FIXME uncomment to show intro prompt
+	//	for (int i = 0; i < ready.length; i++)
+	//	    ready[i].render(spriteBatch);
+	//	for (int i = 0; i < seconds.length; i++)
+	//	    seconds[i].render(spriteBatch);
+	//	for (int i = 0; i < smash.length; i++)
+	//	    smash[i].render(spriteBatch);
 	if (stage.session.combosCurrent > 1)
 	    comboCount.render(spriteBatch);
-	for (int i = 0; i < textPool.size(); i++)
-	    textPool.get(i).render(spriteBatch);
+	//	for (int i = 0; i < textPool.size(); i++)
+	//	    textPool.get(i).render(spriteBatch);
     }
 
     private void updateBonusEffects(float deltaTime) {

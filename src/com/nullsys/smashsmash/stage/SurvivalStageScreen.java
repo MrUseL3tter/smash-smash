@@ -336,7 +336,8 @@ public class SurvivalStageScreen extends SmashSmashStage {
     }
 
     private void updateAliens(float deltaTime) {
-	if (session.stageSecondsElapsed > 5) {
+	// FIXME set to delay before the intro prompt ends
+	if (session.stageSecondsElapsed > 1) {
 	    setAlienAppearanceRate();
 	    setAlienPositions();
 	    int visibles = getVisibleAliens();
