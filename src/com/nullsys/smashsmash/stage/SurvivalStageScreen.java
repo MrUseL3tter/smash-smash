@@ -6,6 +6,7 @@ import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,6 +50,18 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	assetManager.clear();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.noobs2d.tweenengine.utils.DynamicScreen#keyUp(int)
+     */
+    @Override
+    public boolean keyUp(int keycode) {
+	// TODO disable for stable release
+	if (keycode == Keys.CONTROL_LEFT || keycode == Keys.MENU)
+	    game.setScreen(new SurvivalStageScreen(game, assetManager));
+	return super.keyUp(keycode);
+    }
+
     @Override
     public void onAlienAttack(Alien alien) {
 	if (!User.hasEffect(BonusEffect.INVULNERABILITY)) {
@@ -81,6 +94,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    hud.missLabel.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
 	}
 	showComboText();
+	session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
 	session.combosCurrent = 0;
     }
 
@@ -165,7 +179,6 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    coin.interpolateXY(new Vector2(1280, 800), Linear.INOUT, 350, true).setCallback(new RemoveFromCollectionOnEnd(coins, coin));
 	    User.gold += 10;
 	}
-	System.out.println(coin.position + "\t" + coin.getBounds());
     }
 
     private void addHammerEffect(float x, float y) {
@@ -383,6 +396,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	// Check if 3 sec. has passed since the last successful hit. If so, the combos are cancelled.
 	if (session.stageSecondsElapsed - session.combosLastDelta >= COMBO_MAX_DURATION && session.combosCurrent > 0) {
 	    showComboText();
+	    session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
 	    session.combosCurrent = 0;
 	}
     }
@@ -400,25 +414,6 @@ public class SurvivalStageScreen extends SmashSmashStage {
     }
 
     private void updateStreaks(float deltaTime) {
-	//	int streaks = 0;
-	//	for (int i = 0; i < pointers.length; i++)
-	//	    if (pointers[i])
-	//		streaks++;
-	//	DynamicText text = null;
-	//	if (streaks == 2)
-	//	    text = new DynamicText(Fonts.arialNarrow32Italic, "SMASH DUO!", HAlignment.LEFT);
-	//	else if (streaks == 3)
-	//	    text = new DynamicText(Fonts.arialNarrow32Italic, "TRIPLE SMASH!", HAlignment.LEFT);
-	//	else if (streaks == 4)
-	//	    text = new DynamicText(Fonts.arialNarrow32Italic, "QUAD SMASH!", HAlignment.LEFT);
-	//	if (text != null) {
-	//	    text.position.set(0 - text.bitmapFont.getBounds(text.text).width, 562f);
-	//	    text.interpolate(new Vector2(0, 562), Elastic.OUT, 1000).start(text.tweenManager);
-	//	    hud.combosFlyout = text;
-	//	}
-	//	int elapsed = Integer.parseInt(stageSecondsElapsed > 9 ? ("" + stageSecondsElapsed).charAt(3) + "" : ("" + stageSecondsElapsed).charAt(2) + "");
-	//	if (elapsed > 0 && elapsed % 3 == 0)
-	//	    System.out.println("Clear pointers!");
 	int streaks = 0;
 	for (int i = 0; i < pointers.length; i++)
 	    if (pointers[i])
@@ -470,6 +465,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		onAlienSmashed(aliens[i]);
 		hitCount++;
 		session.combosCurrent++;
+		session.combosTotal++;
 		session.combosLastDelta = session.stageSecondsElapsed;
 		hud.shakeCombos();
 	    }

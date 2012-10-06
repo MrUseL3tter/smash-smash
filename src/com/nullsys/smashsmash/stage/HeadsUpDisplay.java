@@ -50,11 +50,7 @@ public class HeadsUpDisplay {
     public DynamicText streakName;
 
     public BitmapFont score;
-    public BitmapFont fps;
-    public BitmapFont gold;
-    public BitmapFont timeElapsed;
-    public BitmapFont appearanceRate;
-    public BitmapFont appearanceDelay;
+    public BitmapFont feed;
 
     public HeadsUpDisplay(SurvivalStageScreen stage) {
 	this.stage = stage;
@@ -71,15 +67,12 @@ public class HeadsUpDisplay {
 	comboCount.position.set(0, 515);
 	comboName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.LEFT);
 	comboName.position.set(0, 550);
-	fps = new BitmapFont();
-	gold = new BitmapFont();
+	feed = new BitmapFont();
+	feed.scale(.5f);
 	flyout = new DynamicText(Fonts.goodGirlx32, "", HAlignment.CENTER);
 	streakBonus = new DynamicText(Fonts.bdCartoonShoutx23orange, "", HAlignment.RIGHT);
 	streakName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.RIGHT);
 	missLabel = new DynamicText(Fonts.bdCartoonShoutx42, "", HAlignment.CENTER);
-	timeElapsed = new BitmapFont();
-	appearanceDelay = new BitmapFont();
-	appearanceRate = new BitmapFont();
 	for (int i = 0; i < lifePoints.length; i++)
 	    lifePoints[i] = new DynamicSprite(Art.hudLifePoint, 55 + 97 * i, 749);
 	initReadyPrompt();
@@ -287,11 +280,15 @@ public class HeadsUpDisplay {
 
     private void renderTexts(SpriteBatch spriteBatch) {
 	score.drawWrapped(spriteBatch, "" + stage.session.score, 1030f, 800f, 250, HAlignment.RIGHT);
-	gold.drawWrapped(spriteBatch, "GOLD: " + User.gold, 0f, 60f, 100, HAlignment.LEFT);
-	fps.drawWrapped(spriteBatch, "GAME FPS: " + Gdx.graphics.getFramesPerSecond() + " fps", 0, 48, 200, HAlignment.LEFT);
-	timeElapsed.drawWrapped(spriteBatch, "TIME ELAPSED: " + stage.session.stageSecondsElapsed, 0, 36, 200, HAlignment.LEFT);
-	appearanceDelay.drawWrapped(spriteBatch, "APPEARANCE DELAY: " + stage.alienAppearanceDelay + "ms", 0, 24, 300, HAlignment.LEFT);
-	appearanceRate.drawWrapped(spriteBatch, "APPEARANCE RATE: " + stage.alienAppearanceRate, 0, 12, 300, HAlignment.LEFT);
+
+	String message = "GOLD: " + User.gold + "\n";
+	message += "FPS: " + Gdx.graphics.getFramesPerSecond() + "fps\n";
+	message += "ELAPSED: " + stage.session.stageSecondsElapsed + "\n";
+	message += "APPEARANCE RATE: " + stage.alienAppearanceRate + "\n";
+	message += "COMBOX MAX: " + stage.session.combosMax + "\n";
+	message += "COMBOS TOTAL: " + stage.session.combosTotal + "\n";
+	message += "Press left CTRL to restart." + "\n";
+	feed.drawWrapped(spriteBatch, message, 0f, 180f, 600, HAlignment.LEFT);
 
 	comboName.render(spriteBatch);
 	flyout.render(spriteBatch);
