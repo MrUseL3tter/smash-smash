@@ -107,17 +107,17 @@ public class HeadsUpDisplay {
     }
 
     public void shakeLifePoint() {
-	if (stage.lifePoints > 0) {
-	    float x = lifePoints[stage.lifePoints - 1].position.x;
-	    float y = lifePoints[stage.lifePoints - 1].position.y + 15;
-	    lifePoints[stage.lifePoints - 1].interpolateXY(new Vector2(x, y), Linear.INOUT, 75, true);
-	    x = lifePoints[stage.lifePoints - 1].position.x;
-	    y = lifePoints[stage.lifePoints - 1].position.y - 15;
-	    lifePoints[stage.lifePoints - 1].interpolateXY(new Vector2(x, y), Linear.INOUT, 75, true).delay(75);
-	    x = lifePoints[stage.lifePoints - 1].position.x;
-	    y = lifePoints[stage.lifePoints - 1].position.y;
-	    lifePoints[stage.lifePoints - 1].interpolateXY(new Vector2(x, y), Linear.INOUT, 75, true).delay(150);
-	    lifePoints[stage.lifePoints - 1].tween.setCallback(new InvisibleOnEnd(lifePoints[stage.lifePoints - 1]));
+	if (stage.session.lifePoints > 0) {
+	    float x = lifePoints[stage.session.lifePoints - 1].position.x;
+	    float y = lifePoints[stage.session.lifePoints - 1].position.y + 15;
+	    lifePoints[stage.session.lifePoints - 1].interpolateXY(new Vector2(x, y), Linear.INOUT, 75, true);
+	    x = lifePoints[stage.session.lifePoints - 1].position.x;
+	    y = lifePoints[stage.session.lifePoints - 1].position.y - 15;
+	    lifePoints[stage.session.lifePoints - 1].interpolateXY(new Vector2(x, y), Linear.INOUT, 75, true).delay(75);
+	    x = lifePoints[stage.session.lifePoints - 1].position.x;
+	    y = lifePoints[stage.session.lifePoints - 1].position.y;
+	    lifePoints[stage.session.lifePoints - 1].interpolateXY(new Vector2(x, y), Linear.INOUT, 75, true).delay(150);
+	    lifePoints[stage.session.lifePoints - 1].tween.setCallback(new InvisibleOnEnd(lifePoints[stage.session.lifePoints - 1]));
 	}
     }
 
@@ -286,12 +286,12 @@ public class HeadsUpDisplay {
     }
 
     private void renderTexts(SpriteBatch spriteBatch) {
-	score.drawWrapped(spriteBatch, "" + stage.score, 1030f, 800f, 250, HAlignment.RIGHT);
+	score.drawWrapped(spriteBatch, "" + stage.session.score, 1030f, 800f, 250, HAlignment.RIGHT);
 	gold.drawWrapped(spriteBatch, "GOLD: " + User.gold, 0f, 60f, 100, HAlignment.LEFT);
 	fps.drawWrapped(spriteBatch, "GAME FPS: " + Gdx.graphics.getFramesPerSecond() + " fps", 0, 48, 200, HAlignment.LEFT);
-	timeElapsed.drawWrapped(spriteBatch, "TIME ELAPSED: " + stage.stageSecondsElapsed, 0, 36, 200, HAlignment.LEFT);
+	timeElapsed.drawWrapped(spriteBatch, "TIME ELAPSED: " + stage.session.stageSecondsElapsed, 0, 36, 200, HAlignment.LEFT);
 	appearanceDelay.drawWrapped(spriteBatch, "APPEARANCE DELAY: " + stage.alienAppearanceDelay + "ms", 0, 24, 300, HAlignment.LEFT);
-	timeElapsed.drawWrapped(spriteBatch, "APPEARANCE RATE: " + stage.alienAppearanceRate, 0, 12, 300, HAlignment.LEFT);
+	appearanceRate.drawWrapped(spriteBatch, "APPEARANCE RATE: " + stage.alienAppearanceRate, 0, 12, 300, HAlignment.LEFT);
 
 	comboName.render(spriteBatch);
 	flyout.render(spriteBatch);
@@ -305,7 +305,7 @@ public class HeadsUpDisplay {
 	    seconds[i].render(spriteBatch);
 	for (int i = 0; i < smash.length; i++)
 	    smash[i].render(spriteBatch);
-	if (stage.combos > 1)
+	if (stage.session.combosCurrent > 1)
 	    comboCount.render(spriteBatch);
 	for (int i = 0; i < textPool.size(); i++)
 	    textPool.get(i).render(spriteBatch);
@@ -325,7 +325,7 @@ public class HeadsUpDisplay {
 
     private void updateTexts(float deltaTime) {
 	flyout.update(deltaTime);
-	comboCount.text = "" + stage.combos;
+	comboCount.text = "" + stage.session.combosCurrent;
 	comboCount.update(deltaTime);
 	comboName.update(deltaTime);
 	streakBonus.update(deltaTime);

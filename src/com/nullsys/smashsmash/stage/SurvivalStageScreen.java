@@ -52,11 +52,11 @@ public class SurvivalStageScreen extends SmashSmashStage {
     @Override
     public void onAlienAttack(Alien alien) {
 	if (!User.hasEffect(BonusEffect.INVULNERABILITY)) {
-	    combos = 0;
+	    session.combosCurrent = 0;
 	    hud.shakeLifePoint();
 	    camera.shake();
-	    if (lifePoints > 0)
-		lifePoints--;
+	    if (session.lifePoints > 0)
+		session.lifePoints--;
 	}
     }
 
@@ -72,7 +72,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
     }
 
     public void onSmashMissed(float x, float y) {
-	if (combos > 1) {
+	if (session.combosCurrent > 1) {
 	    hud.missLabel.text = "MISS!";
 	    hud.missLabel.color.a = 1f;
 	    hud.missLabel.position.set(x, y);
@@ -81,7 +81,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    hud.missLabel.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
 	}
 	showComboText();
-	combos = 0;
+	session.combosCurrent = 0;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
     @Override
     public void render(float deltaTime) {
-	stageSecondsElapsed += deltaTime;
+	session.stageSecondsElapsed += deltaTime;
 
 	spriteBatch.setProjectionMatrix(camera.projection);
 	getCamera().update();
@@ -177,21 +177,21 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
     private void addScore(Alien alien) {
 	int multiplier = 1;
-	if (combos > 4 && combos < 25)
+	if (session.combosCurrent > 4 && session.combosCurrent < 25)
 	    multiplier = 2;
-	else if (combos > 24 && combos < 40)
+	else if (session.combosCurrent > 24 && session.combosCurrent < 40)
 	    multiplier = 3;
-	else if (combos > 39 && combos < 60)
+	else if (session.combosCurrent > 39 && session.combosCurrent < 60)
 	    multiplier = 4;
-	else if (combos > 59 && combos < 100)
+	else if (session.combosCurrent > 59 && session.combosCurrent < 100)
 	    multiplier = 5;
-	else if (combos > 99 && combos < 255)
+	else if (session.combosCurrent > 99 && session.combosCurrent < 255)
 	    multiplier = 7;
-	else if (combos > 254)
+	else if (session.combosCurrent > 254)
 	    multiplier = 10;
 
 	multiplier *= User.hasEffect(BonusEffect.SCORE_FRENZY) ? 3 : 1;
-	score += alien.scoreValue * multiplier;
+	session.score += alien.scoreValue * multiplier;
     }
 
     private int getVisibleAliens() {
@@ -280,17 +280,17 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	boolean hasRampage = User.hasEffect(BonusEffect.COIN_RAIN) && User.hasEffect(BonusEffect.HAMMER_TIME) && User.hasEffect(BonusEffect.SCORE_FRENZY);
 	if (hasRampage)
 	    alienAppearanceRate = aliens.length;
-	else if (combos > 4 && combos < 25)
+	else if (session.combosCurrent > 4 && session.combosCurrent < 25)
 	    alienAppearanceRate = 4;
-	else if (combos > 24 && combos < 40)
+	else if (session.combosCurrent > 24 && session.combosCurrent < 40)
 	    alienAppearanceRate = 5;
-	else if (combos > 39 && combos < 60)
+	else if (session.combosCurrent > 39 && session.combosCurrent < 60)
 	    alienAppearanceRate = 6;
-	else if (combos > 59 && combos < 100)
+	else if (session.combosCurrent > 59 && session.combosCurrent < 100)
 	    alienAppearanceRate = 8;
-	else if (combos > 99 && combos < 255)
+	else if (session.combosCurrent > 99 && session.combosCurrent < 255)
 	    alienAppearanceRate = 10;
-	else if (combos > 254)
+	else if (session.combosCurrent > 254)
 	    alienAppearanceRate = aliens.length;
 	else
 	    alienAppearanceRate = 4;
@@ -314,19 +314,19 @@ public class SurvivalStageScreen extends SmashSmashStage {
     }
 
     private void showComboText() {
-	if (combos > 4 && combos < 25)
+	if (session.combosCurrent > 4 && session.combosCurrent < 25)
 	    hud.comboName.text = "GOOD!";
-	else if (combos > 24 && combos < 40)
+	else if (session.combosCurrent > 24 && session.combosCurrent < 40)
 	    hud.comboName.text = "GREAT!";
-	else if (combos > 39 && combos < 60)
+	else if (session.combosCurrent > 39 && session.combosCurrent < 60)
 	    hud.comboName.text = "AMAZING!";
-	else if (combos > 59 && combos < 100)
+	else if (session.combosCurrent > 59 && session.combosCurrent < 100)
 	    hud.comboName.text = "FANTASTIC!";
-	else if (combos > 99 && combos < 255)
+	else if (session.combosCurrent > 99 && session.combosCurrent < 255)
 	    hud.comboName.text = "MONSTROUS!";
-	else if (combos > 254)
+	else if (session.combosCurrent > 254)
 	    hud.comboName.text = "GODLIKE!!";
-	if (combos > 4) {
+	if (session.combosCurrent > 4) {
 	    hud.comboName.color.a = 1f;
 	    hud.comboName.interpolateAlpha(0f, Sine.OUT, 500, true).delay(2000);
 	    hud.comboName.position.set(0 - hud.comboName.bitmapFont.getBounds(hud.comboName.text).width, hud.comboName.position.y);
@@ -336,7 +336,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
     }
 
     private void updateAliens(float deltaTime) {
-	if (stageSecondsElapsed > 5) {
+	if (session.stageSecondsElapsed > 5) {
 	    setAlienAppearanceRate();
 	    setAlienPositions();
 	    int visibles = getVisibleAliens();
@@ -380,9 +380,9 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
     private void updateCombos(float deltaTime) {
 	// Check if 3 sec. has passed since the last successful hit. If so, the combos are cancelled.
-	if (stageSecondsElapsed - combosLastDelta >= COMBO_MAX_DURATION && combos > 0) {
+	if (session.stageSecondsElapsed - session.combosLastDelta >= COMBO_MAX_DURATION && session.combosCurrent > 0) {
 	    showComboText();
-	    combos = 0;
+	    session.combosCurrent = 0;
 	}
     }
 
@@ -450,7 +450,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		pointers[i] = false;
 	}
 	try {
-	    if (stageSecondsElapsed > 0 && Integer.parseInt(("" + stageSecondsElapsed).split(".")[1]) % 2 == 0) // .2 seconds has passed
+	    if (session.stageSecondsElapsed > 0 && Integer.parseInt(("" + session.stageSecondsElapsed).split(".")[1]) % 2 == 0) // .2 seconds has passed
 		for (int i = 0; i < pointers.length; i++)
 		    pointers[i] = false;
 	} catch (ArrayIndexOutOfBoundsException e) {
@@ -468,8 +468,8 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		aliens[i].smash();
 		onAlienSmashed(aliens[i]);
 		hitCount++;
-		combos++;
-		combosLastDelta = stageSecondsElapsed;
+		session.combosCurrent++;
+		session.combosLastDelta = session.stageSecondsElapsed;
 		hud.shakeCombos();
 	    }
 	// Display a "x + 1!" message

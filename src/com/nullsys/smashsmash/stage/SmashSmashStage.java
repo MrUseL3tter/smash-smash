@@ -6,6 +6,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicScreen;
+import com.nullsys.smashsmash.Session;
 import com.nullsys.smashsmash.alien.Alien;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.hammer.HammerEffect;
@@ -24,19 +25,14 @@ public abstract class SmashSmashStage extends DynamicScreen {
     public final boolean[] pointers = new boolean[4];
 
     protected HeadsUpDisplay hud;
+    protected Session session;
 
     public int alienAppearanceDelay = 0;
     public int alienAppearanceRate = 0;
-    public int combos = 0;
-    public int lifePoints = 3;
-    public int score = 0;
-
-    public float combosLastDelta = 0;
-    public float stageSecondsDuration = 30f;
-    public float stageSecondsElapsed = 0;
 
     public SmashSmashStage(Game game) {
 	super(game);
+	session = new Session();
     }
 
     public abstract void onAlienAttack(Alien alien);
