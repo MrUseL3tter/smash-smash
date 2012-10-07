@@ -90,11 +90,11 @@ public class Sorcerer extends Alien {
 	    randomX += (float) (Math.random() * width * 2);
 
 	    HammerTime hammerTime = new HammerTime(new Vector2(randomX, position.y));
-	    hammerTime.interpolateXY(new Vector2(hammerTime.position.x, hammerTime.position.y + 150), Sine.OUT, 500, true);
+	    hammerTime.interpolateXY(hammerTime.position.x, hammerTime.position.y + 150, Sine.OUT, 500, true);
 	    hammerTime.tween.delay(delay);
 	    hammerTime.interpolateAlpha(1f, Linear.INOUT, 150, true);
 	    hammerTime.tween.delay(delay);
-	    hammerTime.interpolateXY(new Vector2(hammerTime.position.x, hammerTime.position.y), Sine.IN, 500, true);
+	    hammerTime.interpolateXY(hammerTime.position.x, hammerTime.position.y, Sine.IN, 500, true);
 	    hammerTime.tween.delay(delay + 500);
 	    hammerTime.color.a = 0f;
 	    hammerTime.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.
@@ -105,11 +105,11 @@ public class Sorcerer extends Alien {
 	    randomX += (float) (Math.random() * width * 2);
 
 	    Invulnerability invulnerability = new Invulnerability(new Vector2(randomX, position.y));
-	    invulnerability.interpolateXY(new Vector2(invulnerability.position.x, invulnerability.position.y + 150), Sine.OUT, 500, true);
+	    invulnerability.interpolateXY(invulnerability.position.x, invulnerability.position.y + 150, Sine.OUT, 500, true);
 	    invulnerability.tween.delay(delay);
 	    invulnerability.interpolateAlpha(1f, Linear.INOUT, 150, true);
 	    invulnerability.tween.delay(delay);
-	    invulnerability.interpolateXY(new Vector2(invulnerability.position.x, invulnerability.position.y), Sine.IN, 500, true);
+	    invulnerability.interpolateXY(invulnerability.position.x, invulnerability.position.y, Sine.IN, 500, true);
 	    invulnerability.tween.delay(delay + 500);
 	    invulnerability.color.a = 0f;
 	    invulnerability.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.
@@ -120,11 +120,11 @@ public class Sorcerer extends Alien {
 	    randomX += (float) (Math.random() * width * 2);
 
 	    ScoreFrenzy scoreFrenzy = new ScoreFrenzy(new Vector2(randomX, position.y));
-	    scoreFrenzy.interpolateXY(new Vector2(scoreFrenzy.position.x, scoreFrenzy.position.y + 150), Sine.OUT, 500, true);
+	    scoreFrenzy.interpolateXY(scoreFrenzy.position.x, scoreFrenzy.position.y + 150, Sine.OUT, 500, true);
 	    scoreFrenzy.tween.delay(delay);
 	    scoreFrenzy.interpolateAlpha(1f, Linear.INOUT, 150, true);
 	    scoreFrenzy.tween.delay(delay);
-	    scoreFrenzy.interpolateXY(new Vector2(scoreFrenzy.position.x, scoreFrenzy.position.y), Sine.IN, 500, true);
+	    scoreFrenzy.interpolateXY(scoreFrenzy.position.x, scoreFrenzy.position.y, Sine.IN, 500, true);
 	    scoreFrenzy.tween.delay(delay + 500);
 	    scoreFrenzy.color.a = 0f;
 	    scoreFrenzy.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.

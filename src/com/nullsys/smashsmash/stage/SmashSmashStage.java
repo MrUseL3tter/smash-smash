@@ -20,7 +20,7 @@ public abstract class SmashSmashStage extends DynamicScreen {
     public ArrayList<HammerEffect> hammerEffects = new ArrayList<HammerEffect>();
     public ArrayList<DynamicAnimation> coins = new ArrayList<DynamicAnimation>();
 
-    public final Alien[] aliens = new Alien[17];
+    public final Alien[] aliens = new Alien[2];
     public final Vector2[] gridPoints = new Vector2[16];
     public final boolean[] pointers = new boolean[4];
 

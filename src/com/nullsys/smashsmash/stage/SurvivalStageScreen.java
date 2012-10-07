@@ -23,12 +23,7 @@ import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.alien.Alien;
 import com.nullsys.smashsmash.alien.Alien.AlienState;
 import com.nullsys.smashsmash.alien.Diabolic;
-import com.nullsys.smashsmash.alien.Fluff;
-import com.nullsys.smashsmash.alien.Golem;
-import com.nullsys.smashsmash.alien.Jelly;
-import com.nullsys.smashsmash.alien.Ogre;
 import com.nullsys.smashsmash.alien.Sorcerer;
-import com.nullsys.smashsmash.alien.Tortoise;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.bonuseffect.Invulnerability;
 import com.nullsys.smashsmash.bonuseffect.ScoreFrenzy;
@@ -89,8 +84,8 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    hud.missLabel.text = "MISS!";
 	    hud.missLabel.color.a = 1f;
 	    hud.missLabel.position.set(x, y);
-	    hud.missLabel.interpolateXY(new Vector2(x, y + 25), Linear.INOUT, 50, true);
-	    hud.missLabel.interpolateXY(new Vector2(x, y), Linear.INOUT, 50, true).delay(50);
+	    hud.missLabel.interpolateXY(x, y + 25, Linear.INOUT, 50, true);
+	    hud.missLabel.interpolateXY(x, y, Linear.INOUT, 50, true).delay(50);
 	    hud.missLabel.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
 	}
 	showComboText();
@@ -172,11 +167,11 @@ public class SurvivalStageScreen extends SmashSmashStage {
     private void addCoin(float x, float y) {
 	Coin coin = new Coin(Art.coins, 0, 0, 64, 64, 8, 8, .125f);
 	coin.position.set(x, y);
-	coin.interpolateXY(new Vector2(x, y + 100), Quad.OUT, 200, true);
-	coin.interpolateXY(new Vector2(x, y), Quad.IN, 200, true).delay(200);
+	coin.interpolateXY(x, y + 100, Quad.OUT, 200, true);
+	coin.interpolateXY(x, y, Quad.IN, 200, true).delay(200);
 	coins.add(coin);
 	if (User.hasEffect(BonusEffect.COIN_RAIN)) {
-	    coin.interpolateXY(new Vector2(1280, 800), Linear.INOUT, 350, true).setCallback(new RemoveFromCollectionOnEnd(coins, coin));
+	    coin.interpolateXY(1280, 800, Linear.INOUT, 350, true).setCallback(new RemoveFromCollectionOnEnd(coins, coin));
 	    User.gold += 10;
 	}
     }
@@ -218,23 +213,23 @@ public class SurvivalStageScreen extends SmashSmashStage {
     private void initAliens() {
 	aliens[0] = new Diabolic(this);
 	aliens[1] = new Diabolic(this);
-	aliens[2] = new Diabolic(this);
-	aliens[3] = new Fluff(this);
-	aliens[4] = new Fluff(this);
-	aliens[5] = new Fluff(this);
-	aliens[6] = new Golem(this);
-	aliens[7] = new Golem(this);
-	aliens[8] = new Golem(this);
-	aliens[9] = new Jelly(this);
-	aliens[10] = new Jelly(this);
-	aliens[11] = new Jelly(this);
-	aliens[12] = new Ogre(this);
-	aliens[13] = new Ogre(this);
-	aliens[14] = new Ogre(this);
-	aliens[15] = new Tortoise(this);
-	aliens[15] = new Tortoise(this);
-	aliens[15] = new Tortoise(this);
-	aliens[16] = new Sorcerer(this);
+	//	aliens[2] = new Diabolic(this);
+	//	aliens[3] = new Fluff(this);
+	//	aliens[4] = new Fluff(this);
+	//	aliens[5] = new Fluff(this);
+	//	aliens[6] = new Golem(this);
+	//	aliens[7] = new Golem(this);
+	//	aliens[8] = new Golem(this);
+	//	aliens[9] = new Jelly(this);
+	//	aliens[10] = new Jelly(this);
+	//	aliens[11] = new Jelly(this);
+	//	aliens[12] = new Ogre(this);
+	//	aliens[13] = new Ogre(this);
+	//	aliens[14] = new Ogre(this);
+	//	aliens[15] = new Tortoise(this);
+	//	aliens[15] = new Tortoise(this);
+	//	aliens[15] = new Tortoise(this);
+	//	aliens[16] = new Sorcerer(this);
 	for (int i = 0; i < aliens.length; i++)
 	    aliens[i].visible = false;
     }
@@ -343,7 +338,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    hud.comboName.color.a = 1f;
 	    hud.comboName.interpolateAlpha(0f, Sine.OUT, 500, true).delay(2000);
 	    hud.comboName.position.set(0 - hud.comboName.bitmapFont.getBounds(hud.comboName.text).width, hud.comboName.position.y);
-	    hud.comboName.interpolateXY(new Vector2(0, hud.comboName.position.y), Linear.INOUT, 250, true);
+	    hud.comboName.interpolateXY(0, hud.comboName.position.y, Linear.INOUT, 250, true);
 
 	}
     }
@@ -361,14 +356,15 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		for (int j = 0; j < aliens.length; j++)
 		    if (i != j && !aliens[i].visible && aliens[i].getBounds().overlaps(aliens[j].getBounds())) {
 			overlaps = true;
-			j = aliens.length;
+			j = aliens.length; //break this loop
 		    }
+		alienAppearanceDelay = i * (int) (Math.random() * 250);
+		// we only show an alien if it doesn't collide with other ones or if it is a sorcerer 
+		// and it is allowed to be spawn and doesn't collide to others
 		if (!(aliens[i] instanceof Sorcerer) && !overlaps) {
-		    alienAppearanceDelay = i * (int) (Math.random() * 250);
 		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
 		    aliens[i].rise(alienAppearanceDelay, volume / 2);
 		} else if (aliens[i] instanceof Sorcerer && sorcererShouldAppear && !overlaps) {
-		    alienAppearanceDelay = i * (int) (Math.random() * 250);
 		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
 		    aliens[i].rise(alienAppearanceDelay, volume / 2);
 		}
@@ -435,12 +431,12 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    hud.streakName.color.a = 1f;
 	    hud.streakName.tweenManager.killAll();
 	    hud.streakName.position.set(1280 + hud.streakName.bitmapFont.getBounds(hud.streakName.text).width, 500);
-	    hud.streakName.interpolateXY(new Vector2(1280, 500), Linear.INOUT, 250, true);
+	    hud.streakName.interpolateXY(1280, 500, Linear.INOUT, 250, true);
 	    hud.streakName.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
 	    hud.streakBonus.color.a = 1f;
 	    hud.streakBonus.tweenManager.killAll();
 	    hud.streakBonus.position.set(1280 + hud.streakName.bitmapFont.getBounds(hud.streakName.text).width, 530);
-	    hud.streakBonus.interpolateXY(new Vector2(1280, 530), Linear.INOUT, 250, true);
+	    hud.streakBonus.interpolateXY(1280, 530, Linear.INOUT, 250, true);
 	    hud.streakBonus.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
 	    for (int i = 0; i < pointers.length; i++)
 		pointers[i] = false;
@@ -474,7 +470,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	    DynamicText text = new DynamicText(Fonts.bdCartoonShoutx23orange, hitCount + " in 1!", HAlignment.CENTER);
 	    text.position.set(x, y - 50);
 	    text.color.a = 0f;
-	    text.interpolateXY(new Vector2(x, y + 50), Sine.OUT, 250, true);
+	    text.interpolateXY(x, y + 50, Sine.OUT, 250, true);
 	    text.interpolateAlpha(1f, Sine.OUT, 250, true);
 	    text.interpolateAlpha(0f, Sine.OUT, 250, true).delay(1000);
 	    hud.textPool.add(text);
@@ -489,7 +485,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	for (int coinIndex = coins.size() - 1; coinIndex >= 0; coinIndex--)
 	    if (coins.get(coinIndex).getBounds().overlaps(bounds)) {
 		coins.get(coinIndex).tweenManager.killAll();
-		coins.get(coinIndex).interpolateXY(new Vector2(1280, 800), Linear.INOUT, 350, true);
+		coins.get(coinIndex).interpolateXY(1280, 800, Linear.INOUT, 350, true);
 		coins.get(coinIndex).tween.setCallback(new RemoveFromCollectionOnEnd(coins, coins.get(coinIndex)));
 		User.gold += 10;
 		hit = true;

@@ -8,7 +8,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.noobs2d.tweenengine.utils.DynamicDisplay;
@@ -101,7 +100,7 @@ public class Alien extends DynamicDisplay {
 	else if (state == AlienState.WAITING)
 	    return waitingState;
 	else
-	    return null;
+	    return waitingState;
     }
 
     @Override
@@ -139,11 +138,11 @@ public class Alien extends DynamicDisplay {
 	    spawnEffect = new HammerEffect(Particles.leafSpawn, position, 1.0f, spawnEffectDelay);
 
 	    for (int i = 0; i < risingState.displays.size(); i++) {
-		risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position, Bounce.OUT, 1000, true);
+		risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position.x, risingState.displays.get(i).position.y, Bounce.OUT, 1000, true);
 		risingState.displays.get(i).tween.setCallback(new ReturnValues(risingState.displays.get(i)));
 		risingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 		risingState.displays.get(i).tween.delay(delay);
-		risingState.displays.get(i).interpolateScaleXY(new Vector2(1f, 1f), Bounce.OUT, 1000, true);
+		risingState.displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 1000, true);
 		risingState.displays.get(i).tween.setCallback(new ReturnValues(risingState.displays.get(i)));
 		risingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 		risingState.displays.get(i).tween.delay(delay);
@@ -170,24 +169,24 @@ public class Alien extends DynamicDisplay {
 	    hitPoints = hitPointsTotal;
 	    state = AlienState.SMASHED;
 	    for (int i = 0; i < smashedState.displays.size(); i++) {
-		smashedState.displays.get(i).interpolateScaleXY(new Vector2(1f, 0f), Bounce.IN, 1000, true);
+		smashedState.displays.get(i).interpolateScaleXY(1f, 0f, Bounce.IN, 1000, true);
 		smashedState.displays.get(i).tween.setCallback(new ReturnValues(smashedState.displays.get(i)));
 		smashedState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
-		smashedState.displays.get(i).interpolateXY(new Vector2(smashedState.displays.get(i).position.x, 0), Bounce.IN, 1000, true);
+		smashedState.displays.get(i).interpolateXY(smashedState.displays.get(i).position.x, 0, Bounce.IN, 1000, true);
 		smashedState.displays.get(i).tween.setCallback(new ReturnValues(smashedState.displays.get(i)));
 		smashedState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 	    }
 	} else
 	    for (int i = 0; i < getStateAnimation().displays.size(); i++) {
-		getStateAnimation().displays.get(i).interpolateScaleXY(new Vector2(1f, .75f), Linear.INOUT, 150, true);
+		getStateAnimation().displays.get(i).interpolateScaleXY(1f, .75f, Linear.INOUT, 150, true);
 		float x = getStateAnimation().displays.get(i).position.x;
 		float y = getStateAnimation().displays.get(i).position.y * .75f;
-		getStateAnimation().displays.get(i).interpolateXY(new Vector2(x, y), Linear.INOUT, 150, true);
-		getStateAnimation().displays.get(i).interpolateScaleXY(new Vector2(1f, 1f), Bounce.OUT, 500, true);
+		getStateAnimation().displays.get(i).interpolateXY(x, y, Linear.INOUT, 150, true);
+		getStateAnimation().displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 500, true);
 		getStateAnimation().displays.get(i).tween.delay(150);
 		x = getStateAnimation().displays.get(i).position.x;
 		y = getStateAnimation().displays.get(i).position.y;
-		getStateAnimation().displays.get(i).interpolateXY(new Vector2(x, y), Bounce.OUT, 500, true);
+		getStateAnimation().displays.get(i).interpolateXY(x, y, Bounce.OUT, 500, true);
 		getStateAnimation().displays.get(i).tween.delay(150);
 	    }
     }
@@ -197,10 +196,10 @@ public class Alien extends DynamicDisplay {
 	    upElapsedTime = 0;
 	    state = AlienState.STUNNED;
 	    for (int i = 0; i < stunnedState.displays.size(); i++) {
-		stunnedState.displays.get(i).interpolateXY(stunnedState.displays.get(i).position, Bounce.OUT, 1000, true);
+		stunnedState.displays.get(i).interpolateXY(stunnedState.displays.get(i).position.x, stunnedState.displays.get(i).position.y, Bounce.OUT, 1000, true);
 		stunnedState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 		stunnedState.displays.get(i).tween.setCallback(new ReturnValues(stunnedState.displays.get(i)));
-		stunnedState.displays.get(i).interpolateScaleXY(new Vector2(1f, 1f), Bounce.OUT, 1000, true);
+		stunnedState.displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 1000, true);
 		stunnedState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 		stunnedState.displays.get(i).tween.setCallback(new ReturnValues(stunnedState.displays.get(i)));
 		stunnedState.displays.get(i).tween.start(stunnedState.displays.get(i).tweenManager);
@@ -243,10 +242,10 @@ public class Alien extends DynamicDisplay {
 	attackingState.update(deltaTime);
 	if (upElapsedTime * tweenSpeed >= attackingStateTime) {
 	    for (int i = 0; i < hidingState.displays.size(); i++) {
-		hidingState.displays.get(i).interpolateScaleXY(new Vector2(1f, 0f), Bounce.IN, 1000, true);
+		hidingState.displays.get(i).interpolateScaleXY(1f, 0f, Bounce.IN, 1000, true);
 		hidingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 		hidingState.displays.get(i).tween.setCallback(new ReturnValues(hidingState.displays.get(i)));
-		hidingState.displays.get(i).interpolateXY(new Vector2(hidingState.displays.get(i).position.x, 0), Bounce.IN, 1000, true);
+		hidingState.displays.get(i).interpolateXY(hidingState.displays.get(i).position.x, 0, Bounce.IN, 1000, true);
 		hidingState.displays.get(i).tween.setCallback(new ReturnValues(hidingState.displays.get(i)));
 		hidingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
 	    }

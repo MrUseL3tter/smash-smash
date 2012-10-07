@@ -27,7 +27,7 @@ public abstract class BonusEffect extends DynamicDisplay {
     @Override
     public Rectangle getBounds() {
 	float x = position.x, y = position.y;
-	float width = body.region.getRegionWidth(), height = body.region.getRegionHeight();
+	float width = body.getBounds().width, height = body.getBounds().height;
 	bounds.width = width * scale.x;
 	bounds.height = height * scale.y;
 	switch (registration) {
@@ -74,7 +74,7 @@ public abstract class BonusEffect extends DynamicDisplay {
     public void setRegistration(DynamicRegistration registration) {
 	this.registration = registration;
 	float x = position.x, y = position.y;
-	float width = body.region.getRegionWidth(), height = body.region.getRegionHeight();
+	float width = body.getWidth(), height = body.getHeight();
 	switch (registration) {
 	    case BOTTOM_CENTER:
 		origin.set(x - width * scale.x / 2, y);
