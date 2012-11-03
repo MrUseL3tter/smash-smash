@@ -13,7 +13,7 @@ public class Settings {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 800;
 
-    public static int hammerType = Hammer.FROST_BITE;
+    public static int hammerType = Hammer.FIERY_SMASH;
 
     public static boolean musicEnabled = false;
     public static boolean soundEnabled = false;

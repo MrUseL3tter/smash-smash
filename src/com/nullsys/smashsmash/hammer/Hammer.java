@@ -33,6 +33,8 @@ public class Hammer {
 	    case DUSK:
 		break;
 	    case FIERY_SMASH:
+		normalEffect = Particles.fierySmashNormal;
+		hammerTimeEffect = Particles.fierySmashHammerTime;
 		break;
 	    case FROST_BITE:
 		normalEffect = Particles.frostBiteNormal;
@@ -52,6 +54,9 @@ public class Hammer {
 		break;
 	    case WOODEN_HAMMER:
 		break;
+	    default:
+		assert false;
+		break;
 	}
     }
 
@@ -67,5 +72,9 @@ public class Hammer {
 	    return hammerTimeEffect;
 	else
 	    return normalEffect;
+    }
+
+    public HammerEffect getEffect(float x, float y) {
+	return null;
     }
 }

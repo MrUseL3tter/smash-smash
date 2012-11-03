@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.noobs2d.tweenengine.utils.DynamicCallback.InvisibleOnEnd;
+import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.noobs2d.tweenengine.utils.DynamicSprite;
 import com.noobs2d.tweenengine.utils.DynamicText;
 import com.nullsys.smashsmash.Art;
@@ -64,8 +65,10 @@ public class HeadsUpDisplay {
 	score = Fonts.akaDylanCollage64;
 	comboCount = new DynamicText(Fonts.actionJackson115, "", HAlignment.LEFT);
 	comboCount.position.set(0, 515);
+	comboCount.setRegistration(DynamicRegistration.LEFT_CENTER);
 	comboName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.LEFT);
 	comboName.position.set(0, 550);
+	comboName.setRegistration(DynamicRegistration.LEFT_CENTER);
 	feed = new BitmapFont();
 	feed.scale(.5f);
 	flyout = new DynamicText(Fonts.goodGirlx32, "", HAlignment.CENTER);

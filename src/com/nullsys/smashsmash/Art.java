@@ -1,12 +1,9 @@
 package com.nullsys.smashsmash;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.TextureLoader;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Art {
@@ -16,6 +13,8 @@ public class Art {
     public static Texture bonusEffects;
     public static Texture lawnBackground1;
     public static Texture lawnBackground2;
+    public static TextureAtlas menu;
+    public static TextureAtlas pukes;
 
     public static Texture hud;
     public static TextureRegion hudBuffEffectCoinRain;
@@ -45,6 +44,9 @@ public class Art {
 	assetManager.load("data/gfx/SAMPLE_PINWHEEL.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_BONUS_EFFECTS.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
+
+	assetManager.load("data/gfx/menu/MENU.pack", TextureAtlas.class);
+	assetManager.load("data/gfx/PUKES.pack", TextureAtlas.class);
     }
 
     public static void retrieve(AssetManager assetManager) {
@@ -54,6 +56,9 @@ public class Art {
 	lawnBackground1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	lawnBackground2 = assetManager.get("data/gfx/SAMPLE_BACKGROUND2.png", Texture.class);
 	lawnBackground2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+	menu = assetManager.get("data/gfx/menu/MENU.pack", TextureAtlas.class);
+	pukes = assetManager.get("data/gfx/PUKES.pack", TextureAtlas.class);
 
 	hud = assetManager.get("data/gfx/SAMPLE_HUD.png", Texture.class);
 	hud.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -72,20 +77,5 @@ public class Art {
 	pinwheel.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	blackFill = assetManager.get("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
 	blackFill.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-    }
-
-    private static AssetManager getAssetManager() {
-	if (assetManager == null) {
-	    Resolution[] resolutions = { new Resolution(480, 320, ".480320"), new Resolution(800, 480, ".800480"), new Resolution(856, 480, ".856480"), new Resolution(1280, 800, ".1280800") };
-	    ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
-
-	    assetManager = new AssetManager();
-	    assetManager.setLoader(Texture.class, new TextureLoader(resolver));
-
-	    Texture.setAssetManager(assetManager);
-
-	    return assetManager;
-	} else
-	    return assetManager;
     }
 }

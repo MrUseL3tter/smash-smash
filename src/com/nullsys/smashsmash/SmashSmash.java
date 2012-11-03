@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.noobs2d.tweenengine.utils.DynamicDisplay;
-import com.noobs2d.tweenengine.utils.DynamicScreen.DynamicCamera;
 import com.nullsys.smashsmash.stage.StageLoadingScreen;
 
 public class SmashSmash extends Game {
@@ -17,7 +16,6 @@ public class SmashSmash extends Game {
 
     @Override
     public void create() {
-	Gdx.graphics.setVSync(true);
 	initTween();
 	init();
     }
@@ -47,7 +45,6 @@ public class SmashSmash extends Game {
 
     private void initTween() {
 	Tween.ensurePoolCapacity(15);
-	Tween.registerAccessor(DynamicCamera.class, new DynamicCamera());
 	Tween.registerAccessor(DynamicDisplay.class, new DynamicDisplay() {
 
 	    @Override

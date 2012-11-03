@@ -72,6 +72,10 @@ public class Alien extends DynamicDisplay {
 
     public float upElapsedTime = 0;
 
+    public void attack() {
+	stage.onAlienAttack(this);
+    }
+
     @Override
     public Rectangle getBounds() {
 	if (getStateAnimation() != null) {
@@ -101,6 +105,19 @@ public class Alien extends DynamicDisplay {
 	    return waitingState;
 	else
 	    return waitingState;
+    }
+
+    public void hide() {
+	for (int i = 0; i < hidingState.displays.size(); i++) {
+	    hidingState.displays.get(i).interpolateScaleXY(1f, 0f, Bounce.IN, 1000, true);
+	    hidingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
+	    hidingState.displays.get(i).tween.setCallback(new ReturnValues(hidingState.displays.get(i)));
+	    hidingState.displays.get(i).interpolateXY(hidingState.displays.get(i).position.x, 0, Bounce.IN, 1000, true);
+	    hidingState.displays.get(i).tween.setCallback(new ReturnValues(hidingState.displays.get(i)));
+	    hidingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
+	}
+	state = AlienState.HIDING;
+	upElapsedTime = 0;
     }
 
     @Override
@@ -240,19 +257,8 @@ public class Alien extends DynamicDisplay {
 
     protected void updateAttacking(float deltaTime) {
 	attackingState.update(deltaTime);
-	if (upElapsedTime * tweenSpeed >= attackingStateTime) {
-	    for (int i = 0; i < hidingState.displays.size(); i++) {
-		hidingState.displays.get(i).interpolateScaleXY(1f, 0f, Bounce.IN, 1000, true);
-		hidingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
-		hidingState.displays.get(i).tween.setCallback(new ReturnValues(hidingState.displays.get(i)));
-		hidingState.displays.get(i).interpolateXY(hidingState.displays.get(i).position.x, 0, Bounce.IN, 1000, true);
-		hidingState.displays.get(i).tween.setCallback(new ReturnValues(hidingState.displays.get(i)));
-		hidingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
-	    }
-	    state = AlienState.HIDING;
-	    upElapsedTime = 0;
-	    stage.onAlienAttack(this);
-	}
+	if (upElapsedTime * tweenSpeed >= attackingStateTime)
+	    hide();
     }
 
     protected void updateHiding(float deltaTime) {
@@ -291,9 +297,11 @@ public class Alien extends DynamicDisplay {
 
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	if (upElapsedTime * tweenSpeed >= waitingStateTime) {
+	if (upElapsedTime * tweenSpeed >= waitingStateTime && stage.aliensMayAttack() && !User.hasEffect(BonusEffect.INVULNERABILITY)) {
 	    state = AlienState.ATTACKING;
 	    upElapsedTime = 0;
-	}
+	    attack();
+	} else if (upElapsedTime * tweenSpeed >= waitingStateTime)
+	    hide();
     }
 }

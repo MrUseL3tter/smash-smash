@@ -7,12 +7,12 @@ import aurelienribon.tweenengine.equations.Sine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicCallback.RemoveFromCollectionOnEnd;
+import com.noobs2d.tweenengine.utils.DynamicSprite;
 import com.noobs2d.tweenengine.utils.DynamicText;
 import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Coin;
@@ -23,7 +23,12 @@ import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.alien.Alien;
 import com.nullsys.smashsmash.alien.Alien.AlienState;
 import com.nullsys.smashsmash.alien.Diabolic;
+import com.nullsys.smashsmash.alien.Fluff;
+import com.nullsys.smashsmash.alien.Golem;
+import com.nullsys.smashsmash.alien.Jelly;
+import com.nullsys.smashsmash.alien.Ogre;
 import com.nullsys.smashsmash.alien.Sorcerer;
+import com.nullsys.smashsmash.alien.Tortoise;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.bonuseffect.Invulnerability;
 import com.nullsys.smashsmash.bonuseffect.ScoreFrenzy;
@@ -31,7 +36,7 @@ import com.nullsys.smashsmash.hammer.HammerEffect;
 
 public class SurvivalStageScreen extends SmashSmashStage {
 
-    public SurvivalStageScreen(Game game, AssetManager assetManager) {
+    public SurvivalStageScreen(Game game) {
 	super(game);
 	initGridPoints();
 	initAliens();
@@ -53,18 +58,30 @@ public class SurvivalStageScreen extends SmashSmashStage {
     public boolean keyUp(int keycode) {
 	// TODO disable for stable release
 	if (keycode == Keys.CONTROL_LEFT || keycode == Keys.MENU)
-	    game.setScreen(new SurvivalStageScreen(game, assetManager));
+	    game.setScreen(new SurvivalStageScreen(game));
 	return super.keyUp(keycode);
     }
 
     @Override
     public void onAlienAttack(Alien alien) {
-	if (!User.hasEffect(BonusEffect.INVULNERABILITY)) {
-	    session.combosCurrent = 0;
-	    hud.shakeLifePoint();
-	    camera.shake();
-	    if (session.lifePoints > 0)
-		session.lifePoints--;
+	recoveryDelay = RECOVERY_DISABILITY_DURATION;
+	session.combosCurrent = 0;
+	hud.shakeLifePoint();
+	camera.shake();
+	if (session.lifePoints > 0)
+	    session.lifePoints--;
+	// add 3-5 puke splashes into the screen
+	int count = (int) (3 + 1 * Math.random() * 3);
+	for (int i = 0; i < count; i++) {
+	    float x = (float) (300 + Math.random() * 680);
+	    float y = (float) (200 + Math.random() * 400);
+	    float targetScale = (float) (0.75f + Math.random() * 1.5f);
+	    DynamicSprite puke = new DynamicSprite(Art.pukes.findRegion("PUKE_GREEN"), x, y);
+	    puke.setScale(0f, 0f);
+	    puke.setRotation((float) (360 * Math.random()));
+	    puke.interpolateScaleXY(1f * targetScale, 1f * targetScale, 250, true).delay(i * 100);
+	    puke.interpolateAlpha(0f, RECOVERY_DISABILITY_DURATION * 1000, true).delay(i * 100);
+	    pukes.add(puke);
 	}
     }
 
@@ -100,8 +117,8 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
 
 	boolean touchedACoin = inputToCoins(position.x, position.y, pointer);
-	boolean touchedAnAlien = !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
-													 // there are no collisions with any coin
+	boolean touchedAnAlien = aliensMayAttack() && !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
+	// there are no collisions with any coin
 
 	boolean touchedABonusEffect = false;
 	for (int i = 0; i < bonusEffects.size(); i++)
@@ -120,7 +137,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		}
 	    }
 
-	if (touchedAnAlien && !touchedACoin || !touchedAnAlien && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped 
+	if (aliensMayAttack() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
 	    if (User.hasEffect(BonusEffect.HAMMER_TIME))
 		camera.shake();
 	    addHammerEffect(position.x, position.y);
@@ -135,28 +152,69 @@ public class SurvivalStageScreen extends SmashSmashStage {
     }
 
     @Override
-    public void render(float deltaTime) {
-	session.stageSecondsElapsed += deltaTime;
+    public void render(float delta) {
+	session.stageSecondsElapsed += delta;
 
 	spriteBatch.setProjectionMatrix(camera.projection);
 	getCamera().update();
 
 	spriteBatch.begin();
-	renderStage(spriteBatch);
-	renderAliens(spriteBatch);
-	renderBonusEffects(spriteBatch);
-	renderCoins(spriteBatch);
-	renderHammerEffects(spriteBatch);
+	renderStage(spriteBatch, delta);
+	renderAliens(spriteBatch, delta);
+	renderBonusEffects(spriteBatch, delta);
+	renderCoins(spriteBatch, delta);
+	renderHammerEffects(spriteBatch, delta);
+	renderPukes(spriteBatch, delta);
 	hud.render(spriteBatch);
+	hud.update(delta);
 	spriteBatch.end();
 
-	updateHUD(deltaTime);
-	updateAliens(deltaTime);
-	updateBonusEffects(deltaTime);
-	updateCoins(deltaTime);
-	updateCombos(deltaTime);
-	updateHammerEffects(deltaTime);
-	updateStreaks(deltaTime);
+	// Check if 3 sec. has passed since the last successful hit. If so, the combos are cancelled.
+	if (session.stageSecondsElapsed - session.combosLastDelta >= COMBO_MAX_DURATION && session.combosCurrent > 0) {
+	    showComboText();
+	    session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
+	    session.combosCurrent = 0;
+	}
+
+	// update streaks
+	int streaks = 0;
+	for (int i = 0; i < pointers.length; i++)
+	    if (pointers[i])
+		streaks++;
+	if (streaks == 5) {
+	    hud.streakBonus.text = "Score +5";
+	    hud.streakName.text = "QUINTO!";
+	} else if (streaks == 4) {
+	    hud.streakBonus.text = "Score +4";
+	    hud.streakName.text = "QUATRO!";
+	} else if (streaks == 3) {
+	    hud.streakBonus.text = "Score +3";
+	    hud.streakName.text = "TRIO BINGO!";
+	} else if (streaks == 2) {
+	    hud.streakBonus.text = "Score +2";
+	    hud.streakName.text = "DUAL SMASH!";
+	}
+	if (streaks >= 2) {
+	    hud.streakName.color.a = 1f;
+	    hud.streakName.tweenManager.killAll();
+	    hud.streakName.position.set(1280 + hud.streakName.bitmapFont.getBounds(hud.streakName.text).width, 500);
+	    hud.streakName.interpolateXY(1280, 500, Linear.INOUT, 250, true);
+	    hud.streakName.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
+	    hud.streakBonus.color.a = 1f;
+	    hud.streakBonus.tweenManager.killAll();
+	    hud.streakBonus.position.set(1280 + hud.streakName.bitmapFont.getBounds(hud.streakName.text).width, 530);
+	    hud.streakBonus.interpolateXY(1280, 530, Linear.INOUT, 250, true);
+	    hud.streakBonus.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
+	    for (int i = 0; i < pointers.length; i++)
+		pointers[i] = false;
+	}
+	try {
+	    if (session.stageSecondsElapsed > 0 && Integer.parseInt(("" + session.stageSecondsElapsed).split(".")[1]) % 2 == 0) // .2 seconds has passed
+		for (int i = 0; i < pointers.length; i++)
+		    pointers[i] = false;
+	} catch (ArrayIndexOutOfBoundsException e) {
+
+	}
     }
 
     @Override
@@ -178,9 +236,13 @@ public class SurvivalStageScreen extends SmashSmashStage {
 
     private void addHammerEffect(float x, float y) {
 	Vector2 position = new Vector2(x, y);
-	float duration = User.hammer.getEffect().getEmitters().get(0).duration / 2;
+	float duration = User.hammer.getEffect().getEmitters().get(0).getDuration().getLowMax() / 1000;//User.hammer.getEffect().getEmitters().get(0).duration / 2;
 	HammerEffect hammerEffect = new HammerEffect(User.hammer.getEffect(), position, duration, 0f);
 	hammerEffects.add(hammerEffect);
+	//	System.out.println(duration);
+	//	Array<ParticleEmitter> a = User.hammer.getEffect().getEmitters();
+	//	for (ParticleEmitter p : a)
+	//	    System.out.println(p.getDuration().getLowMax());
     }
 
     private void addScore(Alien alien) {
@@ -213,23 +275,23 @@ public class SurvivalStageScreen extends SmashSmashStage {
     private void initAliens() {
 	aliens[0] = new Diabolic(this);
 	aliens[1] = new Diabolic(this);
-	//	aliens[2] = new Diabolic(this);
-	//	aliens[3] = new Fluff(this);
-	//	aliens[4] = new Fluff(this);
-	//	aliens[5] = new Fluff(this);
-	//	aliens[6] = new Golem(this);
-	//	aliens[7] = new Golem(this);
-	//	aliens[8] = new Golem(this);
-	//	aliens[9] = new Jelly(this);
-	//	aliens[10] = new Jelly(this);
-	//	aliens[11] = new Jelly(this);
-	//	aliens[12] = new Ogre(this);
-	//	aliens[13] = new Ogre(this);
-	//	aliens[14] = new Ogre(this);
-	//	aliens[15] = new Tortoise(this);
-	//	aliens[15] = new Tortoise(this);
-	//	aliens[15] = new Tortoise(this);
-	//	aliens[16] = new Sorcerer(this);
+	aliens[2] = new Diabolic(this);
+	aliens[3] = new Fluff(this);
+	aliens[4] = new Fluff(this);
+	aliens[5] = new Fluff(this);
+	aliens[6] = new Golem(this);
+	aliens[7] = new Golem(this);
+	aliens[8] = new Golem(this);
+	aliens[9] = new Jelly(this);
+	aliens[10] = new Jelly(this);
+	aliens[11] = new Jelly(this);
+	aliens[12] = new Ogre(this);
+	aliens[13] = new Ogre(this);
+	aliens[14] = new Ogre(this);
+	aliens[15] = new Tortoise(this);
+	aliens[15] = new Tortoise(this);
+	aliens[15] = new Tortoise(this);
+	aliens[16] = new Sorcerer(this);
 	for (int i = 0; i < aliens.length; i++)
 	    aliens[i].visible = false;
     }
@@ -249,7 +311,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	hud = new HeadsUpDisplay(this);
     }
 
-    private void renderAliens(SpriteBatch spriteBatch) {
+    private void renderAliens(SpriteBatch batch, float delta) {
 	// Sort the aliens first according to their y-coordinate. Aliens with lowest y are rendered last.
 	for (int i = 0; i < aliens.length; i++)
 	    for (int j = i + 1; j < aliens.length; j++)
@@ -258,26 +320,80 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		    aliens[j] = aliens[i];
 		    aliens[i] = alien;
 		}
-	for (int alienIndex = aliens.length - 1; alienIndex > -1; alienIndex--)
-	    aliens[alienIndex].render(spriteBatch);
+	for (int i = aliens.length - 1; i > -1; i--) {
+	    aliens[i].render(batch);
+	    aliens[i].update(delta);
+	}
+
+	// FIXME set to delay before the intro prompt ends
+	if (session.stageSecondsElapsed > 1) {
+	    setAlienAppearanceRate();
+	    setAlienPositions();
+	    int visibles = getVisibleAliens();
+	    boolean overlaps = false;
+	    boolean sorcererShouldAppear = !User.hasEffect(BonusEffect.HAMMER_TIME) && !User.hasEffect(BonusEffect.INVULNERABILITY);
+	    sorcererShouldAppear = sorcererShouldAppear && !User.hasEffect(BonusEffect.SCORE_FRENZY);
+	    for (int i = 0; visibles < alienAppearanceRate - 1 && i < aliens.length && i < alienAppearanceRate - 1; i++) {
+		for (int j = 0; j < aliens.length; j++)
+		    if (i != j && !aliens[i].visible && aliens[i].getBounds().overlaps(aliens[j].getBounds())) {
+			overlaps = true;
+			j = aliens.length; //break this loop
+		    }
+		alienAppearanceDelay = i * (int) (Math.random() * 250);
+		// we only show an alien if it doesn't collide with other ones or if it is a sorcerer 
+		// and it is allowed to be spawn and doesn't collide to others
+		if (!(aliens[i] instanceof Sorcerer) && !overlaps) {
+		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
+		    aliens[i].rise(alienAppearanceDelay, volume / 2);
+		} else if (aliens[i] instanceof Sorcerer && sorcererShouldAppear && !overlaps) {
+		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
+		    aliens[i].rise(alienAppearanceDelay, volume / 2);
+		}
+		overlaps = false;
+	    }
+	}
     }
 
-    private void renderBonusEffects(SpriteBatch spriteBatch) {
-	for (int i = 0; i < bonusEffects.size(); i++)
-	    bonusEffects.get(i).render(spriteBatch);
+    private void renderBonusEffects(SpriteBatch batch, float delta) {
+	for (int i = 0; i < bonusEffects.size(); i++) {
+	    bonusEffects.get(i).render(batch);
+	    bonusEffects.get(i).update(delta);
+	}
     }
 
-    private void renderCoins(SpriteBatch spriteBatch) {
-	for (int i = 0; i < coins.size(); i++)
-	    coins.get(i).render(spriteBatch);
+    private void renderCoins(SpriteBatch batch, float delta) {
+	for (int i = 0; i < coins.size(); i++) {
+	    coins.get(i).render(batch);
+	    if (coins.get(i).timeElapsed > 7f)
+		coins.remove(i);
+	    else
+		coins.get(i).update(delta);
+	}
     }
 
-    private void renderHammerEffects(SpriteBatch spriteBatch) {
-	for (int i = 0; i < hammerEffects.size(); i++)
-	    hammerEffects.get(i).render(spriteBatch);
+    private void renderHammerEffects(SpriteBatch batch, float delta) {
+	for (int i = 0; i < hammerEffects.size(); i++) {
+	    hammerEffects.get(i).render(batch);
+	    if (hammerEffects.get(i).elapsed >= hammerEffects.get(i).duration)
+		hammerEffects.remove(hammerEffects.get(i));
+	    else
+		hammerEffects.get(i).update(delta);
+	}
     }
 
-    private void renderStage(SpriteBatch spriteBatch) {
+    private void renderPukes(SpriteBatch batch, float delta) {
+	for (int i = 0; i < pukes.size(); i++) {
+	    pukes.get(i).render(batch);
+	    pukes.get(i).update(delta);
+	    if (pukes.get(i).tweenManager.getRunningTweensCount() == 0)
+		pukes.remove(i);
+	}
+	recoveryDelay -= delta;
+	System.out.println("[SurvivalStageScreen#renderPukes(SpriteBatch,float)] recoveryDelay: " + recoveryDelay);
+	//	System.out.println("[SurvivalStageScreen#renderPukes(SpriteBatch,float)] Pukes count: " + pukes.size());
+    }
+
+    private void renderStage(SpriteBatch spriteBatch, float delta) {
 	spriteBatch.draw(Art.lawnBackground1, 0, -(1024 - 800));
 	spriteBatch.draw(Art.lawnBackground2, 1280 - 256, -(1024 - 800));
 	if (User.hasEffect(BonusEffect.INVULNERABILITY))
@@ -343,113 +459,6 @@ public class SurvivalStageScreen extends SmashSmashStage {
 	}
     }
 
-    private void updateAliens(float deltaTime) {
-	// FIXME set to delay before the intro prompt ends
-	if (session.stageSecondsElapsed > 1) {
-	    setAlienAppearanceRate();
-	    setAlienPositions();
-	    int visibles = getVisibleAliens();
-	    boolean overlaps = false;
-	    boolean sorcererShouldAppear = !User.hasEffect(BonusEffect.HAMMER_TIME) && !User.hasEffect(BonusEffect.INVULNERABILITY);
-	    sorcererShouldAppear = sorcererShouldAppear && !User.hasEffect(BonusEffect.SCORE_FRENZY);
-	    for (int i = 0; visibles < alienAppearanceRate - 1 && i < aliens.length && i < alienAppearanceRate - 1; i++) {
-		for (int j = 0; j < aliens.length; j++)
-		    if (i != j && !aliens[i].visible && aliens[i].getBounds().overlaps(aliens[j].getBounds())) {
-			overlaps = true;
-			j = aliens.length; //break this loop
-		    }
-		alienAppearanceDelay = i * (int) (Math.random() * 250);
-		// we only show an alien if it doesn't collide with other ones or if it is a sorcerer 
-		// and it is allowed to be spawn and doesn't collide to others
-		if (!(aliens[i] instanceof Sorcerer) && !overlaps) {
-		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
-		    aliens[i].rise(alienAppearanceDelay, volume / 2);
-		} else if (aliens[i] instanceof Sorcerer && sorcererShouldAppear && !overlaps) {
-		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
-		    aliens[i].rise(alienAppearanceDelay, volume / 2);
-		}
-		overlaps = false;
-	    }
-	    for (int i = 0; i < aliens.length; i++)
-		aliens[i].update(deltaTime);
-	}
-    }
-
-    private void updateBonusEffects(float deltaTime) {
-	for (int i = 0; i < bonusEffects.size(); i++)
-	    bonusEffects.get(i).update(deltaTime);
-    }
-
-    private void updateCoins(float deltaTime) {
-	for (int coinIndex = 0; coinIndex < coins.size(); coinIndex++)
-	    if (coins.get(coinIndex).timeElapsed > 7f)
-		coins.remove(coinIndex);
-	    else
-		coins.get(coinIndex).update(deltaTime);
-    }
-
-    private void updateCombos(float deltaTime) {
-	// Check if 3 sec. has passed since the last successful hit. If so, the combos are cancelled.
-	if (session.stageSecondsElapsed - session.combosLastDelta >= COMBO_MAX_DURATION && session.combosCurrent > 0) {
-	    showComboText();
-	    session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
-	    session.combosCurrent = 0;
-	}
-    }
-
-    private void updateHammerEffects(float deltaTime) {
-	for (int hammerEffectIndex = 0; hammerEffectIndex < hammerEffects.size(); hammerEffectIndex++)
-	    if (hammerEffects.get(hammerEffectIndex).elapsed >= hammerEffects.get(hammerEffectIndex).duration)
-		hammerEffects.remove(hammerEffects.get(hammerEffectIndex));
-	    else
-		hammerEffects.get(hammerEffectIndex).update(deltaTime);
-    }
-
-    private void updateHUD(float deltaTime) {
-	hud.update(deltaTime);
-    }
-
-    private void updateStreaks(float deltaTime) {
-	int streaks = 0;
-	for (int i = 0; i < pointers.length; i++)
-	    if (pointers[i])
-		streaks++;
-	if (streaks == 5) {
-	    hud.streakBonus.text = "Score +5";
-	    hud.streakName.text = "QUINTO!";
-	} else if (streaks == 4) {
-	    hud.streakBonus.text = "Score +4";
-	    hud.streakName.text = "QUATRO!";
-	} else if (streaks == 3) {
-	    hud.streakBonus.text = "Score +3";
-	    hud.streakName.text = "TRIO BINGO!";
-	} else if (streaks == 2) {
-	    hud.streakBonus.text = "Score +2";
-	    hud.streakName.text = "DUAL SMASH!";
-	}
-	if (streaks >= 2) {
-	    hud.streakName.color.a = 1f;
-	    hud.streakName.tweenManager.killAll();
-	    hud.streakName.position.set(1280 + hud.streakName.bitmapFont.getBounds(hud.streakName.text).width, 500);
-	    hud.streakName.interpolateXY(1280, 500, Linear.INOUT, 250, true);
-	    hud.streakName.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
-	    hud.streakBonus.color.a = 1f;
-	    hud.streakBonus.tweenManager.killAll();
-	    hud.streakBonus.position.set(1280 + hud.streakName.bitmapFont.getBounds(hud.streakName.text).width, 530);
-	    hud.streakBonus.interpolateXY(1280, 530, Linear.INOUT, 250, true);
-	    hud.streakBonus.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
-	    for (int i = 0; i < pointers.length; i++)
-		pointers[i] = false;
-	}
-	try {
-	    if (session.stageSecondsElapsed > 0 && Integer.parseInt(("" + session.stageSecondsElapsed).split(".")[1]) % 2 == 0) // .2 seconds has passed
-		for (int i = 0; i < pointers.length; i++)
-		    pointers[i] = false;
-	} catch (ArrayIndexOutOfBoundsException e) {
-
-	}
-    }
-
     @Override
     protected boolean inputToAliens(float x, float y, int pointer) {
 	int diameter = User.hammer.getDiameter();
@@ -464,6 +473,7 @@ public class SurvivalStageScreen extends SmashSmashStage {
 		session.combosTotal++;
 		session.combosLastDelta = session.stageSecondsElapsed;
 		hud.shakeCombos();
+		break;
 	    }
 	// Display a "x + 1!" message
 	if (hitCount >= 2) {

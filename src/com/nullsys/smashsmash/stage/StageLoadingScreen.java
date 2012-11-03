@@ -86,7 +86,7 @@ public class StageLoadingScreen extends DynamicScreen {
 	    label.dispose();
 
 	    if (stageScreen == null)
-		game.setScreen(new SurvivalStageScreen(game, assetManager));
+		game.setScreen(new SurvivalStageScreen(game));
 	    else
 		game.setScreen(stageScreen);
 	}
