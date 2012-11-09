@@ -45,6 +45,7 @@ public class SmashSmash extends Game {
 
     private void initTween() {
 	Tween.ensurePoolCapacity(15);
+	//	DynamicValue.register();
 	Tween.registerAccessor(DynamicDisplay.class, new DynamicDisplay() {
 
 	    @Override

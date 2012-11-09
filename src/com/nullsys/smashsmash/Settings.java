@@ -13,10 +13,17 @@ public class Settings {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 800;
 
+    public static int arcadeHighscore = 0;
+    public static int endlessHighscore = 0;
+
     public static int hammerType = Hammer.FIERY_SMASH;
 
     public static boolean musicEnabled = false;
     public static boolean soundEnabled = false;
+
+    public static boolean cheatHammerTime = false;
+    public static boolean cheatInvulnerability = false;
+    public static boolean cheatScoreFrenzy = false;
 
     public static AssetManager getAssetManager() {
 

@@ -16,7 +16,7 @@ import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.hammer.HammerEffect;
-import com.nullsys.smashsmash.stage.SmashSmashStage;
+import com.nullsys.smashsmash.stage.SmashSmashStageCallback;
 
 public class Alien extends DynamicDisplay {
 
@@ -40,7 +40,7 @@ public class Alien extends DynamicDisplay {
 
     public AlienState state = AlienState.HIDDEN;
 
-    protected SmashSmashStage stage;
+    protected SmashSmashStageCallback stage;
 
     public DynamicAnimationGroup risingState;
     public DynamicAnimationGroup waitingState;
@@ -65,12 +65,15 @@ public class Alien extends DynamicDisplay {
     public float hidingStateTime = 1f;
 
     public int scoreValue = 1;
+
     public int tensionValue = 1;
 
     public int hitPoints = 1;
     public int hitPointsTotal = 1;
 
     public float upElapsedTime = 0;
+
+    private boolean hostile = true;
 
     public void attack() {
 	stage.onAlienAttack(this);
@@ -120,6 +123,20 @@ public class Alien extends DynamicDisplay {
 	upElapsedTime = 0;
     }
 
+    public boolean isHostile() {
+	return hostile;
+    }
+
+    @Override
+    public void pause() {
+	risingState.pause();
+	waitingState.pause();
+	attackingState.pause();
+	stunnedState.pause();
+	smashedState.pause();
+	hidingState.pause();
+    }
+
     @Override
     public void render(SpriteBatch spriteBatch) {
 	if (visible) {
@@ -140,6 +157,16 @@ public class Alien extends DynamicDisplay {
 	smashedState.reset();
 	waitingState.reset();
 	color = new Color(1f, 1f, 1f, 1f);
+    }
+
+    @Override
+    public void resume() {
+	risingState.resume();
+	waitingState.resume();
+	attackingState.resume();
+	stunnedState.resume();
+	smashedState.resume();
+	hidingState.resume();
     }
 
     public void rise(float delay, float volume) {
@@ -168,6 +195,10 @@ public class Alien extends DynamicDisplay {
 	    }
 	    //	    SFXspawn.play(volume);
 	}
+    }
+
+    public void setHostile(boolean hostile) {
+	this.hostile = hostile;
     }
 
     @Override
@@ -297,7 +328,7 @@ public class Alien extends DynamicDisplay {
 
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	if (upElapsedTime * tweenSpeed >= waitingStateTime && stage.aliensMayAttack() && !User.hasEffect(BonusEffect.INVULNERABILITY)) {
+	if (hostile && upElapsedTime * tweenSpeed >= waitingStateTime && stage.isAttackAllowed() && !User.hasEffect(BonusEffect.INVULNERABILITY)) {
 	    state = AlienState.ATTACKING;
 	    upElapsedTime = 0;
 	    attack();

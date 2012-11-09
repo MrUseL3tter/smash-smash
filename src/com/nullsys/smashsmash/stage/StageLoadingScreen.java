@@ -21,7 +21,7 @@ public class StageLoadingScreen extends DynamicScreen {
     BitmapFont label;
     ShapeRenderer shapeRenderer;
     String text = "NOW LOADING...";
-    SurvivalStageScreen stageScreen;
+    EndlessStageScreen stageScreen;
 
     public StageLoadingScreen(Game game, AssetManager assetManager) {
 	super(game);
@@ -36,7 +36,7 @@ public class StageLoadingScreen extends DynamicScreen {
 
     }
 
-    public StageLoadingScreen(Game game, SurvivalStageScreen stageScreen, AssetManager assetManager) {
+    public StageLoadingScreen(Game game, EndlessStageScreen stageScreen, AssetManager assetManager) {
 	super(game);
 	this.assetManager = assetManager;
 	label = new BitmapFont(Gdx.files.internal("data/fonts/ARIAL_NARROW_32_ITALIC.fnt"), false);
@@ -83,10 +83,9 @@ public class StageLoadingScreen extends DynamicScreen {
 	    AliensArt.retrieve(assetManager);
 	    Fonts.retrieve(assetManager);
 	    Sounds.retrieve(assetManager);
-	    label.dispose();
 
 	    if (stageScreen == null)
-		game.setScreen(new SurvivalStageScreen(game));
+		game.setScreen(new MainMenuScreen(game));
 	    else
 		game.setScreen(stageScreen);
 	}

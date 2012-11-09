@@ -68,7 +68,7 @@ public class Hammer {
     }
 
     public ParticleEffect getEffect() {
-	if (User.hasEffect(BonusEffect.HAMMER_TIME))
+	if (Settings.cheatHammerTime || User.hasEffect(BonusEffect.HAMMER_TIME))
 	    return hammerTimeEffect;
 	else
 	    return normalEffect;
