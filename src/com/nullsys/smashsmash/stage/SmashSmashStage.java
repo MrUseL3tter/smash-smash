@@ -236,9 +236,20 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	scoreFrenzy.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.
 	//	    scoreFrenzy.tween.setCallback(new RemoveFromCollectionOnEnd(stage.bonusEffects, scoreFrenzy));
 
-	bonusEffects.add(hammerTime);
-	bonusEffects.add(invulnerability);
-	bonusEffects.add(scoreFrenzy);
+	//	bonusEffects.add(hammerTime);
+	//	bonusEffects.add(invulnerability);
+	//	bonusEffects.add(scoreFrenzy);
+
+	hammerTime.trigger();
+	invulnerability.trigger();
+	scoreFrenzy.trigger();
+	bonusEffectBlackFill.color.a = 0f;
+	bonusEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
+	bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+	bonusEffectPinwheel.color.a = 0f;
+	bonusEffectPinwheel.interpolateAlpha(1f, Linear.INOUT, 500, true);
+	bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+
     }
 
     @Override
@@ -488,14 +499,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected void onSmashMissed(float x, float y) {
 	session.smashMissed++;
-	if (session.combosCurrent > 1) {
-	    ui.missLabel.text = "MISS!";
-	    ui.missLabel.color.a = 1f;
-	    ui.missLabel.position.set(x, y);
-	    ui.missLabel.interpolateXY(x, y + 25, Linear.INOUT, 50, true);
-	    ui.missLabel.interpolateXY(x, y, Linear.INOUT, 50, true).delay(50);
-	    ui.missLabel.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
-	}
+	if (session.combosCurrent > 1)
+	    ui.showMissPrompt(x, y);
 	ui.showComboPrompt(session.combosCurrent);
 	session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
 	session.combosCurrent = 0;

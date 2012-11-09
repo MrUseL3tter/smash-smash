@@ -138,6 +138,15 @@ public class UserInterface {
 	}
     }
 
+    public void showMissPrompt(float x, float y) {
+	missLabel.text = "MISS!";
+	missLabel.color.a = 1f;
+	missLabel.position.set(x, y);
+	missLabel.interpolateXY(x, y + 25, Linear.INOUT, 50, true);
+	missLabel.interpolateXY(x, y, Linear.INOUT, 50, true).delay(50);
+	missLabel.interpolateAlpha(0f, Linear.INOUT, 250, true).delay(2000);
+    }
+
     public void showReadyPrompt() {
 	int delay = 1250, duration = 1000;
 	seconds[0].color.a = 0f;

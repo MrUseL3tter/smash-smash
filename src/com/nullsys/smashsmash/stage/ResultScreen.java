@@ -152,7 +152,7 @@ public class ResultScreen extends DynamicScreen implements TweenCallback {
 	menu.update(delta);
 	spriteBatch.end();
 
-	System.out.println("[ResultScreen#render(float)] blackFill.color.a: " + blackFill.getColor().a);
+	//	System.out.println("[ResultScreen#render(float)] blackFill.color.a: " + blackFill.getColor().a);
     }
 
 }
