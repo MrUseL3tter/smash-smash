@@ -185,6 +185,8 @@ public class PauseScreen extends DynamicScreen implements DynamicButtonCallback,
 	resume.interpolateAlpha(0f, 150, true);
 	retry.interpolateAlpha(0f, 150, true);
 	menu.interpolateAlpha(0f, 150, true);
+	music.interpolateAlpha(0f, 150, true);
+	sound.interpolateAlpha(0f, 150, true);
 	blackFill.interpolateAlpha(0f, 150, true);
 	pauseLabel.interpolateAlpha(0f, 150, true);
     }
