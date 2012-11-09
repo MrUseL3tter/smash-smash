@@ -170,8 +170,15 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     @Override
+    public void onAlienEscaped(Alien alien) {
+	// TODO Auto-generated method stub
+	session.escapedAliens++;
+    }
+
+    @Override
     public void onAlienSmashed(Alien alien) {
 	addScore(alien);
+	session.smashedAliens++;
 	// Add coin as per percentage
 	int random = (int) (Math.random() * 100);
 	if (User.hasEffect(BonusEffect.COIN_RAIN))
@@ -262,6 +269,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    }
 
 	if (isAttackAllowed() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
+	    session.smashLanded++;
 	    if (User.hasEffect(BonusEffect.HAMMER_TIME))
 		camera.shake();
 	    addHammerEffect(position.x, position.y);
@@ -446,7 +454,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		onAlienSmashed(aliens[i]);
 		hitCount++;
 		session.combosCurrent++;
-		session.combosTotal++;
 		session.combosLastDelta = session.stageSecondsElapsed;
 		ui.shakeCombos();
 		break;

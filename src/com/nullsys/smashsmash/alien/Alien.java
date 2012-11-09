@@ -298,6 +298,7 @@ public class Alien extends DynamicDisplay {
 	    visible = false;
 	    state = AlienState.HIDDEN;
 	    upElapsedTime = 0;
+	    stage.onAlienEscaped(this);
 	}
     }
 

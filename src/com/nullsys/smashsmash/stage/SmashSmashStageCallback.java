@@ -8,6 +8,8 @@ public interface SmashSmashStageCallback {
 
     public void onAlienAttack(Alien alien);
 
+    public void onAlienEscaped(Alien alien);
+
     public void onAlienSmashed(Alien alien);
 
     public void onBonusEffectSpawn(Alien alien);

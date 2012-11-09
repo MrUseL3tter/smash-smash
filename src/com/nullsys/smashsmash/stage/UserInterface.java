@@ -350,7 +350,7 @@ public class UserInterface {
 	message += "ELAPSED: " + stage.session.stageSecondsElapsed + "\n";
 	message += "SPAWN RATE: " + stage.getSpawnRate() + "\n";
 	message += "COMBOS MAX: " + stage.session.combosMax + "\n";
-	message += "COMBOS TOTAL: " + stage.session.combosTotal + "\n";
+	message += "SMASH LANDED: " + stage.session.smashLanded + "\n";
 	message += "Press left CTRL to restart." + "\n";
 	message += "Press BACKSPACE to pause." + "\n";
 	feed.drawWrapped(spriteBatch, message, 0f, 212f, 600, HAlignment.LEFT);
