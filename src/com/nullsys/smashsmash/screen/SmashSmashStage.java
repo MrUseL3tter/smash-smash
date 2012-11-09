@@ -42,8 +42,6 @@ import com.nullsys.smashsmash.alien.ScoreFrenzyJelly;
 import com.nullsys.smashsmash.alien.Sorcerer;
 import com.nullsys.smashsmash.alien.Tortoise;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
-import com.nullsys.smashsmash.bonuseffect.Invulnerability;
-import com.nullsys.smashsmash.bonuseffect.ScoreFrenzy;
 import com.nullsys.smashsmash.hammer.HammerEffect;
 
 /**
@@ -56,7 +54,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     /** seconds before being able to smash again after being puked on */
     public static final int RECOVERY_DISABILITY_DURATION = 10;
 
-    public ArrayList<BonusEffect> bonusEffects = new ArrayList<BonusEffect>();
     public ArrayList<HammerEffect> hammerEffects = new ArrayList<HammerEffect>();
     public ArrayList<DynamicAnimation> coinsAndGoldBars = new ArrayList<DynamicAnimation>();
     public ArrayList<DynamicSprite> pukes = new ArrayList<DynamicSprite>();
@@ -229,23 +226,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	boolean touchedAnAlien = isAttackAllowed() && !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
 	// there are no collisions with any coin
 
-	boolean touchedABonusEffect = false;
-	for (int i = 0; i < bonusEffects.size(); i++)
-	    if (bonusEffects.get(i).getBounds().contains(position.x, position.y)) {
-		BonusEffect effect = bonusEffects.remove(i);
-		effect.trigger();
-		touchedABonusEffect = true;
-		if (effect instanceof Invulnerability) {
-		    bonusEffectBlackFill.color.a = 0f;
-		    bonusEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
-		    bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
-		} else if (effect instanceof ScoreFrenzy) {
-		    bonusEffectPinwheel.color.a = 0f;
-		    bonusEffectPinwheel.interpolateAlpha(1f, Linear.INOUT, 500, true);
-		    bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
-		}
-	    }
-
 	if (isAttackAllowed() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
 	    session.smashLanded++;
 	    if (User.hasEffect(BonusEffect.HAMMER_TIME))
@@ -255,7 +235,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		Sounds.hammerIceFlakes.play();
 	}
 
-	if (!touchedAnAlien && !touchedACoin && !touchedABonusEffect && !User.hasEffect(BonusEffect.HAMMER_TIME))
+	if (!touchedAnAlien && !touchedACoin && !User.hasEffect(BonusEffect.HAMMER_TIME))
 	    onSmashMissed(position.x, position.y);
 
 	pointers[pointer] = touchedAnAlien;
@@ -272,8 +252,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     @Override
     public void pause() {
 	paused = true;
-	for (int i = 0; i < bonusEffects.size(); i++)
-	    bonusEffects.get(i).pause();
 	for (int i = 0; i < coinsAndGoldBars.size(); i++)
 	    coinsAndGoldBars.get(i).pause();
 	for (int i = 0; i < pukes.size(); i++)
@@ -295,8 +273,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	spriteBatch.begin();
 	renderStage(spriteBatch, delta);
 	renderAliens(spriteBatch, delta);
-	renderBonusEffects(spriteBatch, delta);
-	renderCoins(spriteBatch, delta);
+	renderCoinsAndGoldBars(spriteBatch, delta);
 	renderHammerEffects(spriteBatch, delta);
 	renderPukes(spriteBatch, delta);
 	renderStageEffects(spriteBatch, delta);
@@ -338,8 +315,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     @Override
     public void resume() {
 	paused = false;
-	for (int i = 0; i < bonusEffects.size(); i++)
-	    bonusEffects.get(i).resume();
 	for (int i = 0; i < coinsAndGoldBars.size(); i++)
 	    coinsAndGoldBars.get(i).resume();
 	for (int i = 0; i < pukes.size(); i++)
@@ -544,17 +519,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	}
     }
 
-    protected void renderBonusEffects(SpriteBatch batch, float delta) {
-	for (int i = 0; i < bonusEffects.size(); i++) {
-	    bonusEffects.get(i).render(batch);
-	    if (!paused)
-		bonusEffects.get(i).update(delta);
-	    if (bonusEffects.get(i).tweenManager.getRunningTweensCount() <= 0)
-		bonusEffects.remove(i);
-	}
-    }
-
-    protected void renderCoins(SpriteBatch batch, float delta) {
+    protected void renderCoinsAndGoldBars(SpriteBatch batch, float delta) {
 	for (int i = 0; i < coinsAndGoldBars.size(); i++) {
 	    coinsAndGoldBars.get(i).render(batch);
 	    if (coinsAndGoldBars.get(i).timeElapsed > COIN_DURATION)
