@@ -487,6 +487,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void onSmashMissed(float x, float y) {
+	session.smashMissed++;
 	if (session.combosCurrent > 1) {
 	    ui.missLabel.text = "MISS!";
 	    ui.missLabel.color.a = 1f;

@@ -129,7 +129,7 @@ public class UserInterface {
 	else if (combos > 99 && combos < 255)
 	    comboName.text = "MONSTROUS!";
 	else if (combos > 254)
-	    comboName.text = "GODLIKE!!";
+	    comboName.text = "ALIENLIKE!!";
 	if (combos > 4) {
 	    comboName.color.a = 1f;
 	    comboName.interpolateAlpha(0f, Sine.OUT, 500, true).delay(2000);
@@ -351,9 +351,10 @@ public class UserInterface {
 	message += "SPAWN RATE: " + stage.getSpawnRate() + "\n";
 	message += "COMBOS MAX: " + stage.session.combosMax + "\n";
 	message += "SMASH LANDED: " + stage.session.smashLanded + "\n";
+	message += "hammerEffects SIZE: " + stage.hammerEffects.size() + "\n";
 	message += "Press left CTRL to restart." + "\n";
 	message += "Press BACKSPACE to pause." + "\n";
-	feed.drawWrapped(spriteBatch, message, 0f, 212f, 600, HAlignment.LEFT);
+	feed.drawWrapped(spriteBatch, message, 0f, 232f, 600, HAlignment.LEFT);
 
 	comboName.render(spriteBatch);
 	flyout.render(spriteBatch);
