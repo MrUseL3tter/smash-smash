@@ -8,6 +8,7 @@ import aurelienribon.tweenengine.equations.Bounce;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
+import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.hammer.HammerEffect;
@@ -19,7 +20,6 @@ public class Sorcerer extends Alien {
 
     public Sorcerer(SmashSmashStageCallback stage) {
 	super.stage = stage;
-	setRegistration(DynamicRegistration.BOTTOM_CENTER);
 	SFXspawn = Sounds.jellySpawn;
 	SFXsmash = Sounds.jellySmash;
 	initAttackingState();
@@ -44,7 +44,7 @@ public class Sorcerer extends Alien {
 	    upElapsedTime = 0;
 
 	    reset();
-	    visible = true;
+	    setVisible(true);
 	    state = AlienState.RISING;
 	    spawnEffectDelay = delay / 1000;
 	    spawnEffect = new HammerEffect(Particles.leafSpawn, position, 1.0f, spawnEffectDelay);
@@ -110,7 +110,7 @@ public class Sorcerer extends Alien {
     @Override
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	if (upElapsedTime * tweenSpeed >= waitingStateTime) {
+	if (upElapsedTime >= waitingStateTime) {
 	    stage.onBonusEffectSpawn(this);
 	    state = AlienState.HIDING;
 	    upElapsedTime = 0;

@@ -34,6 +34,7 @@ import com.nullsys.smashsmash.alien.Alien.AlienState;
 import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
 import com.nullsys.smashsmash.alien.Golem;
+import com.nullsys.smashsmash.alien.HammerTimeJelly;
 import com.nullsys.smashsmash.alien.Jelly;
 import com.nullsys.smashsmash.alien.Ogre;
 import com.nullsys.smashsmash.alien.Sorcerer;
@@ -434,7 +435,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected int getVisibleAliens() {
 	int visibles = 0;
 	for (int i = 0; i < aliens.length; i++)
-	    if (aliens[i].visible)
+	    if (aliens[i].isVisible())
 		visibles++;
 	return visibles;
     }
@@ -450,7 +451,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	aliens[7] = new Golem(this);
 	aliens[8] = new Golem(this);
 	aliens[9] = new Jelly(this);
-	aliens[10] = new Jelly(this);
+	aliens[10] = new HammerTimeJelly(this);
 	aliens[11] = new Jelly(this);
 	aliens[12] = new Ogre(this);
 	aliens[13] = new Ogre(this);
@@ -460,7 +461,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	aliens[15] = new Tortoise(this);
 	aliens[16] = new Sorcerer(this);
 	for (int i = 0; i < aliens.length; i++)
-	    aliens[i].visible = false;
+	    aliens[i].setVisible(false);
     }
 
     protected void initHUD() {
@@ -472,7 +473,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	Rectangle bounds = new Rectangle(x - diameter / 2, y - diameter / 2, diameter, diameter);
 	int hitCount = 0;
 	for (int i = 0; i < aliens.length; i++)
-	    if (aliens[i].visible && aliens[i].getBounds().overlaps(bounds) && aliens[i].state != AlienState.SMASHED) {
+	    if (aliens[i].isVisible() && aliens[i].getBounds().overlaps(bounds) && aliens[i].state != AlienState.SMASHED) {
 		aliens[i].smash();
 		onAlienSmashed(aliens[i]);
 		hitCount++;
@@ -545,7 +546,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    sorcererShouldAppear = sorcererSpawnDelay <= 0 && sorcererShouldAppear && !User.hasEffect(BonusEffect.SCORE_FRENZY);
 	    for (int i = 0; visibles < spawnRate - 1 && i < aliens.length && i < spawnRate - 1; i++) {
 		for (int j = 0; j < aliens.length; j++)
-		    if (i != j && !aliens[i].visible && aliens[i].getBounds().overlaps(aliens[j].getBounds())) {
+		    if (i != j && !aliens[i].isVisible() && aliens[i].getBounds().overlaps(aliens[j].getBounds())) {
 			overlaps = true;
 			j = aliens.length; //break this loop
 		    }
@@ -629,7 +630,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    float targetHeight = aliens[i].waitingState.getLargestAreaDisplay().getKeyFrame().getRegionHeight();
 	    aliens[i].getBounds().width = targetWidth;
 	    aliens[i].getBounds().height = targetHeight;
-	    if (!aliens[i].visible) {
+	    if (!aliens[i].isVisible()) {
 		float randomX = (float) (targetWidth / 2 + Math.random() * (Settings.SCREEN_WIDTH - targetWidth * 2));
 		float randomY = (float) (Math.random() * (Settings.SCREEN_HEIGHT - targetHeight));
 		aliens[i].position.set(randomX, randomY);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.screen.SmashSmashStage;
 
@@ -11,7 +12,6 @@ public class Fluff extends Alien {
 
     public Fluff(SmashSmashStage stage) {
 	super.stage = stage;
-	setRegistration(DynamicRegistration.BOTTOM_CENTER);
 	SFXspawn = Sounds.jellySpawn;
 	SFXsmash = Sounds.jellySmash;
 	initAttackingState();
