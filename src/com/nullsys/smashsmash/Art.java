@@ -16,6 +16,7 @@ public class Art {
     public static TextureAtlas menu;
     public static TextureAtlas pukes;
     public static TextureAtlas result;
+    public static TextureAtlas goldbar;
 
     public static Texture hud;
     public static TextureRegion hudBuffEffectCoinRain;
@@ -49,6 +50,7 @@ public class Art {
 	assetManager.load("data/gfx/menu/MENU.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/PUKES.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/RESULT.pack", TextureAtlas.class);
+	assetManager.load("data/gfx/GOLDBAR.pack", TextureAtlas.class);
     }
 
     public static void retrieve(AssetManager assetManager) {
@@ -62,6 +64,7 @@ public class Art {
 	menu = assetManager.get("data/gfx/menu/MENU.pack", TextureAtlas.class);
 	pukes = assetManager.get("data/gfx/PUKES.pack", TextureAtlas.class);
 	result = assetManager.get("data/gfx/RESULT.pack", TextureAtlas.class);
+	goldbar = assetManager.get("data/gfx/GOLDBAR.pack", TextureAtlas.class);
 
 	hud = assetManager.get("data/gfx/SAMPLE_HUD.png", Texture.class);
 	hud.setFilter(TextureFilter.Linear, TextureFilter.Linear);

@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.TweenCallback;
@@ -116,7 +116,9 @@ public class ResultScreen extends DynamicScreen implements TweenCallback {
 	if (menu.getBounds().contains(x, y))
 	    game.setScreen(new MainMenuScreen(game));
 	else if (retry.getBounds().contains(x, y))
-	    if (stage instanceof ArcadeStageScreen)
+	    if (stage instanceof FuryStageScreen)
+		game.setScreen(new FuryStageScreen(game));
+	    else if (stage instanceof ArcadeStageScreen)
 		game.setScreen(new ArcadeStageScreen(game));
 	    else
 		game.setScreen(new EndlessStageScreen(game));

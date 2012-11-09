@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
@@ -6,7 +6,7 @@ import com.noobs2d.tweenengine.utils.DynamicValue;
 
 public class ArcadeStageScreen extends SmashSmashStage {
 
-    public static final int TIME_LIMIT = 90;
+    private static final int TIME_LIMIT = 90;
     DynamicValue elapsed;
 
     public ArcadeStageScreen(Game game) {
@@ -50,8 +50,7 @@ public class ArcadeStageScreen extends SmashSmashStage {
 	if (elapsed.value == TIME_LIMIT) {
 	    game.setScreen(new ResultScreen(game, this));
 	    elapsed.value = 0;
-	    for (int i = 0; i < aliens.length; i++)
-		aliens[i].setHostile(false);
+	    setAliensHostile(false);
 	}
     }
 

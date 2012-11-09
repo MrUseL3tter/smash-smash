@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.noobs2d.tweenengine.utils.DynamicDisplay;
-import com.nullsys.smashsmash.stage.StageLoadingScreen;
+import com.nullsys.smashsmash.screen.StageLoadingScreen;
 
 public class SmashSmash extends Game {
 

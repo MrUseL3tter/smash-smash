@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -85,7 +85,7 @@ public class StageLoadingScreen extends DynamicScreen {
 	    Sounds.retrieve(assetManager);
 
 	    if (stageScreen == null)
-		game.setScreen(new MainMenuScreen(game));
+		game.setScreen(new FuryStageScreen(game));//MainMenuScreen(game));
 	    else
 		game.setScreen(stageScreen);
 	}

@@ -19,9 +19,19 @@ public class HammerTime extends BonusEffect {
 	pinwheel.interpolateRotation(360, Linear.INOUT, 1000, false).repeat(Tween.INFINITY, 0).start(pinwheel.tweenManager);
     }
 
+    public HammerTime(Vector2 position, float duration) {
+	super.position.set(position);
+	body = new DynamicSprite(new TextureRegion(Art.bonusEffects, 0, 0, 115, 129), position.x, position.y);
+	pinwheel = new DynamicSprite(new TextureRegion(Art.bonusEffects, 486, 0, 231, 231), position.x, position.y);
+	type = HAMMER_TIME;
+	pinwheel.interpolateRotation(360, Linear.INOUT, 1000, false).repeat(Tween.INFINITY, 0).start(pinwheel.tweenManager);
+	this.duration = duration;
+    }
+
     @Override
     public void trigger() {
-	User.bonusEffects.add(new HammerTime(position));
-	secondsPassed = 0;
+	active = true;
+	User.bonusEffects.add(this);
+	secondsElapsed = 0;
     }
 }

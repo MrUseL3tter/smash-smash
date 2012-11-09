@@ -11,7 +11,7 @@ import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.hammer.HammerEffect;
-import com.nullsys.smashsmash.stage.SmashSmashStageCallback;
+import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Sorcerer extends Alien {
 
@@ -29,6 +29,11 @@ public class Sorcerer extends Alien {
 	initStunnedState();
 	initWaitingState();
 	waitingStateTime = 500;
+    }
+
+    @Override
+    public int getScore() {
+	return 0;
     }
 
     @Override
@@ -105,7 +110,6 @@ public class Sorcerer extends Alien {
     @Override
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	System.out.println("[Sorcerer#updateWaiting(float)] waitingStateTime: " + waitingStateTime);
 	if (upElapsedTime * tweenSpeed >= waitingStateTime) {
 	    stage.onBonusEffectSpawn(this);
 	    state = AlienState.HIDING;

@@ -15,7 +15,7 @@ public class User {
 
     public static boolean hasEffect(int itemEffectType) {
 	for (int itemEffectIndex = 0; itemEffectIndex < bonusEffects.size(); itemEffectIndex++)
-	    if (bonusEffects.get(itemEffectIndex).type == itemEffectType)
+	    if (bonusEffects.get(itemEffectIndex).getType() == itemEffectType)
 		return true;
 
 	return false;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.nullsys.smashsmash.Sounds;
-import com.nullsys.smashsmash.stage.SmashSmashStage;
+import com.nullsys.smashsmash.screen.SmashSmashStage;
 
 public class Jelly extends Alien {
 
@@ -20,6 +20,11 @@ public class Jelly extends Alien {
 	initStunnedState();
 	initSmashedState();
 	initHidingState();
+    }
+
+    @Override
+    public int getScore() {
+	return state == AlienState.RISING ? 1 : state == AlienState.WAITING || state == AlienState.ATTACKING ? 2 : 1;
     }
 
     private void initAttackingState() {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.nullsys.smashsmash.Sounds;
-import com.nullsys.smashsmash.stage.SmashSmashStage;
+import com.nullsys.smashsmash.screen.SmashSmashStage;
 
 public class Diabolic extends Alien {
 
@@ -21,6 +21,11 @@ public class Diabolic extends Alien {
 	initSmashedState();
 	initStunnedState();
 	initWaitingState();
+    }
+
+    @Override
+    public int getScore() {
+	return state == AlienState.ATTACKING ? 1 : state == AlienState.RISING ? 2 : 1;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import com.nullsys.smashsmash.alien.Alien;
 

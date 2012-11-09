@@ -8,21 +8,21 @@ import com.nullsys.smashsmash.User;
 
 public abstract class BonusEffect extends DynamicDisplay {
 
-    protected static final int DEFAULT_DURATION = 10;
+    protected static final int DEFAULT_DURATION = 1;
 
     public static final int HAMMER_TIME = 1;
     public static final int SCORE_FRENZY = 2;
-    public static final int COIN_RAIN = 4;
     public static final int STUN_EXPLOSION = 5;
     public static final int INVULNERABILITY = 6;
-    public static final int GOLD_SNAP = 7;
 
-    public DynamicSprite body;
-    public DynamicSprite pinwheel;
-    public int type;
+    protected DynamicSprite body;
+    protected DynamicSprite pinwheel;
+    protected int type;
 
-    float secondsPassed;
-    float delta = 0;
+    protected float duration = DEFAULT_DURATION;
+    protected float secondsElapsed = 0;
+    protected float secondsCounter = 0;
+    protected boolean active = false;
 
     @Override
     public Rectangle getBounds() {
@@ -58,6 +58,10 @@ public abstract class BonusEffect extends DynamicDisplay {
 		break;
 	}
 	return bounds;
+    }
+
+    public int getType() {
+	return type;
     }
 
     @Override
@@ -114,14 +118,14 @@ public abstract class BonusEffect extends DynamicDisplay {
 	body.position.set(position);
 	pinwheel.update(deltaTime);
 	pinwheel.position.set(position);
-	if (secondsPassed >= DEFAULT_DURATION)
+	if (active && secondsElapsed >= duration)
 	    User.bonusEffects.remove(this);
 
-	if (delta >= 1 && (int) delta % 1 == 0) {
-	    secondsPassed++;
-	    delta = 0;
+	if (active && secondsCounter >= 1 && (int) secondsCounter % 1 == 0) {
+	    secondsElapsed++;
+	    secondsCounter = 0;
 	}
-	delta += deltaTime;
+	secondsCounter += deltaTime;
 	updateTween();
     }
 }

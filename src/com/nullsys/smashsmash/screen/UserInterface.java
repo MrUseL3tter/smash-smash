@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +97,7 @@ public class UserInterface {
     }
 
     public void shakeCombos() {
+	comboCount.tweenManager.update(1000);
 	comboCount.interpolateXY(comboCount.position.x, comboCount.position.y + 15, Linear.INOUT, 75, true);
 	comboCount.interpolateXY(comboCount.position.x, comboCount.position.y - 15, Linear.INOUT, 75, true).delay(75);
 	comboCount.interpolateXY(comboCount.position.x, comboCount.position.y, Linear.INOUT, 75, true).delay(150);

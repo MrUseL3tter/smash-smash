@@ -16,7 +16,7 @@ import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.hammer.HammerEffect;
-import com.nullsys.smashsmash.stage.SmashSmashStageCallback;
+import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Alien extends DynamicDisplay {
 
@@ -50,27 +50,27 @@ public class Alien extends DynamicDisplay {
     public DynamicAnimationGroup hidingState;
 
     public Sound SFXattack;
+
     public Sound SFXsmash;
     public Sound SFXspawn;
     public Sound SFXstun;
-
     public HammerEffect spawnEffect;
-    public float spawnEffectDelay = 0;
 
+    public float spawnEffectDelay = 0;
     public float risingStateTime = 1f;
+
     public float waitingStateTime = 1f;
     public float attackingStateTime = 1f;
     public float stunnedStateTime = 3f;
     public float smashedStateTime = .95f;
     public float hidingStateTime = 1f;
-
     public int scoreValue = 1;
 
     public int tensionValue = 1;
 
     public int hitPoints = 1;
-    public int hitPointsTotal = 1;
 
+    public int hitPointsTotal = 1;
     public float upElapsedTime = 0;
 
     private boolean hostile = true;
@@ -91,6 +91,10 @@ public class Alien extends DynamicDisplay {
 	    bounds.set(x, y, width, height);
 	}
 	return bounds;
+    }
+
+    public int getScore() {
+	return 1;
     }
 
     public DynamicAnimationGroup getStateAnimation() {

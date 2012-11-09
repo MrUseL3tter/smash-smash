@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import java.util.ArrayList;
 
@@ -24,6 +24,7 @@ import com.noobs2d.tweenengine.utils.DynamicText;
 import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Coin;
 import com.nullsys.smashsmash.Fonts;
+import com.nullsys.smashsmash.GoldBar;
 import com.nullsys.smashsmash.Session;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.Sounds;
@@ -55,7 +56,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     public ArrayList<BonusEffect> bonusEffects = new ArrayList<BonusEffect>();
     public ArrayList<HammerEffect> hammerEffects = new ArrayList<HammerEffect>();
-    public ArrayList<DynamicAnimation> coins = new ArrayList<DynamicAnimation>();
+    public ArrayList<DynamicAnimation> coinsAndGoldBars = new ArrayList<DynamicAnimation>();
     public ArrayList<DynamicSprite> pukes = new ArrayList<DynamicSprite>();
 
     public DynamicSprite bonusEffectBlackFill;
@@ -77,10 +78,12 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
      */
     private float recoveryDelay = 0;
     private float inputDelay = 0;
-    private float sorcererSpawnDelay = 0;
+    protected float sorcererSpawnDelay = 0;
     protected int spawnDelay = 0;
     protected int spawnRate = 0;
     protected int streaks = 0;
+
+    private static final float COIN_DURATION = 7f;
 
     public SmashSmashStage(Game game) {
 	super(game, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
@@ -180,10 +183,10 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	addScore(alien);
 	session.smashedAliens++;
 	// Add coin as per percentage
-	int random = (int) (Math.random() * 100);
-	if (User.hasEffect(BonusEffect.COIN_RAIN))
-	    addCoin(alien.position.x, alien.position.y);
-	else if (random >= 18 && random <= 20)
+	int random = (int) (Math.random() * 1000);
+	if (random <= 4)
+	    addGoldBar(alien.position.x, alien.position.y);
+	else if (random > 4 && random <= 25)
 	    addCoin(alien.position.x, alien.position.y);
     }
 
@@ -258,7 +261,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	position.x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
 	position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
 
-	boolean touchedACoin = inputToCoins(position.x, position.y, pointer);
+	boolean touchedACoin = inputToCoinsAndGoldBars(position.x, position.y, pointer);
 	boolean touchedAnAlien = isAttackAllowed() && !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
 	// there are no collisions with any coin
 
@@ -307,8 +310,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	paused = true;
 	for (int i = 0; i < bonusEffects.size(); i++)
 	    bonusEffects.get(i).pause();
-	for (int i = 0; i < coins.size(); i++)
-	    coins.get(i).pause();
+	for (int i = 0; i < coinsAndGoldBars.size(); i++)
+	    coinsAndGoldBars.get(i).pause();
 	for (int i = 0; i < pukes.size(); i++)
 	    pukes.get(i).pause();
 	for (int i = 0; i < aliens.length; i++)
@@ -374,12 +377,17 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	paused = false;
 	for (int i = 0; i < bonusEffects.size(); i++)
 	    bonusEffects.get(i).resume();
-	for (int i = 0; i < coins.size(); i++)
-	    coins.get(i).resume();
+	for (int i = 0; i < coinsAndGoldBars.size(); i++)
+	    coinsAndGoldBars.get(i).resume();
 	for (int i = 0; i < pukes.size(); i++)
 	    pukes.get(i).resume();
 	for (int i = 0; i < aliens.length; i++)
 	    aliens[i].resume();
+    }
+
+    public void setAliensHostile(boolean hostile) {
+	for (int i = 0; i < aliens.length; i++)
+	    aliens[i].setHostile(hostile);
     }
 
     public void setAllowSpawn(boolean allowSpawn) {
@@ -395,11 +403,15 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	coin.position.set(x, y);
 	coin.interpolateXY(x, y + 100, Quad.OUT, 200, true);
 	coin.interpolateXY(x, y, Quad.IN, 200, true).delay(200);
-	coins.add(coin);
-	if (User.hasEffect(BonusEffect.COIN_RAIN)) {
-	    coin.interpolateXY(1280, 800, Linear.INOUT, 350, true).setCallback(new RemoveFromCollectionOnEnd(coins, coin));
-	    User.gold += 10;
-	}
+	coinsAndGoldBars.add(coin);
+    }
+
+    protected void addGoldBar(float x, float y) {
+	GoldBar g = new GoldBar(1f, Art.goldbar.findRegion("GOLDBAR"));
+	g.setPosition(x, y);
+	g.interpolateXY(x, y + 100, Quad.OUT, 200, true);
+	g.interpolateXY(x, y, Quad.IN, 200, true).delay(200);
+	coinsAndGoldBars.add(g);
     }
 
     protected void addHammerEffect(float x, float y) {
@@ -416,7 +428,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected void addScore(Alien alien) {
 	int multiplier = getComboMultiplier();
 	multiplier *= User.hasEffect(BonusEffect.SCORE_FRENZY) ? 3 : 1;
-	session.score += alien.scoreValue * multiplier * (streaks >= 1 ? streaks : 1);
+	session.score += alien.getScore() * multiplier * (streaks >= 1 ? streaks : 1);
     }
 
     protected int getVisibleAliens() {
@@ -482,17 +494,20 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	return hitCount > 0;
     }
 
-    protected boolean inputToCoins(float x, float y, int pointer) {
+    protected boolean inputToCoinsAndGoldBars(float x, float y, int pointer) {
 	Rectangle bounds = new Rectangle(x - 25, y - 25, 50, 50);
 	boolean hit = false;
-	for (int coinIndex = coins.size() - 1; coinIndex >= 0; coinIndex--)
-	    if (coins.get(coinIndex).getBounds().overlaps(bounds)) {
-		coins.get(coinIndex).tweenManager.killAll();
-		coins.get(coinIndex).interpolateXY(1280, 800, Linear.INOUT, 350, true);
-		coins.get(coinIndex).tween.setCallback(new RemoveFromCollectionOnEnd(coins, coins.get(coinIndex)));
-		User.gold += 10;
+	for (int i = coinsAndGoldBars.size() - 1; i >= 0; i--)
+	    if (coinsAndGoldBars.get(i).getBounds().overlaps(bounds)) {
+		coinsAndGoldBars.get(i).tweenManager.killAll();
+		coinsAndGoldBars.get(i).interpolateXY(1280, 800, Linear.INOUT, 350, true);
+		coinsAndGoldBars.get(i).tween.setCallback(new RemoveFromCollectionOnEnd(coinsAndGoldBars, coinsAndGoldBars.get(i)));
+		if (coinsAndGoldBars.get(i) instanceof GoldBar)
+		    User.gold += 1000;
+		else
+		    User.gold += 10;
 		hit = true;
-		coinIndex = -1;
+		i = -1;
 	    }
 	return hit;
     }
@@ -561,12 +576,12 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void renderCoins(SpriteBatch batch, float delta) {
-	for (int i = 0; i < coins.size(); i++) {
-	    coins.get(i).render(batch);
-	    if (coins.get(i).timeElapsed > 7f)
-		coins.remove(i);
+	for (int i = 0; i < coinsAndGoldBars.size(); i++) {
+	    coinsAndGoldBars.get(i).render(batch);
+	    if (coinsAndGoldBars.get(i).timeElapsed > COIN_DURATION)
+		coinsAndGoldBars.remove(i);
 	    else
-		coins.get(i).update(delta);
+		coinsAndGoldBars.get(i).update(delta);
 	}
     }
 
@@ -625,7 +640,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void setSpawnRate() {
-	boolean hasRampage = User.hasEffect(BonusEffect.COIN_RAIN) && User.hasEffect(BonusEffect.HAMMER_TIME) && User.hasEffect(BonusEffect.SCORE_FRENZY);
+	boolean hasRampage = User.hasEffect(BonusEffect.INVULNERABILITY) && User.hasEffect(BonusEffect.HAMMER_TIME) && User.hasEffect(BonusEffect.SCORE_FRENZY);
 	if (allowSpawn && hasRampage)
 	    spawnRate = aliens.length;
 	else if (!allowSpawn)

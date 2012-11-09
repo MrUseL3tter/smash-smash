@@ -1,4 +1,4 @@
-package com.nullsys.smashsmash.stage;
+package com.nullsys.smashsmash.screen;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.TweenCallback;
@@ -128,7 +128,9 @@ public class PauseScreen extends DynamicScreen implements DynamicButtonCallback,
 		stage.setUIVisible(true);
 		game.setScreen(stage);
 	    } else if (source.equals(retry.tween)) {
-		if (stage instanceof ArcadeStageScreen)
+		if (stage instanceof FuryStageScreen)
+		    game.setScreen(new FuryStageScreen(game));
+		else if (stage instanceof ArcadeStageScreen)
 		    game.setScreen(new ArcadeStageScreen(game));
 		else
 		    game.setScreen(new EndlessStageScreen(game));

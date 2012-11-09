@@ -1,17 +1,10 @@
 package com.nullsys.smashsmash;
 
-import java.util.List;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 
 public class Coin extends DynamicAnimation {
-
-    public Coin(float frameDuration, List<TextureRegion> keyFrames) {
-	super(frameDuration, keyFrames);
-	setRegistration(DynamicRegistration.BOTTOM_CENTER);
-    }
 
     public Coin(float frameDuration, TextureRegion... keyFrames) {
 	super(frameDuration, keyFrames);
