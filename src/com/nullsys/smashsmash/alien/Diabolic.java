@@ -6,11 +6,11 @@ import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
-import com.nullsys.smashsmash.screen.SmashSmashStage;
+import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Diabolic extends Alien {
 
-    public Diabolic(SmashSmashStage stage) {
+    public Diabolic(SmashSmashStageCallback stage) {
 	super.stage = stage;
 	//	hitPoints = 2;
 	SFXspawn = Sounds.jellySpawn;

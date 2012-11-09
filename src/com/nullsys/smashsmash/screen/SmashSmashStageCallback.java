@@ -12,5 +12,5 @@ public interface SmashSmashStageCallback {
 
     public void onAlienSmashed(Alien alien);
 
-    public void onBonusEffectSpawn(Alien alien);
+    public void onBonusEffectTrigger(int... bonusEffects);
 }

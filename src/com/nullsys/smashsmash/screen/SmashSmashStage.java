@@ -35,12 +35,13 @@ import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
 import com.nullsys.smashsmash.alien.Golem;
 import com.nullsys.smashsmash.alien.HammerTimeJelly;
+import com.nullsys.smashsmash.alien.InvulnerabilityJelly;
 import com.nullsys.smashsmash.alien.Jelly;
 import com.nullsys.smashsmash.alien.Ogre;
+import com.nullsys.smashsmash.alien.ScoreFrenzyJelly;
 import com.nullsys.smashsmash.alien.Sorcerer;
 import com.nullsys.smashsmash.alien.Tortoise;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
-import com.nullsys.smashsmash.bonuseffect.HammerTime;
 import com.nullsys.smashsmash.bonuseffect.Invulnerability;
 import com.nullsys.smashsmash.bonuseffect.ScoreFrenzy;
 import com.nullsys.smashsmash.hammer.HammerEffect;
@@ -63,8 +64,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     public DynamicSprite bonusEffectBlackFill;
     public DynamicSprite bonusEffectPinwheel;
 
-    public final Alien[] aliens = new Alien[17];
-    public final boolean[] pointers = new boolean[4];
+    public Alien[] aliens = new Alien[17];
+    public boolean[] pointers = new boolean[4];
 
     protected UserInterface ui;
     protected Session session;
@@ -78,7 +79,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
      * player successfully. player can only smash when recoverDelay is below 1.
      */
     private float recoveryDelay = 0;
-    private float inputDelay = 0;
     protected float sorcererSpawnDelay = 0;
     protected int spawnDelay = 0;
     protected int spawnRate = 0;
@@ -192,68 +192,31 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     @Override
-    public void onBonusEffectSpawn(Alien alien) {
-	// Spawn the bonus effects
-	float width = 130;//waitingState.getLargestAreaDisplay().getKeyFrame().getRegionWidth();
-	float randomX = alien.position.x - width;
-	float delay = 500;
-	randomX += (float) (Math.random() * width * 2);
+    public void onBonusEffectTrigger(int... bonusEffects) {
+	for (int i = 0; i < bonusEffects.length; i++)
+	    switch (bonusEffects[i]) {
+		case BonusEffect.HAMMER_TIME:
+		    addBonusEffect(BonusEffect.HAMMER_TIME);
+		    break;
+		case BonusEffect.INVULNERABILITY:
+		    addBonusEffect(BonusEffect.INVULNERABILITY);
+		    break;
+		case BonusEffect.SCORE_FRENZY:
+		    addBonusEffect(BonusEffect.SCORE_FRENZY);
+		    break;
+		default:
+		    assert false;
+		    break;
+	    }
+    }
 
-	HammerTime hammerTime = new HammerTime(new Vector2(randomX, alien.position.y));
-	hammerTime.interpolateXY(hammerTime.position.x, hammerTime.position.y + 150, Sine.OUT, 500, true);
-	hammerTime.tween.delay(delay);
-	hammerTime.interpolateAlpha(1f, Linear.INOUT, 150, true);
-	hammerTime.tween.delay(delay);
-	hammerTime.interpolateXY(hammerTime.position.x, hammerTime.position.y, Sine.IN, 500, true);
-	hammerTime.tween.delay(delay + 500);
-	hammerTime.color.a = 0f;
-	hammerTime.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.
-	//	    hammerTime.tween.setCallback(new RemoveFromCollectionOnEnd(stage.bonusEffects, hammerTime));
-
-	delay += 500;
-	randomX = alien.position.x - width;
-	randomX += (float) (Math.random() * width * 2);
-
-	Invulnerability invulnerability = new Invulnerability(new Vector2(randomX, alien.position.y));
-	invulnerability.interpolateXY(invulnerability.position.x, invulnerability.position.y + 150, Sine.OUT, 500, true);
-	invulnerability.tween.delay(delay);
-	invulnerability.interpolateAlpha(1f, Linear.INOUT, 150, true);
-	invulnerability.tween.delay(delay);
-	invulnerability.interpolateXY(invulnerability.position.x, invulnerability.position.y, Sine.IN, 500, true);
-	invulnerability.tween.delay(delay + 500);
-	invulnerability.color.a = 0f;
-	invulnerability.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.
-	//	    invulnerability.tween.setCallback(new RemoveFromCollectionOnEnd(stage.bonusEffects, invulnerability));
-
-	delay += 500;
-	randomX = alien.position.x - width;
-	randomX += (float) (Math.random() * width * 2);
-
-	ScoreFrenzy scoreFrenzy = new ScoreFrenzy(new Vector2(randomX, alien.position.y));
-	scoreFrenzy.interpolateXY(scoreFrenzy.position.x, scoreFrenzy.position.y + 150, Sine.OUT, 500, true);
-	scoreFrenzy.tween.delay(delay);
-	scoreFrenzy.interpolateAlpha(1f, Linear.INOUT, 150, true);
-	scoreFrenzy.tween.delay(delay);
-	scoreFrenzy.interpolateXY(scoreFrenzy.position.x, scoreFrenzy.position.y, Sine.IN, 500, true);
-	scoreFrenzy.tween.delay(delay + 500);
-	scoreFrenzy.color.a = 0f;
-	scoreFrenzy.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(5000); // The BE disappears after 5 seconds.
-	//	    scoreFrenzy.tween.setCallback(new RemoveFromCollectionOnEnd(stage.bonusEffects, scoreFrenzy));
-
-	//	bonusEffects.add(hammerTime);
-	//	bonusEffects.add(invulnerability);
-	//	bonusEffects.add(scoreFrenzy);
-
-	hammerTime.trigger();
-	invulnerability.trigger();
-	scoreFrenzy.trigger();
-	bonusEffectBlackFill.color.a = 0f;
-	bonusEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
-	bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
-	bonusEffectPinwheel.color.a = 0f;
-	bonusEffectPinwheel.interpolateAlpha(1f, Linear.INOUT, 500, true);
-	bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
-
+    public void onSmashMissed(float x, float y) {
+	session.smashMissed++;
+	if (session.combosCurrent > 1)
+	    ui.showMissPrompt(x, y);
+	ui.showComboPrompt(session.combosCurrent);
+	session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
+	session.combosCurrent = 0;
     }
 
     @Override
@@ -326,7 +289,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
 	delta = paused ? 0 : delta;
 
-	inputDelay += delta;
 	sorcererSpawnDelay -= delta;
 	session.stageSecondsElapsed += delta;
 
@@ -399,6 +361,26 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	this.showUI = showUI;
     }
 
+    protected void addBonusEffect(int bonusEffect) {
+	switch (bonusEffect) {
+	    case BonusEffect.HAMMER_TIME:
+		break;
+	    case BonusEffect.INVULNERABILITY:
+		bonusEffectBlackFill.color.a = 0f;
+		bonusEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
+		bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+		break;
+	    case BonusEffect.SCORE_FRENZY:
+		bonusEffectPinwheel.color.a = 0f;
+		bonusEffectPinwheel.interpolateAlpha(1f, Linear.INOUT, 500, true);
+		bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+		break;
+	    default:
+		assert false;
+		break;
+	}
+    }
+
     protected void addCoin(float x, float y) {
 	Coin coin = new Coin(Art.coins, 0, 0, 64, 64, 8, 8, .125f);
 	coin.position.set(x, y);
@@ -441,25 +423,30 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void initAliens() {
-	aliens[0] = new Diabolic(this);
-	aliens[1] = new Diabolic(this);
-	aliens[2] = new Diabolic(this);
-	aliens[3] = new Fluff(this);
-	aliens[4] = new Fluff(this);
-	aliens[5] = new Fluff(this);
-	aliens[6] = new Golem(this);
-	aliens[7] = new Golem(this);
-	aliens[8] = new Golem(this);
-	aliens[9] = new Jelly(this);
-	aliens[10] = new HammerTimeJelly(this);
-	aliens[11] = new Jelly(this);
-	aliens[12] = new Ogre(this);
-	aliens[13] = new Ogre(this);
-	aliens[14] = new Ogre(this);
-	aliens[15] = new Tortoise(this);
-	aliens[15] = new Tortoise(this);
-	aliens[15] = new Tortoise(this);
-	aliens[16] = new Sorcerer(this);
+	aliens = new Alien[22];
+	int index = -1;
+	aliens[++index] = new Diabolic(this);
+	aliens[++index] = new Diabolic(this);
+	aliens[++index] = new Diabolic(this);
+	aliens[++index] = new Fluff(this);
+	aliens[++index] = new Fluff(this);
+	aliens[++index] = new Fluff(this);
+	aliens[++index] = new Golem(this);
+	aliens[++index] = new Golem(this);
+	aliens[++index] = new Golem(this);
+	aliens[++index] = new Jelly(this);
+	aliens[++index] = new Jelly(this);
+	aliens[++index] = new Jelly(this);
+	aliens[++index] = new Ogre(this);
+	aliens[++index] = new Ogre(this);
+	aliens[++index] = new Ogre(this);
+	aliens[++index] = new Tortoise(this);
+	aliens[++index] = new Tortoise(this);
+	aliens[++index] = new Tortoise(this);
+	aliens[++index] = new Sorcerer(this);
+	aliens[++index] = new InvulnerabilityJelly(this);
+	aliens[++index] = new HammerTimeJelly(this);
+	aliens[++index] = new ScoreFrenzyJelly(this);
 	for (int i = 0; i < aliens.length; i++)
 	    aliens[i].setVisible(false);
     }
@@ -511,15 +498,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		i = -1;
 	    }
 	return hit;
-    }
-
-    protected void onSmashMissed(float x, float y) {
-	session.smashMissed++;
-	if (session.combosCurrent > 1)
-	    ui.showMissPrompt(x, y);
-	ui.showComboPrompt(session.combosCurrent);
-	session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
-	session.combosCurrent = 0;
     }
 
     protected void renderAliens(SpriteBatch batch, float delta) {

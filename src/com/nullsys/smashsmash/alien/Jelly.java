@@ -6,11 +6,11 @@ import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
-import com.nullsys.smashsmash.screen.SmashSmashStage;
+import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Jelly extends Alien {
 
-    public Jelly(SmashSmashStage stage) {
+    public Jelly(SmashSmashStageCallback stage) {
 	super.stage = stage;
 	SFXspawn = Sounds.jellySpawn;
 	SFXsmash = Sounds.jellySmash;

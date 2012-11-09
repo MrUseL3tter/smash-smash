@@ -12,8 +12,7 @@ public abstract class BonusEffect extends DynamicDisplay {
 
     public static final int HAMMER_TIME = 1;
     public static final int SCORE_FRENZY = 2;
-    public static final int STUN_EXPLOSION = 5;
-    public static final int INVULNERABILITY = 6;
+    public static final int INVULNERABILITY = 3;
 
     protected DynamicSprite body;
     protected DynamicSprite pinwheel;

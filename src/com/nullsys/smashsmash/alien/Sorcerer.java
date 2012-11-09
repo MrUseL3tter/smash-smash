@@ -5,18 +5,22 @@ import java.util.ArrayList;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Bounce;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Sounds;
+import com.nullsys.smashsmash.User;
+import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.hammer.HammerEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Sorcerer extends Alien {
 
     private static final int WAITING_STATE_TIME = 7;
+    private float spawnDelay = 0;
 
     public Sorcerer(SmashSmashStageCallback stage) {
 	super.stage = stage;
@@ -38,7 +42,10 @@ public class Sorcerer extends Alien {
 
     @Override
     public void rise(float delay, float volume) {
-	if (state == AlienState.HIDDEN) {
+	boolean sorcererShouldAppear = !User.hasEffect(BonusEffect.HAMMER_TIME) && !User.hasEffect(BonusEffect.INVULNERABILITY);
+	sorcererShouldAppear = spawnDelay <= 0 && sorcererShouldAppear && !User.hasEffect(BonusEffect.SCORE_FRENZY);
+	if (sorcererShouldAppear && state == AlienState.HIDDEN) {
+	    spawnDelay = 15f + MathUtils.random(25f);
 	    risingStateTime = 1 + delay / 1000;
 	    waitingStateTime = WAITING_STATE_TIME;
 	    upElapsedTime = 0;
@@ -63,6 +70,12 @@ public class Sorcerer extends Alien {
 	    }
 	    //	    SFXspawn.play(volume);
 	}
+    }
+
+    @Override
+    public void update(float delta) {
+	super.update(delta);
+	spawnDelay -= delta;
     }
 
     private void initAttackingState() {
@@ -111,7 +124,7 @@ public class Sorcerer extends Alien {
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
 	if (upElapsedTime >= waitingStateTime) {
-	    stage.onBonusEffectSpawn(this);
+	    stage.onBonusEffectTrigger(BonusEffect.HAMMER_TIME, BonusEffect.INVULNERABILITY, BonusEffect.SCORE_FRENZY);
 	    state = AlienState.HIDING;
 	    upElapsedTime = 0;
 	}

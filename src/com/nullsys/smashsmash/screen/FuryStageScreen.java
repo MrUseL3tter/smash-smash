@@ -4,6 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicValue;
+import com.nullsys.smashsmash.alien.Alien;
+import com.nullsys.smashsmash.alien.Diabolic;
+import com.nullsys.smashsmash.alien.Fluff;
+import com.nullsys.smashsmash.alien.Golem;
+import com.nullsys.smashsmash.alien.Jelly;
+import com.nullsys.smashsmash.alien.Ogre;
+import com.nullsys.smashsmash.alien.Sorcerer;
+import com.nullsys.smashsmash.alien.Tortoise;
 import com.nullsys.smashsmash.bonuseffect.HammerTime;
 
 public class FuryStageScreen extends ArcadeStageScreen {
@@ -44,7 +52,29 @@ public class FuryStageScreen extends ArcadeStageScreen {
 
     @Override
     protected void initAliens() {
-	super.initAliens();
+	aliens = new Alien[19];
+	int index = -1;
+	aliens[++index] = new Diabolic(this);
+	aliens[++index] = new Diabolic(this);
+	aliens[++index] = new Diabolic(this);
+	aliens[++index] = new Fluff(this);
+	aliens[++index] = new Fluff(this);
+	aliens[++index] = new Fluff(this);
+	aliens[++index] = new Golem(this);
+	aliens[++index] = new Golem(this);
+	aliens[++index] = new Golem(this);
+	aliens[++index] = new Jelly(this);
+	aliens[++index] = new Jelly(this);
+	aliens[++index] = new Jelly(this);
+	aliens[++index] = new Ogre(this);
+	aliens[++index] = new Ogre(this);
+	aliens[++index] = new Ogre(this);
+	aliens[++index] = new Tortoise(this);
+	aliens[++index] = new Tortoise(this);
+	aliens[++index] = new Tortoise(this);
+	aliens[++index] = new Sorcerer(this);
+	for (int i = 0; i < aliens.length; i++)
+	    aliens[i].setVisible(false);
 	setAliensHostile(false);
     }
 

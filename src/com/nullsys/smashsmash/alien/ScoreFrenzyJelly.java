@@ -4,21 +4,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
-import com.nullsys.smashsmash.bonuseffect.HammerTime;
+import com.nullsys.smashsmash.bonuseffect.ScoreFrenzy;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
-public class HammerTimeJelly extends Jelly {
+public class ScoreFrenzyJelly extends Jelly {
 
     private float spawnDelay = 0;
 
-    public HammerTimeJelly(SmashSmashStageCallback stage) {
+    public ScoreFrenzyJelly(SmashSmashStageCallback stage) {
 	super(stage);
-	risingState.setColor(Color.GREEN);
-	waitingState.setColor(Color.GREEN);
-	attackingState.setColor(Color.GREEN);
-	stunnedState.setColor(Color.GREEN);
-	smashedState.setColor(Color.GREEN);
-	hidingState.setColor(Color.GREEN);
+	risingState.setColor(Color.BLUE);
+	waitingState.setColor(Color.BLUE);
+	attackingState.setColor(Color.BLUE);
+	stunnedState.setColor(Color.BLUE);
+	smashedState.setColor(Color.BLUE);
+	hidingState.setColor(Color.BLUE);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class HammerTimeJelly extends Jelly {
 
     @Override
     public void smash() {
-	new HammerTime(new Vector2(0, 0), 10f).trigger();
-	stage.onBonusEffectTrigger(BonusEffect.HAMMER_TIME);
+	new ScoreFrenzy(new Vector2(0, 0), 10).trigger();
+	stage.onBonusEffectTrigger(BonusEffect.SCORE_FRENZY);
 	super.smash();
     }
 
