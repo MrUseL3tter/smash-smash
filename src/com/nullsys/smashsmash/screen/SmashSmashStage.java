@@ -31,6 +31,7 @@ import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.alien.Alien;
 import com.nullsys.smashsmash.alien.Alien.AlienState;
+import com.nullsys.smashsmash.alien.Bomb;
 import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
 import com.nullsys.smashsmash.alien.Golem;
@@ -43,6 +44,7 @@ import com.nullsys.smashsmash.alien.Sorcerer;
 import com.nullsys.smashsmash.alien.Tortoise;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.hammer.HammerEffect;
+import com.nullsys.smashsmash.hammer.HammerEffectPool;
 
 /**
  * @author MrUseL3tter
@@ -57,11 +59,11 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     public ArrayList<HammerEffect> hammerEffects = new ArrayList<HammerEffect>();
     public ArrayList<DynamicAnimation> coinsAndGoldBars = new ArrayList<DynamicAnimation>();
     public ArrayList<DynamicSprite> pukes = new ArrayList<DynamicSprite>();
+    public ArrayList<Alien> aliens = new ArrayList<Alien>();
 
     public DynamicSprite bonusEffectBlackFill;
     public DynamicSprite bonusEffectPinwheel;
 
-    public Alien[] aliens = new Alien[17];
     public boolean[] pointers = new boolean[4];
 
     protected UserInterface ui;
@@ -155,18 +157,20 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	recoveryDelay = RECOVERY_DISABILITY_DURATION;
 	session.combosCurrent = 0;
 	camera.shake();
-	// add 3-5 puke splashes into the screen
-	int count = (int) (3 + 1 * Math.random() * 3);
-	for (int i = 0; i < count; i++) {
-	    float x = (float) (300 + Math.random() * 680);
-	    float y = (float) (200 + Math.random() * 400);
-	    float targetScale = (float) (0.75f + Math.random() * 1.5f);
-	    DynamicSprite puke = new DynamicSprite(Art.pukes.findRegion("PUKE_GREEN"), x, y);
-	    puke.setScale(0f, 0f);
-	    puke.setRotation((float) (360 * Math.random()));
-	    puke.interpolateScaleXY(1f * targetScale, 1f * targetScale, 250, true).delay(i * 100);
-	    puke.interpolateAlpha(0f, RECOVERY_DISABILITY_DURATION * 1000, true).delay(i * 100);
-	    pukes.add(puke);
+	if (!(alien instanceof Bomb)) {
+	    // add 3-5 puke splashes into the screen
+	    int count = (int) (3 + 1 * Math.random() * 3);
+	    for (int i = 0; i < count; i++) {
+		float x = (float) (300 + Math.random() * 680);
+		float y = (float) (200 + Math.random() * 400);
+		float targetScale = (float) (0.75f + Math.random() * 1.5f);
+		DynamicSprite puke = new DynamicSprite(Art.pukes.findRegion("PUKE_GREEN"), x, y);
+		puke.setScale(0f, 0f);
+		puke.setRotation((float) (360 * Math.random()));
+		puke.interpolateScaleXY(1f * targetScale, 1f * targetScale, 250, true).delay(i * 100);
+		puke.interpolateAlpha(0f, RECOVERY_DISABILITY_DURATION * 1000, true).delay(i * 100);
+		pukes.add(puke);
+	    }
 	}
     }
 
@@ -256,8 +260,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    coinsAndGoldBars.get(i).pause();
 	for (int i = 0; i < pukes.size(); i++)
 	    pukes.get(i).pause();
-	for (int i = 0; i < aliens.length; i++)
-	    aliens[i].pause();
+	for (int i = 0; i < aliens.size(); i++)
+	    aliens.get(i).pause();
     }
 
     @Override
@@ -319,13 +323,13 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    coinsAndGoldBars.get(i).resume();
 	for (int i = 0; i < pukes.size(); i++)
 	    pukes.get(i).resume();
-	for (int i = 0; i < aliens.length; i++)
-	    aliens[i].resume();
+	for (int i = 0; i < aliens.size(); i++)
+	    aliens.get(i).resume();
     }
 
     public void setAliensHostile(boolean hostile) {
-	for (int i = 0; i < aliens.length; i++)
-	    aliens[i].setHostile(hostile);
+	for (int i = 0; i < aliens.size(); i++)
+	    aliens.get(i).setHostile(hostile);
     }
 
     public void setAllowSpawn(boolean allowSpawn) {
@@ -373,10 +377,12 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void addHammerEffect(float x, float y) {
-	Vector2 position = new Vector2(x, y);
-	float duration = User.hammer.getEffect().getEmitters().get(0).getDuration().getLowMax() / 1000;//User.hammer.getEffect().getEmitters().get(0).duration / 2;
-	HammerEffect hammerEffect = new HammerEffect(User.hammer.getEffect(), position, duration, 0f);
-	hammerEffects.add(hammerEffect);
+	//	Vector2 position = new Vector2(x, y);
+	//	float duration = User.hammer.getEffect().getEmitters().get(0).getDuration().getLowMax() / 1000;//User.hammer.getEffect().getEmitters().get(0).duration / 2;
+	//	HammerEffect hammerEffect = new HammerEffect(User.hammer.getEffect(), position, duration, 0f);
+	HammerEffect he = HammerEffectPool.obtain();
+	he.setPosition(x, y);
+	hammerEffects.add(he);
 	//	System.out.println(duration);
 	//	Array<ParticleEmitter> a = User.hammer.getEffect().getEmitters();
 	//	for (ParticleEmitter p : a)
@@ -391,39 +397,40 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected int getVisibleAliens() {
 	int visibles = 0;
-	for (int i = 0; i < aliens.length; i++)
-	    if (aliens[i].isVisible())
+	for (int i = 0; i < aliens.size(); i++)
+	    if (aliens.get(i).isVisible())
 		visibles++;
 	return visibles;
     }
 
     protected void initAliens() {
-	aliens = new Alien[22];
-	int index = -1;
-	aliens[++index] = new Diabolic(this);
-	aliens[++index] = new Diabolic(this);
-	aliens[++index] = new Diabolic(this);
-	aliens[++index] = new Fluff(this);
-	aliens[++index] = new Fluff(this);
-	aliens[++index] = new Fluff(this);
-	aliens[++index] = new Golem(this);
-	aliens[++index] = new Golem(this);
-	aliens[++index] = new Golem(this);
-	aliens[++index] = new Jelly(this);
-	aliens[++index] = new Jelly(this);
-	aliens[++index] = new Jelly(this);
-	aliens[++index] = new Ogre(this);
-	aliens[++index] = new Ogre(this);
-	aliens[++index] = new Ogre(this);
-	aliens[++index] = new Tortoise(this);
-	aliens[++index] = new Tortoise(this);
-	aliens[++index] = new Tortoise(this);
-	aliens[++index] = new Sorcerer(this);
-	aliens[++index] = new InvulnerabilityJelly(this);
-	aliens[++index] = new HammerTimeJelly(this);
-	aliens[++index] = new ScoreFrenzyJelly(this);
-	for (int i = 0; i < aliens.length; i++)
-	    aliens[i].setVisible(false);
+	aliens.add(new Bomb(this));
+	aliens.add(new Bomb(this));
+	aliens.add(new Bomb(this));
+	aliens.add(new Diabolic(this));
+	aliens.add(new Diabolic(this));
+	aliens.add(new Diabolic(this));
+	aliens.add(new Fluff(this));
+	aliens.add(new Fluff(this));
+	aliens.add(new Fluff(this));
+	aliens.add(new Golem(this));
+	aliens.add(new Golem(this));
+	aliens.add(new Golem(this));
+	aliens.add(new Jelly(this));
+	aliens.add(new Jelly(this));
+	aliens.add(new Jelly(this));
+	aliens.add(new Ogre(this));
+	aliens.add(new Ogre(this));
+	aliens.add(new Ogre(this));
+	aliens.add(new Tortoise(this));
+	aliens.add(new Tortoise(this));
+	aliens.add(new Tortoise(this));
+	aliens.add(new Sorcerer(this));
+	aliens.add(new InvulnerabilityJelly(this));
+	aliens.add(new HammerTimeJelly(this));
+	aliens.add(new ScoreFrenzyJelly(this));
+	for (int i = 0; i < aliens.size(); i++)
+	    aliens.get(i).setVisible(false);
     }
 
     protected void initHUD() {
@@ -434,10 +441,10 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	int diameter = User.hammer.getDiameter();
 	Rectangle bounds = new Rectangle(x - diameter / 2, y - diameter / 2, diameter, diameter);
 	int hitCount = 0;
-	for (int i = 0; i < aliens.length; i++)
-	    if (aliens[i].isVisible() && aliens[i].getBounds().overlaps(bounds) && aliens[i].state != AlienState.SMASHED) {
-		aliens[i].smash();
-		onAlienSmashed(aliens[i]);
+	for (int i = 0; i < aliens.size(); i++)
+	    if (aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
+		aliens.get(i).smash();
+		onAlienSmashed(aliens.get(i));
 		hitCount++;
 		session.combosCurrent++;
 		session.combosLastDelta = session.stageSecondsElapsed;
@@ -477,16 +484,18 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected void renderAliens(SpriteBatch batch, float delta) {
 	// Sort the aliens first according to their y-coordinate. Aliens with lowest y are rendered last.
-	for (int i = 0; i < aliens.length; i++)
-	    for (int j = i + 1; j < aliens.length; j++)
-		if (aliens[j].position.y < aliens[i].position.y) {
-		    Alien alien = aliens[j];
-		    aliens[j] = aliens[i];
-		    aliens[i] = alien;
+	for (int i = 0; i < aliens.size(); i++)
+	    for (int j = i + 1; j < aliens.size(); j++)
+		if (aliens.get(j).position.y < aliens.get(i).position.y) {
+		    Alien alien = aliens.get(j);
+		    aliens.remove(j);
+		    aliens.add(aliens.get(i));
+		    aliens.remove(i);
+		    aliens.add(i, alien);
 		}
-	for (int i = aliens.length - 1; i > -1; i--) {
-	    aliens[i].render(batch);
-	    aliens[i].update(delta);
+	for (int i = aliens.size() - 1; i > -1; i--) {
+	    aliens.get(i).render(batch);
+	    aliens.get(i).update(delta);
 	}
 
 	// FIXME set to delay before the intro prompt ends
@@ -497,22 +506,22 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    boolean overlaps = false;
 	    boolean sorcererShouldAppear = !User.hasEffect(BonusEffect.HAMMER_TIME) && !User.hasEffect(BonusEffect.INVULNERABILITY);
 	    sorcererShouldAppear = sorcererSpawnDelay <= 0 && sorcererShouldAppear && !User.hasEffect(BonusEffect.SCORE_FRENZY);
-	    for (int i = 0; visibles < spawnRate - 1 && i < aliens.length && i < spawnRate - 1; i++) {
-		for (int j = 0; j < aliens.length; j++)
-		    if (i != j && !aliens[i].isVisible() && aliens[i].getBounds().overlaps(aliens[j].getBounds())) {
+	    for (int i = 0; visibles < spawnRate - 1 && i < aliens.size() && i < spawnRate - 1; i++) {
+		for (int j = 0; j < aliens.size(); j++)
+		    if (i != j && !aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(aliens.get(j).getBounds())) {
 			overlaps = true;
-			j = aliens.length; //break this loop
+			j = aliens.size(); //break this loop
 		    }
 		spawnDelay = i * (int) (Math.random() * 250);
 		// we only show an alien if it doesn't collide with other ones or if it is a sorcerer 
 		// and it is allowed to be spawn and doesn't collide to others
-		if (!(aliens[i] instanceof Sorcerer) && !overlaps) {
-		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
-		    aliens[i].rise(spawnDelay, volume / 2);
-		} else if (aliens[i] instanceof Sorcerer && sorcererShouldAppear && !overlaps) {
+		if (!(aliens.get(i) instanceof Sorcerer) && !overlaps) {
+		    float volume = visibles > 0 ? 1.1f - visibles / aliens.size() : 1f;
+		    aliens.get(i).rise(spawnDelay, volume / 2);
+		} else if (aliens.get(i) instanceof Sorcerer && sorcererShouldAppear && !overlaps) {
 		    sorcererSpawnDelay = (float) (3f + Math.random() * 11f);
-		    float volume = visibles > 0 ? 1.1f - visibles / aliens.length : 1f;
-		    aliens[i].rise(spawnDelay, volume / 2);
+		    float volume = visibles > 0 ? 1.1f - visibles / aliens.size() : 1f;
+		    aliens.get(i).rise(spawnDelay, volume / 2);
 		}
 		overlaps = false;
 	    }
@@ -532,11 +541,13 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected void renderHammerEffects(SpriteBatch batch, float delta) {
 	for (int i = 0; i < hammerEffects.size(); i++) {
 	    hammerEffects.get(i).render(batch);
-	    if (hammerEffects.get(i).elapsed >= hammerEffects.get(i).duration)
-		hammerEffects.remove(hammerEffects.get(i));
+	    if (hammerEffects.get(i).isComplete())//elapsed >= hammerEffects.get(i).duration)
+		hammerEffects.get(i).free(hammerEffects, i);
+	    //		hammerEffects.remove(hammerEffects.get(i));
 	    else
 		hammerEffects.get(i).update(delta);
 	}
+	//	System.out.println("[SmashSmashStage#renderHammerEffects(SpriteBatch,float)] HammerEffectPool.size(): " + hammerEffects.size());
     }
 
     protected void renderPukes(SpriteBatch batch, float delta) {
@@ -568,17 +579,17 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void setSpawnPositions() {
-	for (int i = 0; i < aliens.length; i++) {
-	    float targetWidth = aliens[i].waitingState.getLargestAreaDisplay().getKeyFrame().getRegionWidth();
-	    float targetHeight = aliens[i].waitingState.getLargestAreaDisplay().getKeyFrame().getRegionHeight();
-	    aliens[i].getBounds().width = targetWidth;
-	    aliens[i].getBounds().height = targetHeight;
-	    if (!aliens[i].isVisible()) {
+	for (int i = 0; i < aliens.size(); i++) {
+	    float targetWidth = aliens.get(i).waitingState.getLargestAreaDisplay().getKeyFrame().getRegionWidth();
+	    float targetHeight = aliens.get(i).waitingState.getLargestAreaDisplay().getKeyFrame().getRegionHeight();
+	    aliens.get(i).getBounds().width = targetWidth;
+	    aliens.get(i).getBounds().height = targetHeight;
+	    if (!aliens.get(i).isVisible()) {
 		float randomX = (float) (targetWidth / 2 + Math.random() * (Settings.SCREEN_WIDTH - targetWidth * 2));
 		float randomY = (float) (Math.random() * (Settings.SCREEN_HEIGHT - targetHeight));
-		aliens[i].position.set(randomX, randomY);
-		aliens[i].getBounds().x = randomX - targetWidth / 2;
-		aliens[i].getBounds().y = randomY;
+		aliens.get(i).position.set(randomX, randomY);
+		aliens.get(i).getBounds().x = randomX - targetWidth / 2;
+		aliens.get(i).getBounds().y = randomY;
 	    }
 	}
     }
@@ -586,7 +597,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected void setSpawnRate() {
 	boolean hasRampage = User.hasEffect(BonusEffect.INVULNERABILITY) && User.hasEffect(BonusEffect.HAMMER_TIME) && User.hasEffect(BonusEffect.SCORE_FRENZY);
 	if (allowSpawn && hasRampage)
-	    spawnRate = aliens.length;
+	    spawnRate = aliens.size();
 	else if (!allowSpawn)
 	    spawnRate = 0;
 	else if (session.combosCurrent > 4 && session.combosCurrent < 25)
@@ -600,9 +611,9 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	else if (session.combosCurrent > 99 && session.combosCurrent < 255)
 	    spawnRate = 10;
 	else if (session.combosCurrent > 254)
-	    spawnRate = aliens.length;
+	    spawnRate = aliens.size();
 	else
 	    spawnRate = 4;
-	//	alienAppearanceRate = aliens.length;
+	//	alienAppearanceRate = aliens.size();
     }
 }

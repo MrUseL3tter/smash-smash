@@ -85,7 +85,7 @@ public class StageLoadingScreen extends DynamicScreen {
 	    Sounds.retrieve(assetManager);
 
 	    if (stageScreen == null)
-		game.setScreen(new ArcadeStageScreen(game));//MainMenuScreen(game));
+		game.setScreen(new MainMenuScreen(game));//MainMenuScreen(game));
 	    else
 		game.setScreen(stageScreen);
 	}

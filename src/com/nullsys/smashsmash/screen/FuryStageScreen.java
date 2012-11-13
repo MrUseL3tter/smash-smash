@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicValue;
-import com.nullsys.smashsmash.alien.Alien;
 import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
 import com.nullsys.smashsmash.alien.Golem;
@@ -52,34 +51,32 @@ public class FuryStageScreen extends ArcadeStageScreen {
 
     @Override
     protected void initAliens() {
-	aliens = new Alien[19];
-	int index = -1;
-	aliens[++index] = new Diabolic(this);
-	aliens[++index] = new Diabolic(this);
-	aliens[++index] = new Diabolic(this);
-	aliens[++index] = new Fluff(this);
-	aliens[++index] = new Fluff(this);
-	aliens[++index] = new Fluff(this);
-	aliens[++index] = new Golem(this);
-	aliens[++index] = new Golem(this);
-	aliens[++index] = new Golem(this);
-	aliens[++index] = new Jelly(this);
-	aliens[++index] = new Jelly(this);
-	aliens[++index] = new Jelly(this);
-	aliens[++index] = new Ogre(this);
-	aliens[++index] = new Ogre(this);
-	aliens[++index] = new Ogre(this);
-	aliens[++index] = new Tortoise(this);
-	aliens[++index] = new Tortoise(this);
-	aliens[++index] = new Tortoise(this);
-	aliens[++index] = new Sorcerer(this);
-	for (int i = 0; i < aliens.length; i++)
-	    aliens[i].setVisible(false);
+	aliens.add(new Diabolic(this));
+	aliens.add(new Diabolic(this));
+	aliens.add(new Diabolic(this));
+	aliens.add(new Fluff(this));
+	aliens.add(new Fluff(this));
+	aliens.add(new Fluff(this));
+	aliens.add(new Golem(this));
+	aliens.add(new Golem(this));
+	aliens.add(new Golem(this));
+	aliens.add(new Jelly(this));
+	aliens.add(new Jelly(this));
+	aliens.add(new Jelly(this));
+	aliens.add(new Ogre(this));
+	aliens.add(new Ogre(this));
+	aliens.add(new Ogre(this));
+	aliens.add(new Tortoise(this));
+	aliens.add(new Tortoise(this));
+	aliens.add(new Tortoise(this));
+	aliens.add(new Sorcerer(this));
+	for (int i = 0; i < aliens.size(); i++)
+	    aliens.get(i).setVisible(false);
 	setAliensHostile(false);
     }
 
     @Override
     protected void setSpawnRate() {
-	spawnRate = aliens.length;
+	spawnRate = aliens.size() - 1;
     }
 }

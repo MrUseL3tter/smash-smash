@@ -26,8 +26,8 @@ public class EndlessStageScreen extends SmashSmashStage {
 	    session.lifePoints--;
 	if (session.lifePoints <= 0) {
 	    game.setScreen(new ResultScreen(game, this));
-	    for (int i = 0; i < aliens.length; i++)
-		aliens[i].setHostile(false);
+	    for (int i = 0; i < aliens.size(); i++)
+		aliens.get(i).setHostile(false);
 	}
     }
 
@@ -54,6 +54,6 @@ public class EndlessStageScreen extends SmashSmashStage {
 	else if (session.stageSecondsElapsed >= 90 && session.stageSecondsElapsed < 130)
 	    spawnRate = 5;
 	else if (session.stageSecondsElapsed >= 130)
-	    spawnRate = (int) (Math.random() * aliens.length);
+	    spawnRate = (int) (Math.random() * aliens.size());
     }
 }
