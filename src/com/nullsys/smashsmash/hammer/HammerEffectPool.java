@@ -106,13 +106,6 @@ public class HammerEffectPool {
 	    normal.free(objects);
     }
 
-    public static void free(HammerEffect object) {
-	if (User.hasEffect(BonusEffect.HAMMER_TIME))
-	    hammerTime.free(object);
-	else
-	    normal.free(object);
-    }
-
     public static HammerEffect obtain() {
 	if (User.hasEffect(BonusEffect.HAMMER_TIME)) {
 	    HammerEffect he = hammerTime.obtain();

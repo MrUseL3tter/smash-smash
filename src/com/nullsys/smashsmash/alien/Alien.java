@@ -239,6 +239,7 @@ public class Alien {
 		getStateAnimation().displays.get(i).interpolateXY(x, y, Bounce.OUT, 500, true);
 		getStateAnimation().displays.get(i).tween.delay(150);
 	    }
+	stage.onAlienSmashed(this);
     }
 
     public void stun() {
