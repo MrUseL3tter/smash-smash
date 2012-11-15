@@ -10,11 +10,9 @@ import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
-import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
-import com.nullsys.smashsmash.hammer.HammerEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Sorcerer extends Alien {
@@ -53,8 +51,6 @@ public class Sorcerer extends Alien {
 	    reset();
 	    setVisible(true);
 	    state = AlienState.RISING;
-	    spawnEffectDelay = delay / 1000;
-	    spawnEffect = new HammerEffect(Particles.leafSpawn, position, 1.0f, spawnEffectDelay);
 
 	    for (int i = 0; i < risingState.displays.size(); i++) {
 		risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position.x, risingState.displays.get(i).position.y, Bounce.OUT, 1000, true);

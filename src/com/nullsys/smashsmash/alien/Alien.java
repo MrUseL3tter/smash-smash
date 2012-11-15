@@ -10,11 +10,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
-import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
-import com.nullsys.smashsmash.hammer.HammerEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Alien {
@@ -51,15 +49,11 @@ public class Alien {
 
     public Vector2 position = new Vector2(0, 0);
     public Sound SFXattack;
-
     public Sound SFXsmash;
     public Sound SFXspawn;
     public Sound SFXstun;
-    public HammerEffect spawnEffect;
 
-    public float spawnEffectDelay = 0;
     public float risingStateTime = 1f;
-
     public float waitingStateTime = 1f;
     public float attackingStateTime = 1f;
     public float stunnedStateTime = 3f;
@@ -150,7 +144,6 @@ public class Alien {
 	    getStateAnimation().position.add(position);
 	    getStateAnimation().render(spriteBatch);
 	    getStateAnimation().position.sub(position);
-	    spawnEffect.render(spriteBatch);
 	}
     }
 
@@ -181,8 +174,6 @@ public class Alien {
 	    reset();
 	    visible = true;
 	    state = AlienState.RISING;
-	    spawnEffectDelay = delay / 1000;
-	    spawnEffect = new HammerEffect(Particles.leafSpawn, position, 1.0f, spawnEffectDelay);
 
 	    for (int i = 0; i < risingState.displays.size(); i++) {
 		risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position.x, risingState.displays.get(i).position.y, Bounce.OUT, 1000, true);
@@ -283,7 +274,6 @@ public class Alien {
 		    break;
 	    }
 	    upElapsedTime += deltaTime;
-	    spawnEffect.update(deltaTime);
 	}
     }
 
