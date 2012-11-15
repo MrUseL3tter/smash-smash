@@ -256,6 +256,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     @Override
     public void pause() {
 	paused = true;
+	bonusEffectBlackFill.tweenManager.pause();
+	bonusEffectPinwheel.tweenManager.pause();
 	for (int i = 0; i < coinsAndGoldBars.size(); i++)
 	    coinsAndGoldBars.get(i).pause();
 	for (int i = 0; i < pukes.size(); i++)
@@ -319,6 +321,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     @Override
     public void resume() {
 	paused = false;
+	bonusEffectBlackFill.tweenManager.resume();
+	bonusEffectPinwheel.tweenManager.resume();
 	for (int i = 0; i < coinsAndGoldBars.size(); i++)
 	    coinsAndGoldBars.get(i).resume();
 	for (int i = 0; i < pukes.size(); i++)
