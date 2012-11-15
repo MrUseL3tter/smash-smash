@@ -156,6 +156,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     public void onAlienAttack(Alien alien) {
 	session.combosCurrent = 0;
 	camera.shake();
+	removeBonusEffects();
 	if (!(alien instanceof Bomb)) {
 	    recoveryDelay = RECOVERY_DISABILITY_DURATION;
 	    // add 3-5 puke splashes into the screen
@@ -255,6 +256,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     @Override
     public void pause() {
+	System.out.println("[SmashSmashStage#pause()]");
 	paused = true;
 	bonusEffectBlackFill.tweenManager.pause();
 	bonusEffectPinwheel.tweenManager.pause();
@@ -320,6 +322,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     @Override
     public void resume() {
+	System.out.println("[SmashSmashStage#resume()]");
 	paused = false;
 	bonusEffectBlackFill.tweenManager.resume();
 	bonusEffectPinwheel.tweenManager.resume();
@@ -487,6 +490,12 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		i = -1;
 	    }
 	return hit;
+    }
+
+    protected void removeBonusEffects() {
+	bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 200, true);
+	bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 200, true);
+	User.bonusEffects.clear();
     }
 
     protected void renderAliens(SpriteBatch batch, float delta) {

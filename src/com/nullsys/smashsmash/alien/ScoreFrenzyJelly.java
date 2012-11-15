@@ -13,12 +13,12 @@ public class ScoreFrenzyJelly extends Jelly {
 
     public ScoreFrenzyJelly(SmashSmashStageCallback stage) {
 	super(stage);
-	risingState.setColor(Color.BLUE);
-	waitingState.setColor(Color.BLUE);
-	attackingState.setColor(Color.BLUE);
-	stunnedState.setColor(Color.BLUE);
-	smashedState.setColor(Color.BLUE);
-	hidingState.setColor(Color.BLUE);
+	risingState.setColor(new Color(0f, 0f, .5f, 1f));
+	waitingState.setColor(new Color(0f, 0f, .5f, 1f));
+	attackingState.setColor(new Color(0f, 0f, .5f, 1f));
+	stunnedState.setColor(new Color(0f, 0f, .5f, 1f));
+	smashedState.setColor(new Color(0f, 0f, .5f, 1f));
+	hidingState.setColor(new Color(0f, 0f, .5f, 1f));
     }
 
     @Override
