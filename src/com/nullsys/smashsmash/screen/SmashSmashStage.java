@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
-import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,10 +18,8 @@ import com.noobs2d.tweenengine.utils.DynamicAnimation;
 import com.noobs2d.tweenengine.utils.DynamicCallback.RemoveFromCollectionOnEnd;
 import com.noobs2d.tweenengine.utils.DynamicScreen;
 import com.noobs2d.tweenengine.utils.DynamicSprite;
-import com.noobs2d.tweenengine.utils.DynamicText;
 import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Coin;
-import com.nullsys.smashsmash.Fonts;
 import com.nullsys.smashsmash.GoldBar;
 import com.nullsys.smashsmash.Session;
 import com.nullsys.smashsmash.Settings;
@@ -232,27 +228,29 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     @Override
     public void onTouchDown(float x, float y, int pointer, int button) {
-	Vector2 position = new Vector2(x, y);
-	position.x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
-	position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
+	if (!paused) {
+	    Vector2 position = new Vector2(x, y);
+	    position.x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
+	    position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
 
-	boolean touchedACoin = inputToCoinsAndGoldBars(position.x, position.y, pointer);
-	boolean touchedAnAlien = isAttackAllowed() && !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
-	// there are no collisions with any coin
+	    boolean touchedACoin = inputToCoinsAndGoldBars(position.x, position.y, pointer);
+	    boolean touchedAnAlien = isAttackAllowed() && !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
+	    // there are no collisions with any coin
 
-	if (isAttackAllowed() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
-	    session.smashLanded++;
-	    if (User.hasEffect(BonusEffect.HAMMER_TIME))
-		camera.shake();
-	    addHammerEffect(position.x, position.y);
-	    if (Settings.soundEnabled)
-		Sounds.hammerIceFlakes.play();
+	    if (isAttackAllowed() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
+		session.smashLanded++;
+		if (User.hasEffect(BonusEffect.HAMMER_TIME))
+		    camera.shake();
+		addHammerEffect(position.x, position.y);
+		if (Settings.soundEnabled)
+		    Sounds.hammerIceFlakes.play();
+	    }
+
+	    if (!touchedAnAlien && !touchedACoin && !User.hasEffect(BonusEffect.HAMMER_TIME))
+		onSmashMissed(position.x, position.y);
+
+	    pointers[pointer] = touchedAnAlien;
 	}
-
-	if (!touchedAnAlien && !touchedACoin && !User.hasEffect(BonusEffect.HAMMER_TIME))
-	    onSmashMissed(position.x, position.y);
-
-	pointers[pointer] = touchedAnAlien;
     }
 
     @Override
@@ -479,15 +477,15 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		break;
 	    }
 	// Display a "x + 1!" message
-	if (hitCount >= 2) {
-	    DynamicText text = new DynamicText(Fonts.bdCartoonShoutx23orange, hitCount + " in 1!", HAlignment.CENTER);
-	    text.position.set(x, y - 50);
-	    text.color.a = 0f;
-	    text.interpolateXY(x, y + 50, Sine.OUT, 250, true);
-	    text.interpolateAlpha(1f, Sine.OUT, 250, true);
-	    text.interpolateAlpha(0f, Sine.OUT, 250, true).delay(1000);
-	    ui.textPool.add(text);
-	}
+	//	if (hitCount >= 2) {
+	//	    DynamicText text = new DynamicText(Fonts.bdCartoonShoutx23orange, hitCount + " in 1!", HAlignment.CENTER);
+	//	    text.position.set(x, y - 50);
+	//	    text.color.a = 0f;
+	//	    text.interpolateXY(x, y + 50, Sine.OUT, 250, true);
+	//	    text.interpolateAlpha(1f, Sine.OUT, 250, true);
+	//	    text.interpolateAlpha(0f, Sine.OUT, 250, true).delay(1000);
+	//	    ui.textPool.add(text);
+	//	}
 	return hitCount > 0;
     }
 
