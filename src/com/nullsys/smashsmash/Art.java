@@ -10,7 +10,6 @@ public class Art {
 
     static AssetManager assetManager;
 
-    public static Texture bonusEffects;
     public static Texture lawnBackground1;
     public static Texture lawnBackground2;
     public static TextureAtlas menu;
@@ -44,7 +43,6 @@ public class Art {
 	assetManager.load("data/gfx/SAMPLE_BACKGROUND2.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_READY_PROMPT.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_PINWHEEL.png", Texture.class);
-	assetManager.load("data/gfx/SAMPLE_BONUS_EFFECTS.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
 
 	assetManager.load("data/gfx/menu/MENU.pack", TextureAtlas.class);
@@ -54,8 +52,6 @@ public class Art {
     }
 
     public static void retrieve(AssetManager assetManager) {
-	bonusEffects = assetManager.get("data/gfx/SAMPLE_BONUS_EFFECTS.png", Texture.class);
-	bonusEffects.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	lawnBackground1 = assetManager.get("data/gfx/SAMPLE_BACKGROUND1.png", Texture.class);
 	lawnBackground1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	lawnBackground2 = assetManager.get("data/gfx/SAMPLE_BACKGROUND2.png", Texture.class);

@@ -2,7 +2,6 @@ package com.nullsys.smashsmash.alien;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 import com.nullsys.smashsmash.bonuseffect.HammerTime;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
@@ -31,7 +30,7 @@ public class HammerTimeJelly extends Jelly {
 
     @Override
     public void smash() {
-	new HammerTime(new Vector2(0, 0), 10f).trigger();
+	new HammerTime(10f).trigger();
 	stage.onBonusEffectTrigger(BonusEffect.HAMMER_TIME);
 	super.smash();
     }

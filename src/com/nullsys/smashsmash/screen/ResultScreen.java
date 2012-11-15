@@ -127,10 +127,6 @@ public class ResultScreen extends DynamicScreen implements TweenCallback {
     @Override
     public void render(float delta) {
 	super.render(delta);
-
-	spriteBatch.begin();
-	spriteBatch.draw(Art.bonusEffects, 0, 0);
-	spriteBatch.end();
 	scoreValue.update(delta);
 
 	stage.render(delta);

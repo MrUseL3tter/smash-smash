@@ -2,7 +2,6 @@ package com.nullsys.smashsmash.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicValue;
 import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
@@ -20,7 +19,7 @@ public class FuryStageScreen extends ArcadeStageScreen {
     public FuryStageScreen(Game game) {
 	super(game);
 	elapsed = new DynamicValue(0, TIME_LIMIT, TIME_LIMIT * 1000, 0);
-	new HammerTime(new Vector2(0, 0), TIME_LIMIT * 2).trigger();
+	new HammerTime(TIME_LIMIT * 2).trigger();
 	sorcererSpawnDelay = TIME_LIMIT * 2;
     }
 

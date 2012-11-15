@@ -10,6 +10,7 @@
 bin/**
 tmp/**
 tmp/**/*
+*.class
 *.tmp
 *.bak
 *.swp
