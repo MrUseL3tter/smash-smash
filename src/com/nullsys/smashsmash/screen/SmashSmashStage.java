@@ -188,14 +188,16 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     @Override
     public void onAlienSmashed(Alien alien) {
-	addScore(alien);
-	session.smashedAliens++;
-	// Add coin as per percentage
-	int random = (int) (Math.random() * 1000);
-	if (random <= 4)
-	    addGoldBar(alien.position.x, alien.position.y);
-	else if (random > 4 && random <= 25)
-	    addCoin(alien.position.x, alien.position.y);
+	if (!(alien instanceof Bomb)) {
+	    addScore(alien);
+	    session.smashedAliens++;
+	    // Add coin as per percentage
+	    int random = (int) (Math.random() * 1000);
+	    if (random <= 4)
+		addGoldBar(alien.position.x, alien.position.y);
+	    else if (random > 4 && random <= 25)
+		addCoin(alien.position.x, alien.position.y);
+	}
     }
 
     @Override
@@ -248,8 +250,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
 	    if (!touchedAnAlien && !touchedACoin && !User.hasEffect(BonusEffect.HAMMER_TIME))
 		onSmashMissed(position.x, position.y);
-
-	    pointers[pointer] = touchedAnAlien;
 	}
     }
 
@@ -466,7 +466,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	for (int i = 0; i < aliens.size(); i++)
 	    if (aliens.get(i) instanceof Bomb && aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
 		aliens.get(i).smash();
-		return false;
+		pointers[pointer] = false;
+		return true;
 	    } else if (aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
 		//		onAlienSmashed(aliens.get(i));
 		hitCount++;
@@ -474,6 +475,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		session.combosLastDelta = session.stageSecondsElapsed;
 		ui.shakeCombos();
 		aliens.get(i).smash();
+		pointers[pointer] = true;
 		break;
 	    }
 	// Display a "x + 1!" message
@@ -633,19 +635,19 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	else if (!allowSpawn)
 	    spawnRate = 0;
 	else if (session.combosCurrent > 4 && session.combosCurrent < 25)
-	    spawnRate = 4;
-	else if (session.combosCurrent > 24 && session.combosCurrent < 40)
 	    spawnRate = 5;
-	else if (session.combosCurrent > 39 && session.combosCurrent < 60)
+	else if (session.combosCurrent > 24 && session.combosCurrent < 40)
 	    spawnRate = 6;
+	else if (session.combosCurrent > 39 && session.combosCurrent < 60)
+	    spawnRate = 7;
 	else if (session.combosCurrent > 59 && session.combosCurrent < 100)
 	    spawnRate = 8;
 	else if (session.combosCurrent > 99 && session.combosCurrent < 255)
-	    spawnRate = 10;
+	    spawnRate = 14;
 	else if (session.combosCurrent > 254)
 	    spawnRate = aliens.size();
 	else
-	    spawnRate = 4;
+	    spawnRate = 6;
 	//	alienAppearanceRate = aliens.size();
     }
 }
