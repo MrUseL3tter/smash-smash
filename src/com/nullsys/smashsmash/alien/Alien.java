@@ -320,7 +320,7 @@ public class Alien {
 
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	if (hostile && upElapsedTime >= waitingStateTime && stage.isAttackAllowed() && !User.hasEffect(BonusEffect.INVULNERABILITY)) {
+	if (hostile && upElapsedTime >= waitingStateTime && stage.isAttackAllowed()) {
 	    state = AlienState.ATTACKING;
 	    upElapsedTime = 0;
 	    attack();

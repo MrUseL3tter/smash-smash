@@ -2,7 +2,9 @@ package com.nullsys.smashsmash.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
+import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.alien.Alien;
+import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 
 public class EndlessStageScreen extends SmashSmashStage {
 
@@ -21,9 +23,10 @@ public class EndlessStageScreen extends SmashSmashStage {
     @Override
     public void onAlienAttack(Alien alien) {
 	super.onAlienAttack(alien);
-	ui.shakeLifePoint();
-	if (session.lifePoints > 0)
+	if (!User.hasEffect(BonusEffect.INVULNERABILITY) && session.lifePoints > 0) {
+	    ui.shakeLifePoint();
 	    session.lifePoints--;
+	}
 	if (session.lifePoints <= 0) {
 	    game.setScreen(new ResultScreen(game, this));
 	    for (int i = 0; i < aliens.size(); i++)
