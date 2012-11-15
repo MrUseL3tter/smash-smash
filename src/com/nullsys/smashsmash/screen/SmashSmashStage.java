@@ -155,8 +155,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     @Override
     public void onAlienAttack(Alien alien) {
 	session.combosCurrent = 0;
+	camera.shake();
 	if (!(alien instanceof Bomb)) {
-	    camera.shake();
 	    recoveryDelay = RECOVERY_DISABILITY_DURATION;
 	    // add 3-5 puke splashes into the screen
 	    int count = (int) (3 + 1 * Math.random() * 3);
@@ -443,12 +443,12 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	int hitCount = 0;
 	for (int i = 0; i < aliens.size(); i++)
 	    if (aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
-		aliens.get(i).smash();
 		//		onAlienSmashed(aliens.get(i));
 		hitCount++;
 		session.combosCurrent++;
 		session.combosLastDelta = session.stageSecondsElapsed;
 		ui.shakeCombos();
+		aliens.get(i).smash();
 		break;
 	    }
 	// Display a "x + 1!" message
