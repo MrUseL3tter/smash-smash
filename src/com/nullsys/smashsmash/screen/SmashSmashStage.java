@@ -446,7 +446,10 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	Rectangle bounds = new Rectangle(x - diameter / 2, y - diameter / 2, diameter, diameter);
 	int hitCount = 0;
 	for (int i = 0; i < aliens.size(); i++)
-	    if (aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
+	    if (aliens.get(i) instanceof Bomb && aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
+		aliens.get(i).smash();
+		return false;
+	    } else if (aliens.get(i).isVisible() && aliens.get(i).getBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
 		//		onAlienSmashed(aliens.get(i));
 		hitCount++;
 		session.combosCurrent++;
