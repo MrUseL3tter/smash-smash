@@ -62,7 +62,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     public ArrayList<Alien> aliens = new ArrayList<Alien>();
 
     public DynamicSprite bonusEffectBlackFill;
-    public DynamicSprite bonusEffectPinwheel;
+    public DynamicSprite bonusEffectPinwheelBlue;
+    public DynamicSprite bonusEffectPinwheelGreen;
 
     public boolean[] pointers = new boolean[4];
 
@@ -93,10 +94,16 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
 	bonusEffectBlackFill = new DynamicSprite(new TextureRegion(Art.blackFill), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
 	bonusEffectBlackFill.scale.set(15f, 15f);
-	bonusEffectBlackFill.setColor(1f, 1f, 1f, .5f);
-	bonusEffectPinwheel = new DynamicSprite(new TextureRegion(Art.pinwheel), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
-	bonusEffectPinwheel.scale.set(3f, 3f);
-	bonusEffectPinwheel.interpolateRotation(360, Linear.INOUT, 3000, false).repeat(Tween.INFINITY, 0).start(bonusEffectPinwheel.tweenManager);
+	bonusEffectBlackFill.setColor(1f, 1f, 1f, 0f);
+	bonusEffectPinwheelBlue = new DynamicSprite(new TextureRegion(Art.pinwheel), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+	bonusEffectPinwheelBlue.scale.set(3f, 3f);
+	bonusEffectPinwheelBlue.setColor(1f, 1f, 1f, 0f);
+	bonusEffectPinwheelBlue.interpolateRotation(360, Linear.INOUT, 3000, false).repeat(Tween.INFINITY, 0).start(bonusEffectPinwheelBlue.tweenManager);
+	bonusEffectPinwheelGreen = new DynamicSprite(new TextureRegion(Art.pinwheel2), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+	bonusEffectPinwheelGreen.scale.set(3f, 3f);
+	bonusEffectPinwheelGreen.setColor(1f, 1f, 1f, 0f);
+	bonusEffectPinwheelGreen.setRotation(-1);
+	bonusEffectPinwheelGreen.interpolateRotation(-360, Linear.INOUT, 3000, false).repeat(Tween.INFINITY, 0).start(bonusEffectPinwheelGreen.tweenManager);
 
 	Gdx.input.setCatchBackKey(true);
 	Gdx.input.setCatchMenuKey(true);
@@ -261,7 +268,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	System.out.println("[SmashSmashStage#pause()]");
 	paused = true;
 	bonusEffectBlackFill.tweenManager.pause();
-	bonusEffectPinwheel.tweenManager.pause();
+	bonusEffectPinwheelBlue.tweenManager.pause();
+	bonusEffectPinwheelGreen.tweenManager.pause();
 	for (int i = 0; i < coinsAndGoldBars.size(); i++)
 	    coinsAndGoldBars.get(i).pause();
 	for (int i = 0; i < pukes.size(); i++)
@@ -327,7 +335,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	System.out.println("[SmashSmashStage#resume()]");
 	paused = false;
 	bonusEffectBlackFill.tweenManager.resume();
-	bonusEffectPinwheel.tweenManager.resume();
+	bonusEffectPinwheelBlue.tweenManager.resume();
+	bonusEffectPinwheelGreen.tweenManager.resume();
 	for (int i = 0; i < coinsAndGoldBars.size(); i++)
 	    coinsAndGoldBars.get(i).resume();
 	for (int i = 0; i < pukes.size(); i++)
@@ -352,18 +361,21 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected void addBonusEffect(int bonusEffect) {
 	switch (bonusEffect) {
 	    case BonusEffect.HAMMER_TIME:
+		bonusEffectPinwheelGreen.color.a = 0f;
+		bonusEffectPinwheelGreen.interpolateAlpha(1f, Linear.INOUT, 500, true);
+		bonusEffectPinwheelGreen.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
 		ui.showBonusEffectPrompt(BonusEffect.HAMMER_TIME);
 		break;
 	    case BonusEffect.INVULNERABILITY:
 		bonusEffectBlackFill.color.a = 0f;
 		bonusEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
-		bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+		bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
 		ui.showBonusEffectPrompt(BonusEffect.INVULNERABILITY);
 		break;
 	    case BonusEffect.SCORE_FRENZY:
-		bonusEffectPinwheel.color.a = 0f;
-		bonusEffectPinwheel.interpolateAlpha(1f, Linear.INOUT, 500, true);
-		bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+		bonusEffectPinwheelBlue.color.a = 0f;
+		bonusEffectPinwheelBlue.interpolateAlpha(1f, Linear.INOUT, 500, true);
+		bonusEffectPinwheelBlue.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
 		ui.showBonusEffectPrompt(BonusEffect.SCORE_FRENZY);
 		break;
 	    default:
@@ -499,7 +511,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected void removeBonusEffects() {
 	bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 200, true);
-	bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 200, true);
+	bonusEffectPinwheelBlue.interpolateAlpha(0f, Linear.INOUT, 200, true);
+	bonusEffectPinwheelGreen.interpolateAlpha(0f, Linear.INOUT, 200, true);
 	User.bonusEffects.clear();
     }
 
@@ -589,12 +602,12 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void renderStageEffects(SpriteBatch batch, float delta) {
-	if (User.hasEffect(BonusEffect.SCORE_FRENZY))
-	    bonusEffectPinwheel.render(batch);
-	if (User.hasEffect(BonusEffect.INVULNERABILITY))
-	    bonusEffectBlackFill.render(batch);
+	bonusEffectPinwheelGreen.render(batch);
+	bonusEffectPinwheelBlue.render(batch);
+	bonusEffectBlackFill.render(batch);
 	bonusEffectBlackFill.update(delta);
-	bonusEffectPinwheel.update(delta);
+	bonusEffectPinwheelBlue.update(delta);
+	bonusEffectPinwheelGreen.update(delta);
 	for (int itemEffectIndex = 0; itemEffectIndex < User.bonusEffects.size(); itemEffectIndex++)
 	    User.bonusEffects.get(itemEffectIndex).update(delta);
     }
