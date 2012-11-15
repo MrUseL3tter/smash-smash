@@ -350,16 +350,19 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected void addBonusEffect(int bonusEffect) {
 	switch (bonusEffect) {
 	    case BonusEffect.HAMMER_TIME:
+		ui.showBonusEffectPrompt(BonusEffect.HAMMER_TIME);
 		break;
 	    case BonusEffect.INVULNERABILITY:
 		bonusEffectBlackFill.color.a = 0f;
 		bonusEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
 		bonusEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+		ui.showBonusEffectPrompt(BonusEffect.INVULNERABILITY);
 		break;
 	    case BonusEffect.SCORE_FRENZY:
 		bonusEffectPinwheel.color.a = 0f;
 		bonusEffectPinwheel.interpolateAlpha(1f, Linear.INOUT, 500, true);
 		bonusEffectPinwheel.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9500);
+		ui.showBonusEffectPrompt(BonusEffect.SCORE_FRENZY);
 		break;
 	    default:
 		assert false;

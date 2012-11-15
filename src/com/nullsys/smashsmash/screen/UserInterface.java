@@ -3,6 +3,8 @@ package com.nullsys.smashsmash.screen;
 import java.util.ArrayList;
 import java.util.List;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Elastic;
 import aurelienribon.tweenengine.equations.Linear;
@@ -22,6 +24,7 @@ import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Fonts;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
+import com.nullsys.smashsmash.bonuseffect.BonusEffect;
 
 public class UserInterface {
 
@@ -116,6 +119,47 @@ public class UserInterface {
 	    lifePoints[stage.session.lifePoints - 1].interpolateXY(x, y, Linear.INOUT, 75, true).delay(150);
 	    lifePoints[stage.session.lifePoints - 1].tween.setCallback(new InvisibleOnEnd(lifePoints[stage.session.lifePoints - 1]));
 	}
+    }
+
+    public void showBonusEffectPrompt(int bonusEffect) {
+	DynamicText text = new DynamicText(Fonts.actionJackson115, "");
+	text.setPosition(-(Settings.SCREEN_WIDTH / 2), Settings.SCREEN_HEIGHT / 2);
+	text.setColor(1f, 1f, 1f, 0f);
+	text.interpolateAlpha(1f, 500, true).delay(250);
+	text.interpolateX(Settings.SCREEN_WIDTH / 2, 500, true).delay(250).setCallbackTriggers(TweenCallback.BEGIN).setCallback(new TweenCallback() {
+
+	    @Override
+	    public void onEvent(int type, BaseTween<?> source) {
+		if (type == TweenCallback.BEGIN)
+		    stage.pause();
+	    }
+	});
+	text.interpolateX(Settings.SCREEN_WIDTH * 2, 500, true).delay(2000).setCallback(new TweenCallback() {
+
+	    @Override
+	    public void onEvent(int type, BaseTween<?> source) {
+		if (type == TweenCallback.COMPLETE) {
+		    stage.resume();
+		    textPool.remove(this);
+		}
+	    }
+	});
+	text.interpolateAlpha(0f, 500, true).delay(500).delay(2000);
+	switch (bonusEffect) {
+	    case BonusEffect.HAMMER_TIME:
+		text.text = "HAMMER TIME!";
+		break;
+	    case BonusEffect.INVULNERABILITY:
+		text.text = "INVULNERABILITY!";
+		break;
+	    case BonusEffect.SCORE_FRENZY:
+		text.text = "SCORE FRENZY!";
+		break;
+	    default:
+		assert false;
+		break;
+	}
+	textPool.add(text);
     }
 
     public void showComboPrompt(int combos) {
@@ -383,8 +427,8 @@ public class UserInterface {
 	    comboCount.render(spriteBatch);
 	    comboBonus.render(spriteBatch);
 	}
-	//	for (int i = 0; i < textPool.size(); i++)
-	//	    textPool.get(i).render(spriteBatch);
+	for (int i = 0; i < textPool.size(); i++)
+	    textPool.get(i).render(spriteBatch);
 
 	if (stage instanceof ArcadeStageScreen)
 	    for (int i = 0; i < timer.length; i++)
