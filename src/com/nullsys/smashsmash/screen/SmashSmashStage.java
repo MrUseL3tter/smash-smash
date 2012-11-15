@@ -519,14 +519,13 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     protected void renderAliens(SpriteBatch batch, float delta) {
 	// Sort the aliens first according to their y-coordinate. Aliens with lowest y are rendered last.
 	for (int i = 0; i < aliens.size(); i++)
-	    for (int j = i + 1; j < aliens.size(); j++)
-		if (aliens.get(j).position.y < aliens.get(i).position.y) {
-		    Alien alien = aliens.get(j);
-		    aliens.remove(j);
-		    aliens.add(aliens.get(i));
-		    aliens.remove(i);
-		    aliens.add(i, alien);
-		}
+	    if (aliens.get(i).isVisible())
+		for (int j = i + 1; j < aliens.size(); j++)
+		    if (aliens.get(j).isVisible() && aliens.get(j).position.y < aliens.get(i).position.y) {
+			Alien alien = aliens.remove(j);
+			aliens.add(aliens.remove(i));
+			aliens.add(i, alien);
+		    }
 	for (int i = aliens.size() - 1; i > -1; i--) {
 	    aliens.get(i).render(batch);
 	    aliens.get(i).update(delta);

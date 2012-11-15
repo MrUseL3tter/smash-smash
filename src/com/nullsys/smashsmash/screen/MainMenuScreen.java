@@ -25,6 +25,7 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
     DynamicButton hammers;
     DynamicButton arcade;
     DynamicButton endless;
+    DynamicButton fury;
     DynamicToggleButton music;
     DynamicToggleButton sound;
     DynamicSprite title;
@@ -48,14 +49,20 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
 	upstate = Art.menu.findRegion("ARCADE");
 	hoverstate = Art.menu.findRegion("ARCADE");
 	downstate = Art.menu.findRegion("ARCADE");
-	arcade = new DynamicButton(upstate, hoverstate, downstate, new Vector2(320, 420));
+	arcade = new DynamicButton(upstate, hoverstate, downstate, new Vector2(417, 589));
 	arcade.visible = false;
 
-	upstate = Art.menu.findRegion("SURVIVAL");
-	hoverstate = Art.menu.findRegion("SURVIVAL");
-	downstate = Art.menu.findRegion("SURVIVAL");
-	endless = new DynamicButton(upstate, hoverstate, downstate, new Vector2(938, 420));
+	upstate = Art.menu.findRegion("ENDLESS");
+	hoverstate = Art.menu.findRegion("ENDLESS");
+	downstate = Art.menu.findRegion("ENDLESS");
+	endless = new DynamicButton(upstate, hoverstate, downstate, new Vector2(862, 589));
 	endless.visible = false;
+
+	upstate = Art.menu.findRegion("FURY");
+	hoverstate = Art.menu.findRegion("FURY");
+	downstate = Art.menu.findRegion("FURY");
+	fury = new DynamicButton(upstate, hoverstate, downstate, new Vector2(640, 210));
+	fury.visible = false;
 
 	upstate = Art.result.findRegion("MUSIC");
 	downstate = Art.result.findRegion("MUSIC-DISABLED");
@@ -99,6 +106,8 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
 	    game.setScreen(new ArcadeStageScreen(game));
 	else if (type == COMPLETE && source.equals(endless.tween))
 	    game.setScreen(new EndlessStageScreen(game));
+	else if (type == COMPLETE && source.equals(fury.tween))
+	    game.setScreen(new FuryStageScreen(game));
 
     }
 
@@ -106,18 +115,21 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
     public void onTouchDown(float x, float y, int pointer, int button) {
 	x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
 	y = (Gdx.graphics.getHeight() * camera.zoom - y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
-	if (!showPlayOptions && stats.getBounds().contains(x, Settings.SCREEN_HEIGHT - y))
+	if (!showPlayOptions && stats.getBounds().contains(x, y))
 	    // TODO show stats screen
 	    ;
-	else if (!showPlayOptions && hammers.getBounds().contains(x, Settings.SCREEN_HEIGHT - y))
+	else if (!showPlayOptions && hammers.getBounds().contains(x, y))
 	    // TODO show hammers screen
 	    ;
-	else if (showPlayOptions && arcade.getBounds().contains(x, Settings.SCREEN_HEIGHT - y)) {
+	else if (showPlayOptions && arcade.getBounds().contains(x, y)) {
 	    interpolateEnd();
 	    arcade.tween.setCallback(this);
-	} else if (showPlayOptions && endless.getBounds().contains(x, Settings.SCREEN_HEIGHT - y)) {
+	} else if (showPlayOptions && endless.getBounds().contains(x, y)) {
 	    interpolateEnd();
 	    endless.tween.setCallback(this);
+	} else if (showPlayOptions && fury.getBounds().contains(x, y)) {
+	    interpolateEnd();
+	    fury.tween.setCallback(this);
 	} else if (music.getBounds().contains(x, y))
 	    music.inputDown(x, y);
 	else if (sound.getBounds().contains(x, y))
@@ -130,6 +142,9 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
 	    endless.visible = true;
 	    endless.setScale(0f, 0f);
 	    endless.interpolateScaleXY(1f, 1f, Back.OUT, 250, true).delay(150);
+	    fury.visible = true;
+	    fury.setScale(0f, 0f);
+	    fury.interpolateScaleXY(1f, 1f, Back.OUT, 250, true).delay(300);
 	    title.interpolateAlpha(0f, 100, true);
 	    stats.interpolateY(stats.getY() - 200, 100, true);
 	    hammers.interpolateY(hammers.getY() - 200, 100, true);
@@ -161,6 +176,8 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
 	arcade.update(delta);
 	endless.render(spriteBatch);
 	endless.update(delta);
+	fury.render(spriteBatch);
+	fury.update(delta);
 	music.render(spriteBatch);
 	music.update(delta);
 	sound.render(spriteBatch);
@@ -176,6 +193,7 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
     private void interpolateEnd() {
 	arcade.interpolateScaleXY(.5f, .5f, Back.IN, 500, true);
 	endless.interpolateScaleXY(.5f, .5f, Back.IN, 500, true);
+	fury.interpolateScaleXY(.5f, .5f, Back.IN, 500, true);
     }
 
 }
