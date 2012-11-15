@@ -23,5 +23,6 @@ public class User {
 
     public static void init() {
 	hammer = new Hammer();
+	bonusEffects = new ArrayList<BonusEffect>();
     }
 }
