@@ -89,6 +89,6 @@ public class FuryStageScreen extends ArcadeStageScreen {
     @Override
     protected void setSpawnRate() {
 	if (isSpawnAllowed())
-	    spawnRate = aliens.size() - 1;
+	    spawnRate = (int) (Math.random() * (aliens.size() / 2));
     }
 }
