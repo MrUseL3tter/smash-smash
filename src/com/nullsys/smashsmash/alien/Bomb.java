@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Bomb extends Jelly {
@@ -43,7 +43,7 @@ public class Bomb extends Jelly {
 	if (Settings.soundEnabled)
 	    SFXsmash.play();
 	hitPoints--;
-	if (User.hasEffect(BuffEffect.HAMMER_TIME) || hitPoints <= 0 && state != AlienState.SMASHED) { //alien dead
+	if (User.hasBuffEffect(BuffEffect.HAMMER_TIME) || hitPoints <= 0 && state != AlienState.SMASHED) { //alien dead
 	    upElapsedTime = 0;
 	    hitPoints = hitPointsTotal;
 	    state = AlienState.SMASHED;

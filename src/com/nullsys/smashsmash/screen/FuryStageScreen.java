@@ -3,6 +3,7 @@ package com.nullsys.smashsmash.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
 import com.noobs2d.tweenengine.utils.DynamicValue;
+import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
 import com.nullsys.smashsmash.alien.Golem;
@@ -10,7 +11,7 @@ import com.nullsys.smashsmash.alien.Jelly;
 import com.nullsys.smashsmash.alien.Ogre;
 import com.nullsys.smashsmash.alien.Sorcerer;
 import com.nullsys.smashsmash.alien.Tortoise;
-import com.nullsys.smashsmash.bonuseffect.HammerTime;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 
 public class FuryStageScreen extends ArcadeStageScreen {
 
@@ -19,8 +20,7 @@ public class FuryStageScreen extends ArcadeStageScreen {
     public FuryStageScreen(Game game) {
 	super(game);
 	elapsed = new DynamicValue(0, TIME_LIMIT, TIME_LIMIT * 1000, 0);
-	new HammerTime(TIME_LIMIT * 2).trigger();
-	sorcererSpawnDelay = TIME_LIMIT * 2;
+	User.addBuffEffect(BuffEffect.HAMMER_TIME, TIME_LIMIT * 2);
     }
 
     @Override

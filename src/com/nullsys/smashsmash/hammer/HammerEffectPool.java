@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 
 public class HammerEffectPool {
 
@@ -93,21 +93,21 @@ public class HammerEffectPool {
     };
 
     public static void clear() {
-	if (User.hasEffect(BuffEffect.HAMMER_TIME))
+	if (User.hasBuffEffect(BuffEffect.HAMMER_TIME))
 	    hammerTime.clear();
 	else
 	    normal.clear();
     }
 
     public static void free(Array<HammerEffect> objects) {
-	if (User.hasEffect(BuffEffect.HAMMER_TIME))
+	if (User.hasBuffEffect(BuffEffect.HAMMER_TIME))
 	    hammerTime.free(objects);
 	else
 	    normal.free(objects);
     }
 
     public static HammerEffect obtain() {
-	if (User.hasEffect(BuffEffect.HAMMER_TIME)) {
+	if (User.hasBuffEffect(BuffEffect.HAMMER_TIME)) {
 	    HammerEffect he = hammerTime.obtain();
 	    he.setPool(hammerTime);
 	    return he;

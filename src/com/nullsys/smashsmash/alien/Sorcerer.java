@@ -12,7 +12,7 @@ import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Sorcerer extends Alien {
@@ -40,8 +40,8 @@ public class Sorcerer extends Alien {
 
     @Override
     public void rise(float delay, float volume) {
-	boolean sorcererShouldAppear = !User.hasEffect(BuffEffect.HAMMER_TIME) && !User.hasEffect(BuffEffect.INVULNERABILITY);
-	sorcererShouldAppear = spawnDelay <= 0 && sorcererShouldAppear && !User.hasEffect(BuffEffect.SCORE_FRENZY);
+	boolean sorcererShouldAppear = !User.hasBuffEffect(BuffEffect.HAMMER_TIME) && !User.hasBuffEffect(BuffEffect.INVULNERABILITY);
+	sorcererShouldAppear = spawnDelay <= 0 && sorcererShouldAppear && !User.hasBuffEffect(BuffEffect.SCORE_FRENZY);
 	if (sorcererShouldAppear && state == AlienState.HIDDEN) {
 	    spawnDelay = 15f + MathUtils.random(25f);
 	    risingStateTime = 1 + delay / 1000;
@@ -120,7 +120,7 @@ public class Sorcerer extends Alien {
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
 	if (upElapsedTime >= waitingStateTime) {
-	    stage.onBonusEffectTrigger(BuffEffect.HAMMER_TIME, BuffEffect.INVULNERABILITY, BuffEffect.SCORE_FRENZY);
+	    stage.onBonusEffectTrigger(this, BuffEffect.HAMMER_TIME, BuffEffect.INVULNERABILITY, BuffEffect.SCORE_FRENZY);
 	    state = AlienState.HIDING;
 	    upElapsedTime = 0;
 	}

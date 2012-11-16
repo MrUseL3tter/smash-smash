@@ -12,7 +12,7 @@ import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Alien {
@@ -185,22 +185,11 @@ public class Alien {
 	    waitingStateTime = (float) (Math.random() * 3 + 2.5);
 	    upElapsedTime = 0;
 
-	    reset();
 	    visible = true;
 	    state = AlienState.RISING;
 
-	    for (int i = 0; i < risingState.displays.size(); i++) {
-		risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position.x, risingState.displays.get(i).position.y, Bounce.OUT, 1000, true);
-		risingState.displays.get(i).tween.setCallback(new ReturnValues(risingState.displays.get(i)));
-		risingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
-		risingState.displays.get(i).tween.delay(delay);
-		risingState.displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 1000, true);
-		risingState.displays.get(i).tween.setCallback(new ReturnValues(risingState.displays.get(i)));
-		risingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
-		risingState.displays.get(i).tween.delay(delay);
-		risingState.displays.get(i).position.set(0, 0);
-		risingState.displays.get(i).scale.y = 0f;
-	    }
+	    reset();
+	    interpolateRise(delay);
 	    //	    SFXspawn.play(volume);
 	}
     }
@@ -219,7 +208,7 @@ public class Alien {
 	if (Settings.soundEnabled)
 	    SFXsmash.play();
 	hitPoints--;
-	if (User.hasEffect(BuffEffect.HAMMER_TIME) || hitPoints <= 0 && state != AlienState.SMASHED) { //alien dead
+	if (User.hasBuffEffect(BuffEffect.HAMMER_TIME) || hitPoints <= 0 && state != AlienState.SMASHED) { //alien dead
 	    upElapsedTime = 0;
 	    hitPoints = hitPointsTotal;
 	    state = AlienState.SMASHED;
@@ -288,6 +277,21 @@ public class Alien {
 		    break;
 	    }
 	    upElapsedTime += deltaTime;
+	}
+    }
+
+    protected void interpolateRise(float delay) {
+	for (int i = 0; i < risingState.displays.size(); i++) {
+	    risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position.x, risingState.displays.get(i).position.y, Bounce.OUT, 1000, true);
+	    risingState.displays.get(i).tween.setCallback(new ReturnValues(risingState.displays.get(i)));
+	    risingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
+	    risingState.displays.get(i).tween.delay(delay);
+	    risingState.displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 1000, true);
+	    risingState.displays.get(i).tween.setCallback(new ReturnValues(risingState.displays.get(i)));
+	    risingState.displays.get(i).tween.setCallbackTriggers(TweenCallback.COMPLETE);
+	    risingState.displays.get(i).tween.delay(delay);
+	    risingState.displays.get(i).position.set(0, 0);
+	    risingState.displays.get(i).scale.y = 0f;
 	}
     }
 

@@ -2,9 +2,7 @@ package com.nullsys.smashsmash.alien;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
-import com.nullsys.smashsmash.bonuseffect.ScoreFrenzy;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class ScoreFrenzyJelly extends Jelly {
@@ -19,6 +17,7 @@ public class ScoreFrenzyJelly extends Jelly {
 	stunnedState.setColor(new Color(0f, 0f, .5f, 1f));
 	smashedState.setColor(new Color(0f, 0f, .5f, 1f));
 	hidingState.setColor(new Color(0f, 0f, .5f, 1f));
+	setHostile(false);
     }
 
     @Override
@@ -31,8 +30,7 @@ public class ScoreFrenzyJelly extends Jelly {
 
     @Override
     public void smash() {
-	new ScoreFrenzy(new Vector2(0, 0), 10).trigger();
-	stage.onBonusEffectTrigger(BuffEffect.SCORE_FRENZY);
+	stage.onBonusEffectTrigger(this, BuffEffect.SCORE_FRENZY);
 	super.smash();
     }
 

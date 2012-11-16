@@ -24,7 +24,7 @@ import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Fonts;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 
 public class UserInterface {
 

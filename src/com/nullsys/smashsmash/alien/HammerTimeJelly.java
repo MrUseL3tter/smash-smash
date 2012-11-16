@@ -2,8 +2,7 @@ package com.nullsys.smashsmash.alien;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
-import com.nullsys.smashsmash.bonuseffect.HammerTime;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class HammerTimeJelly extends Jelly {
@@ -18,6 +17,7 @@ public class HammerTimeJelly extends Jelly {
 	stunnedState.setColor(Color.GREEN);
 	smashedState.setColor(Color.GREEN);
 	hidingState.setColor(Color.GREEN);
+	setHostile(false);
     }
 
     @Override
@@ -30,8 +30,7 @@ public class HammerTimeJelly extends Jelly {
 
     @Override
     public void smash() {
-	new HammerTime(10f).trigger();
-	stage.onBonusEffectTrigger(BuffEffect.HAMMER_TIME);
+	stage.onBonusEffectTrigger(this, BuffEffect.HAMMER_TIME);
 	super.smash();
     }
 

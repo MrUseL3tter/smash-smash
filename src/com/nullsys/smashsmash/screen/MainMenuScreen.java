@@ -194,6 +194,9 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
 	arcade.interpolateAlpha(0f, 250, true);
 	endless.interpolateAlpha(0f, 250, true);
 	fury.interpolateAlpha(0f, 250, true);
+	arcade.interpolateScaleXY(.25f, .25f, 250, true);
+	endless.interpolateScaleXY(.25f, .25f, 250, true);
+	fury.interpolateScaleXY(.25f, .25f, 250, true);
     }
 
 }

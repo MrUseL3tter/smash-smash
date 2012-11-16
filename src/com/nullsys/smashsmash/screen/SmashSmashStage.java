@@ -38,7 +38,7 @@ import com.nullsys.smashsmash.alien.Ogre;
 import com.nullsys.smashsmash.alien.ScoreFrenzyJelly;
 import com.nullsys.smashsmash.alien.Sorcerer;
 import com.nullsys.smashsmash.alien.Tortoise;
-import com.nullsys.smashsmash.bonuseffect.BuffEffect;
+import com.nullsys.smashsmash.buffeffect.BuffEffect;
 import com.nullsys.smashsmash.hammer.HammerEffect;
 import com.nullsys.smashsmash.hammer.HammerEffectPool;
 
@@ -69,13 +69,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     private boolean showUI = true;
     private boolean allowSpawn = true;
     private boolean paused = false;
-
-    /**
-     * becomes RECOVERY_DISABILITY_DURATION and continuously decremented when an alien attacks the
-     * player successfully. player can only smash when recoverDelay is below 1.
-     */
     private float recoveryDelay = 0;
-    protected float sorcererSpawnDelay = 0;
     protected int spawnDelay = 0;
     protected int spawnRate = 0;
     protected int streaks = 0;
@@ -157,7 +151,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     @Override
     public void onAlienAttack(Alien alien) {
-	if (!User.hasEffect(BuffEffect.INVULNERABILITY)) {
+	if (!User.hasBuffEffect(BuffEffect.INVULNERABILITY)) {
 	    session.combosCurrent = 0;
 	    camera.shake();
 	    removeBonusEffects();
@@ -201,17 +195,32 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     @Override
-    public void onBonusEffectTrigger(int... bonusEffects) {
-	for (int i = 0; i < bonusEffects.length; i++)
-	    switch (bonusEffects[i]) {
+    public void onBonusEffectTrigger(Alien alien, int... buffEffects) {
+	for (int i = 0; i < buffEffects.length; i++)
+	    switch (buffEffects[i]) {
 		case BuffEffect.HAMMER_TIME:
-		    ui.showBuffEffectPrompt(BuffEffect.HAMMER_TIME);
+		    if (!(alien instanceof Sorcerer))
+			ui.showBuffEffectPrompt(BuffEffect.HAMMER_TIME);
+		    else {
+			showBuffEffect(buffEffects[i]);
+			User.addBuffEffect(BuffEffect.HAMMER_TIME);
+		    }
 		    break;
 		case BuffEffect.INVULNERABILITY:
-		    ui.showBuffEffectPrompt(BuffEffect.INVULNERABILITY);
+		    if (!(alien instanceof Sorcerer))
+			ui.showBuffEffectPrompt(BuffEffect.INVULNERABILITY);
+		    else {
+			showBuffEffect(buffEffects[i]);
+			User.addBuffEffect(BuffEffect.INVULNERABILITY);
+		    }
 		    break;
 		case BuffEffect.SCORE_FRENZY:
-		    ui.showBuffEffectPrompt(BuffEffect.SCORE_FRENZY);
+		    if (!(alien instanceof Sorcerer))
+			ui.showBuffEffectPrompt(BuffEffect.SCORE_FRENZY);
+		    else {
+			showBuffEffect(buffEffects[i]);
+			User.addBuffEffect(BuffEffect.SCORE_FRENZY);
+		    }
 		    break;
 		default:
 		    assert false;
@@ -241,14 +250,14 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
 	    if (isAttackAllowed() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
 		session.smashLanded++;
-		if (User.hasEffect(BuffEffect.HAMMER_TIME))
+		if (User.hasBuffEffect(BuffEffect.HAMMER_TIME))
 		    camera.shake();
 		addHammerEffect(position.x, position.y);
 		if (Settings.soundEnabled)
 		    Sounds.hammerIceFlakes.play();
 	    }
 
-	    if (!touchedAnAlien && !touchedACoin && !User.hasEffect(BuffEffect.HAMMER_TIME))
+	    if (!touchedAnAlien && !touchedACoin && !User.hasBuffEffect(BuffEffect.HAMMER_TIME))
 		onSmashMissed(position.x, position.y);
 	}
     }
@@ -283,7 +292,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
 	delta = paused ? 0 : delta;
 
-	sorcererSpawnDelay -= delta;
 	session.stageSecondsElapsed += delta;
 
 	spriteBatch.begin();
@@ -356,29 +364,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	this.showUI = showUI;
     }
 
-    protected void showBuffEffect(int buffEffect) {
-	switch (buffEffect) {
-	    case BuffEffect.HAMMER_TIME:
-		buffEffectPinwheelGreen.color.a = 0f;
-		buffEffectPinwheelGreen.interpolateAlpha(1f, Linear.INOUT, 500, true);
-		buffEffectPinwheelGreen.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
-		break;
-	    case BuffEffect.INVULNERABILITY:
-		buffEffectBlackFill.color.a = 0f;
-		buffEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
-		buffEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
-		break;
-	    case BuffEffect.SCORE_FRENZY:
-		buffEffectPinwheelBlue.color.a = 0f;
-		buffEffectPinwheelBlue.interpolateAlpha(1f, Linear.INOUT, 500, true);
-		buffEffectPinwheelBlue.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
-		break;
-	    default:
-		assert false;
-		break;
-	}
-    }
-
     protected void addCoin(float x, float y) {
 	Coin coin = new Coin(Art.coins, 0, 0, 64, 64, 8, 8, .125f);
 	coin.position.set(x, y);
@@ -410,8 +395,18 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected void addScore(Alien alien) {
 	int multiplier = getComboMultiplier();
-	multiplier *= User.hasEffect(BuffEffect.SCORE_FRENZY) ? 3 : 1;
+	multiplier *= User.hasBuffEffect(BuffEffect.SCORE_FRENZY) ? 3 : 1;
 	session.score += alien.getScore() * multiplier * (streaks >= 1 ? streaks : 1);
+    }
+
+    protected boolean buffAliensVisible() {
+	boolean visible = false;
+	for (int i = 0; i < aliens.size(); i++)
+	    if (aliens.get(i).isVisible() && (aliens.get(i) instanceof HammerTimeJelly || aliens.get(i) instanceof InvulnerabilityJelly || aliens.get(i) instanceof ScoreFrenzyJelly)) {
+		visible = true;
+		break;
+	    }
+	return visible;
     }
 
     protected int getVisibleAliens() {
@@ -506,11 +501,21 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	return hit;
     }
 
+    protected boolean isSorcererVisible() {
+	boolean visible = false;
+	for (int i = 0; i < aliens.size(); i++)
+	    if (aliens.get(i) instanceof Sorcerer && aliens.get(i).isVisible()) {
+		visible = true;
+		break;
+	    }
+	return visible;
+    }
+
     protected void removeBonusEffects() {
 	buffEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 200, true);
 	buffEffectPinwheelBlue.interpolateAlpha(0f, Linear.INOUT, 200, true);
 	buffEffectPinwheelGreen.interpolateAlpha(0f, Linear.INOUT, 200, true);
-	User.bonusEffects.clear();
+	User.buffEffects.clear();
     }
 
     protected void renderAliens(SpriteBatch batch, float delta) {
@@ -533,8 +538,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    setSpawnRate();
 	    setSpawnPositions();
 	    boolean overlaps = false;
-	    boolean sorcererShouldAppear = !User.hasEffect(BuffEffect.HAMMER_TIME) && !User.hasEffect(BuffEffect.INVULNERABILITY);
-	    sorcererShouldAppear = sorcererSpawnDelay <= 0 && sorcererShouldAppear && !User.hasEffect(BuffEffect.SCORE_FRENZY);
 	    if (getVisibleAliens() < spawnRate)
 		for (int i = 0; i < aliens.size() && getVisibleAliens() < spawnRate; i++) {
 		    if (!aliens.get(i).isVisible()) {
@@ -544,16 +547,22 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 				j = aliens.size() + 1; //break this loop
 			    }
 			spawnDelay = i * (int) (Math.random() * 250);
-			// we only show an alien if it doesn't collide with other ones or if it is a sorcerer 
-			// and it is allowed to be spawn and doesn't collide to others
-			if (!(aliens.get(i) instanceof Sorcerer) && !overlaps) {
-			    float volume = getVisibleAliens() > 0 ? 1.1f - getVisibleAliens() / aliens.size() : 1f;
+			boolean buffAlien = aliens.get(i) instanceof HammerTimeJelly || aliens.get(i) instanceof InvulnerabilityJelly || aliens.get(i) instanceof ScoreFrenzyJelly;
+			float volume = getVisibleAliens() > 0 ? 1.1f - getVisibleAliens() / aliens.size() : 1f;
+			if (aliens.get(i) instanceof Sorcerer && !buffAliensVisible() && User.buffEffects.size() == 0 && !overlaps)
 			    aliens.get(i).rise(spawnDelay, volume / 2);
-			} else if (aliens.get(i) instanceof Sorcerer && sorcererShouldAppear && !overlaps) {
-			    sorcererSpawnDelay = (float) (3f + Math.random() * 11f);
-			    float volume = getVisibleAliens() > 0 ? 1.1f - getVisibleAliens() / aliens.size() : 1f;
+			else if (aliens.get(i) instanceof HammerTimeJelly && !User.hasBuffEffect(BuffEffect.HAMMER_TIME) && !isSorcererVisible() && !overlaps)
 			    aliens.get(i).rise(spawnDelay, volume / 2);
-			}
+			else if (aliens.get(i) instanceof InvulnerabilityJelly && !User.hasBuffEffect(BuffEffect.INVULNERABILITY) && !isSorcererVisible() && !overlaps)
+			    aliens.get(i).rise(spawnDelay, volume / 2);
+			else if (aliens.get(i) instanceof ScoreFrenzyJelly && !User.hasBuffEffect(BuffEffect.SCORE_FRENZY) && !isSorcererVisible() && !overlaps)
+			    aliens.get(i).rise(spawnDelay, volume / 2);
+			else if (!buffAlien && !overlaps)
+			    aliens.get(i).rise(spawnDelay, volume / 2);
+			//			if (aliens.get(i) instanceof Sorcerer && !buffAliensVisible() && !overlaps || buffAlien && !isSorcererVisible() && !overlaps || !buffAlien && !overlaps) {
+			//			    float volume = getVisibleAliens() > 0 ? 1.1f - getVisibleAliens() / aliens.size() : 1f;
+			//			    aliens.get(i).rise(spawnDelay, volume / 2);
+			//			}
 		    }
 		    overlaps = false;
 		}
@@ -606,8 +615,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	buffEffectBlackFill.update(delta);
 	buffEffectPinwheelBlue.update(delta);
 	buffEffectPinwheelGreen.update(delta);
-	for (int itemEffectIndex = 0; itemEffectIndex < User.bonusEffects.size(); itemEffectIndex++)
-	    User.bonusEffects.get(itemEffectIndex).update(delta);
+	for (int itemEffectIndex = 0; itemEffectIndex < User.buffEffects.size(); itemEffectIndex++)
+	    User.buffEffects.get(itemEffectIndex).update(delta);
     }
 
     protected void setSpawnPositions() {
@@ -627,7 +636,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     protected void setSpawnRate() {
-	boolean hasRampage = User.hasEffect(BuffEffect.INVULNERABILITY) && User.hasEffect(BuffEffect.HAMMER_TIME) && User.hasEffect(BuffEffect.SCORE_FRENZY);
+	boolean hasRampage = User.hasBuffEffect(BuffEffect.INVULNERABILITY) && User.hasBuffEffect(BuffEffect.HAMMER_TIME) && User.hasBuffEffect(BuffEffect.SCORE_FRENZY);
 	if (allowSpawn && hasRampage)
 	    spawnRate = aliens.size();
 	else if (!allowSpawn)
@@ -647,5 +656,31 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	else
 	    spawnRate = 6;
 	//	alienAppearanceRate = aliens.size();
+    }
+
+    protected void showBuffEffect(int buffEffect) {
+	switch (buffEffect) {
+	    case BuffEffect.HAMMER_TIME:
+		buffEffectPinwheelGreen.color.a = 0f;
+		buffEffectPinwheelGreen.interpolateAlpha(1f, Linear.INOUT, 500, true);
+		buffEffectPinwheelGreen.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
+		User.addBuffEffect(BuffEffect.HAMMER_TIME);
+		break;
+	    case BuffEffect.INVULNERABILITY:
+		buffEffectBlackFill.color.a = 0f;
+		buffEffectBlackFill.interpolateAlpha(.35f, Linear.INOUT, 500, true);
+		buffEffectBlackFill.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
+		User.addBuffEffect(BuffEffect.INVULNERABILITY);
+		break;
+	    case BuffEffect.SCORE_FRENZY:
+		buffEffectPinwheelBlue.color.a = 0f;
+		buffEffectPinwheelBlue.interpolateAlpha(1f, Linear.INOUT, 500, true);
+		buffEffectPinwheelBlue.interpolateAlpha(0f, Linear.INOUT, 500, true).delay(9000);
+		User.addBuffEffect(BuffEffect.SCORE_FRENZY);
+		break;
+	    default:
+		assert false;
+		break;
+	}
     }
 }

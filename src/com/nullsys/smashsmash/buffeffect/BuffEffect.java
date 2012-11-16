@@ -1,10 +1,10 @@
-package com.nullsys.smashsmash.bonuseffect;
+package com.nullsys.smashsmash.buffeffect;
 
 import com.nullsys.smashsmash.User;
 
-public abstract class BuffEffect {
+public class BuffEffect {
 
-    protected static final int DEFAULT_DURATION = 1;
+    protected static final int DEFAULT_DURATION = 10;
     public static final int HAMMER_TIME = 1;
     public static final int SCORE_FRENZY = 2;
     public static final int INVULNERABILITY = 3;
@@ -15,15 +15,33 @@ public abstract class BuffEffect {
     protected float secondsCounter = 0;
     protected boolean active = false;
 
+    public BuffEffect(int type) {
+	this.type = type;
+    }
+
+    public BuffEffect(int type, float duration) {
+	this.type = type;
+	this.duration = duration;
+    }
+
+    protected BuffEffect() {
+
+    }
+
     public int getType() {
 	return type;
     }
 
-    public abstract void trigger();
+    public BuffEffect trigger() {
+	active = true;
+	//	User.buffEffects.add(this);
+	secondsElapsed = 0;
+	return this;
+    }
 
     public void update(float deltaTime) {
 	if (active && secondsElapsed >= duration)
-	    User.bonusEffects.remove(this);
+	    User.buffEffects.remove(this);
 
 	if (active && secondsCounter >= 1 && (int) secondsCounter % 1 == 0) {
 	    secondsElapsed++;
