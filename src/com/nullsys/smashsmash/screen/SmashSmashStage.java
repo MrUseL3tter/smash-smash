@@ -26,7 +26,6 @@ import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.User;
 import com.nullsys.smashsmash.alien.Alien;
-import com.nullsys.smashsmash.alien.Alien.AlienState;
 import com.nullsys.smashsmash.alien.Bomb;
 import com.nullsys.smashsmash.alien.Diabolic;
 import com.nullsys.smashsmash.alien.Fluff;
@@ -199,28 +198,25 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	for (int i = 0; i < buffEffects.length; i++)
 	    switch (buffEffects[i]) {
 		case BuffEffect.HAMMER_TIME:
+		    showBuffEffect(buffEffects[i]);
 		    if (!(alien instanceof Sorcerer))
-			ui.showBuffEffectPrompt(BuffEffect.HAMMER_TIME);
-		    else {
-			showBuffEffect(buffEffects[i]);
+			ui.showBuffEffectPrompt(BuffEffect.HAMMER_TIME, alien.position.x, alien.position.y);
+		    else
 			User.addBuffEffect(BuffEffect.HAMMER_TIME);
-		    }
 		    break;
 		case BuffEffect.INVULNERABILITY:
+		    showBuffEffect(buffEffects[i]);
 		    if (!(alien instanceof Sorcerer))
-			ui.showBuffEffectPrompt(BuffEffect.INVULNERABILITY);
-		    else {
-			showBuffEffect(buffEffects[i]);
+			ui.showBuffEffectPrompt(BuffEffect.INVULNERABILITY, alien.position.x, alien.position.y);
+		    else
 			User.addBuffEffect(BuffEffect.INVULNERABILITY);
-		    }
 		    break;
 		case BuffEffect.SCORE_FRENZY:
+		    showBuffEffect(buffEffects[i]);
 		    if (!(alien instanceof Sorcerer))
-			ui.showBuffEffectPrompt(BuffEffect.SCORE_FRENZY);
-		    else {
-			showBuffEffect(buffEffects[i]);
+			ui.showBuffEffectPrompt(BuffEffect.SCORE_FRENZY, alien.position.x, alien.position.y);
+		    else
 			User.addBuffEffect(BuffEffect.SCORE_FRENZY);
-		    }
 		    break;
 		default:
 		    assert false;
@@ -453,14 +449,15 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected boolean inputToAliens(float x, float y, int pointer) {
 	int diameter = User.hammer.getDiameter();
-	Rectangle bounds = new Rectangle(x - diameter / 2, y - diameter / 2, diameter, diameter);
+	Rectangle hammerBounds = new Rectangle(x - diameter / 2, y - diameter / 2, diameter, diameter);
 	int hitCount = 0;
-	for (int i = 0; i < aliens.size(); i++)
-	    if (aliens.get(i) instanceof Bomb && aliens.get(i).isVisible() && aliens.get(i).getHitBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
+	for (int i = 0; i < aliens.size(); i++) {
+	    boolean hit = aliens.get(i).hit(hammerBounds);
+	    if (hit && aliens.get(i) instanceof Bomb) {
 		aliens.get(i).smash();
 		pointers[pointer] = false;
 		return true;
-	    } else if (aliens.get(i).isVisible() && aliens.get(i).getHitBounds().overlaps(bounds) && aliens.get(i).state != AlienState.SMASHED) {
+	    } else if (hit) {
 		//		onAlienSmashed(aliens.get(i));
 		hitCount++;
 		session.combosCurrent++;
@@ -470,6 +467,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		pointers[pointer] = true;
 		break;
 	    }
+	}
 	// Display a "x + 1!" message
 	//	if (hitCount >= 2) {
 	//	    DynamicText text = new DynamicText(Fonts.bdCartoonShoutx23orange, hitCount + " in 1!", HAlignment.CENTER);

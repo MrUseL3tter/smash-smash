@@ -131,9 +131,8 @@ public class Alien {
 	upElapsedTime = 0;
     }
 
-    public boolean hit(float x, float y) {
-	// TODO 
-	return false;
+    public boolean hit(Rectangle rectangle) {
+	return visible && state != AlienState.SMASHED && getHitBounds().overlaps(rectangle);
     }
 
     public boolean isHostile() {

@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.noobs2d.tweenengine.utils.DynamicCallback.InvisibleOnEnd;
+import com.noobs2d.tweenengine.utils.DynamicDisplay;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.noobs2d.tweenengine.utils.DynamicSprite;
 import com.noobs2d.tweenengine.utils.DynamicText;
@@ -40,7 +41,7 @@ public class UserInterface {
     public DynamicSprite itemEffectHammerTime;
     public DynamicSprite itemEffectScoreFrenzy;
 
-    public List<DynamicText> textPool = new ArrayList<DynamicText>();
+    public List<DynamicDisplay> textPool = new ArrayList<DynamicDisplay>();
     public DynamicText flyout;
     public DynamicText comboCount;
     public DynamicText comboBonus;
@@ -121,45 +122,35 @@ public class UserInterface {
 	}
     }
 
-    public void showBuffEffectPrompt(final int buffEffect) {
-	DynamicText text = new DynamicText(Fonts.actionJackson115, "");
-	text.setPosition(-(Settings.SCREEN_WIDTH / 2), Settings.SCREEN_HEIGHT / 2);
-	text.setColor(1f, 1f, 1f, 0f);
-	text.interpolateAlpha(1f, 500, true).delay(250);
-	text.interpolateX(Settings.SCREEN_WIDTH / 2, 500, true).delay(250).setCallbackTriggers(TweenCallback.BEGIN).setCallback(new TweenCallback() {
-
-	    @Override
-	    public void onEvent(int type, BaseTween<?> source) {
-		if (type == TweenCallback.BEGIN)
-		    stage.pause();
-	    }
-	});
-	text.interpolateX(Settings.SCREEN_WIDTH * 2, 500, true).delay(2000).setCallback(new TweenCallback() {
-
-	    @Override
-	    public void onEvent(int type, BaseTween<?> source) {
-		if (type == TweenCallback.COMPLETE) {
-		    stage.resume();
-		    stage.showBuffEffect(buffEffect);
-		    textPool.remove(this);
-		}
-	    }
-	});
-	text.interpolateAlpha(0f, 500, true).delay(500).delay(2000);
+    public void showBuffEffectPrompt(final int buffEffect, float x, float y) {
+	DynamicSprite text = null;
 	switch (buffEffect) {
 	    case BuffEffect.HAMMER_TIME:
-		text.text = "HAMMER TIME!";
+		text = new DynamicSprite(Art.pukes.findRegion("HAMMER_TIME"), x, y);
 		break;
 	    case BuffEffect.INVULNERABILITY:
-		text.text = "INVULNERABILITY!";
+		text = new DynamicSprite(Art.pukes.findRegion("INVULNERABILITY"), x, y);
 		break;
 	    case BuffEffect.SCORE_FRENZY:
-		text.text = "SCORE FRENZY!";
+		text = new DynamicSprite(Art.pukes.findRegion("SCORE_FRENZY"), x, y);
 		break;
 	    default:
 		assert false;
 		break;
 	}
+	text.setColor(1f, 1f, 1f, 0f);
+	text.setScale(2.15f, 2.15f);
+	text.interpolateAlpha(1f, 200, true);
+	text.interpolateScaleXY(1f, 1f, Back.OUT, 200, true);
+	text.interpolateScaleXY(1.5f, 1.5f, Back.IN, 200, true).delay(1000).setCallback(new TweenCallback() {
+
+	    @Override
+	    public void onEvent(int type, BaseTween<?> source) {
+		if (type == TweenCallback.COMPLETE)
+		    textPool.remove(this);
+	    }
+	});
+	text.interpolateAlpha(0f, 200, true).delay(1000);
 	textPool.add(text);
     }
 
