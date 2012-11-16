@@ -22,9 +22,17 @@ public class HammerTimeJelly extends Jelly {
 
     @Override
     public void rise(float delay, float volume) {
-	if (spawnDelay <= 0) {
+	if (spawnDelay <= 0 && state == AlienState.HIDDEN) {
 	    spawnDelay = 15f + MathUtils.random(25f);
-	    super.rise(delay, volume);
+	    risingStateTime = 1 + delay / 1000;
+	    waitingStateTime = 1.25f;
+	    upElapsedTime = 0;
+
+	    state = AlienState.RISING;
+
+	    setVisible(true);
+	    reset();
+	    interpolateRise(delay);
 	}
     }
 
