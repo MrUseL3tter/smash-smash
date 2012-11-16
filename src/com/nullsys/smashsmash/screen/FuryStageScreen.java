@@ -1,5 +1,7 @@
 package com.nullsys.smashsmash.screen;
 
+import aurelienribon.tweenengine.BaseTween;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
 import com.noobs2d.tweenengine.utils.DynamicValue;
@@ -20,6 +22,7 @@ public class FuryStageScreen extends ArcadeStageScreen {
     public FuryStageScreen(Game game) {
 	super(game);
 	elapsed = new DynamicValue(0, TIME_LIMIT, TIME_LIMIT * 1000, 0);
+	elapsed.tween.setCallback(this);
 	User.addBuffEffect(BuffEffect.HAMMER_TIME, TIME_LIMIT * 2);
     }
 
@@ -46,6 +49,15 @@ public class FuryStageScreen extends ArcadeStageScreen {
 	if (keycode == Keys.CONTROL_LEFT || keycode == Keys.MENU)
 	    game.setScreen(new FuryStageScreen(game));
 	return super.keyUp(keycode);
+    }
+
+    @Override
+    public void onEvent(int type, BaseTween<?> source) {
+	if (type == COMPLETE) {
+	    game.setScreen(new ResultScreen(game, this));
+	    setAllowSpawn(false);
+	    setAliensHostile(false);
+	}
     }
 
     @Override
@@ -76,6 +88,7 @@ public class FuryStageScreen extends ArcadeStageScreen {
 
     @Override
     protected void setSpawnRate() {
-	spawnRate = aliens.size() - 1;
+	if (isSpawnAllowed())
+	    spawnRate = aliens.size() - 1;
     }
 }

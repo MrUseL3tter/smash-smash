@@ -1,17 +1,21 @@
 package com.nullsys.smashsmash.screen;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.TweenCallback;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input.Keys;
 import com.noobs2d.tweenengine.utils.DynamicValue;
 
-public class ArcadeStageScreen extends SmashSmashStage {
+public class ArcadeStageScreen extends SmashSmashStage implements TweenCallback {
 
     private static final int TIME_LIMIT = 90;
-    DynamicValue elapsed;
+    protected DynamicValue elapsed;
 
     public ArcadeStageScreen(Game game) {
 	super(game);
 	elapsed = new DynamicValue(0, TIME_LIMIT, TIME_LIMIT * 1000, 0);
+	elapsed.tween.setCallback(this);
     }
 
     public String[] getTimerValues() {
@@ -37,6 +41,14 @@ public class ArcadeStageScreen extends SmashSmashStage {
     }
 
     @Override
+    public void onEvent(int type, BaseTween<?> source) {
+	if (type == COMPLETE) {
+	    game.setScreen(new ResultScreen(game, this));
+	    setAliensHostile(false);
+	}
+    }
+
+    @Override
     public void pause() {
 	super.pause();
 	elapsed.tweenManager.pause();
@@ -46,12 +58,6 @@ public class ArcadeStageScreen extends SmashSmashStage {
     public void render(float delta) {
 	super.render(delta);
 	elapsed.update(isPaused() ? 0 : delta);
-
-	if (elapsed.value == TIME_LIMIT) {
-	    game.setScreen(new ResultScreen(game, this));
-	    elapsed.value = 0;
-	    setAliensHostile(false);
-	}
     }
 
     @Override
