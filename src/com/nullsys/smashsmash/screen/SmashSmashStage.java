@@ -629,6 +629,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		aliens.get(i).position.set(randomX, randomY);
 		aliens.get(i).getHitBounds().x = randomX - targetWidth / 2;
 		aliens.get(i).getHitBounds().y = randomY;
+		aliens.add((int) (i * Math.random()), aliens.remove(i));
 	    }
 	}
     }
