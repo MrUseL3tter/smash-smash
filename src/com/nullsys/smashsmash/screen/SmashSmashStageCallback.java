@@ -4,8 +4,6 @@ import com.nullsys.smashsmash.alien.Alien;
 
 public interface SmashSmashStageCallback {
 
-    public boolean isAttackAllowed();
-
     public void onAlienAttack(Alien alien);
 
     public void onAlienEscaped(Alien alien);

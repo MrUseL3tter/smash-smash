@@ -48,8 +48,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     /** maximum duration before the combo expires. */
     public static final int COMBO_MAX_DURATION = 3;
-    /** seconds before being able to smash again after being puked on */
-    public static final int RECOVERY_DISABILITY_DURATION = 10;
 
     public ArrayList<HammerEffect> hammerEffects = new ArrayList<HammerEffect>();
     public ArrayList<DynamicAnimation> coinsAndGoldBars = new ArrayList<DynamicAnimation>();
@@ -68,7 +66,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     private boolean showUI = true;
     private boolean allowSpawn = true;
     private boolean paused = false;
-    private float recoveryDelay = 0;
     protected int spawnDelay = 0;
     protected int spawnRate = 0;
     protected int streaks = 0;
@@ -122,11 +119,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	return spawnRate;
     }
 
-    @Override
-    public boolean isAttackAllowed() {
-	return recoveryDelay <= RECOVERY_DISABILITY_DURATION / 4f;
-    }
-
     public boolean isPaused() {
 	return paused;
     }
@@ -155,7 +147,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    camera.shake();
 	    removeBonusEffects();
 	    if (!(alien instanceof Bomb)) {
-		recoveryDelay = RECOVERY_DISABILITY_DURATION;
 		// add 3-5 puke splashes into the screen
 		int count = (int) (3 + 1 * Math.random() * 3);
 		for (int i = 0; i < count; i++) {
@@ -166,7 +157,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		    puke.setScale(0f, 0f);
 		    puke.setRotation((float) (360 * Math.random()));
 		    puke.interpolateScaleXY(1f * targetScale, 1f * targetScale, 250, true).delay(i * 100);
-		    puke.interpolateAlpha(0f, RECOVERY_DISABILITY_DURATION * 1000, true).delay(i * 100);
+		    puke.interpolateAlpha(0f, 2000, true).delay(i * 100);
 		    pukes.add(puke);
 		}
 	    }
@@ -241,10 +232,10 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    position.y = (Gdx.graphics.getHeight() * camera.zoom - position.y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
 
 	    boolean touchedACoin = inputToCoinsAndGoldBars(position.x, position.y, pointer);
-	    boolean touchedAnAlien = isAttackAllowed() && !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
+	    boolean touchedAnAlien = !touchedACoin ? inputToAliens(position.x, position.y, pointer) : false; // We will only test collisions with the aliens if
 	    // there are no collisions with any coin
 
-	    if (isAttackAllowed() && !touchedACoin) { // Hammer effects will only be added if a coin is not tapped
+	    if (!touchedACoin) { // Hammer effects will only be added if a coin is not tapped
 		session.smashLanded++;
 		if (User.hasBuffEffect(BuffEffect.HAMMER_TIME))
 		    camera.shake();
@@ -256,14 +247,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    if (!touchedAnAlien && !touchedACoin && !User.hasBuffEffect(BuffEffect.HAMMER_TIME))
 		onSmashMissed(position.x, position.y);
 	}
-    }
-
-    @Override
-    public void onTouchDrag(float x, float y, float pointer) {
-	super.onTouchMove(x, y);
-	recoveryDelay -= 0.025f;
-	for (int i = 0; i < pukes.size(); i++)
-	    pukes.get(i).tweenSpeed += .015f;
     }
 
     @Override
@@ -596,7 +579,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    if (pukes.get(i).tweenManager.getRunningTweensCount() == 0)
 		pukes.remove(i);
 	}
-	recoveryDelay -= delta;
 	//	System.out.println("[SurvivalStageScreen#renderPukes(SpriteBatch,float)] recoveryDelay: " + recoveryDelay);
 	//	System.out.println("[SurvivalStageScreen#renderPukes(SpriteBatch,float)] Pukes count: " + pukes.size());
     }

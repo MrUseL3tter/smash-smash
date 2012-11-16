@@ -337,7 +337,7 @@ public class Alien {
 
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	if (hostile && upElapsedTime >= waitingStateTime && stage.isAttackAllowed()) {
+	if (hostile && upElapsedTime >= waitingStateTime) {
 	    state = AlienState.ATTACKING;
 	    upElapsedTime = 0;
 	    attack();
