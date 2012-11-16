@@ -27,6 +27,11 @@ public class FuryStageScreen extends ArcadeStageScreen {
     }
 
     @Override
+    public int getComboMultiplier() {
+	return 1;
+    }
+
+    @Override
     public String[] getTimerValues() {
 	float left = TIME_LIMIT - elapsed.value;
 	String one = "0", two = "0", three = "0", four = "0";
@@ -58,6 +63,16 @@ public class FuryStageScreen extends ArcadeStageScreen {
 	    setAllowSpawn(false);
 	    setAliensHostile(false);
 	}
+    }
+
+    @Override
+    protected void checkComboTime() {
+	session.combosCurrent = 0;
+    }
+
+    @Override
+    protected void checkStreaks() {
+
     }
 
     @Override

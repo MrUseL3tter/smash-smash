@@ -415,7 +415,7 @@ public class UserInterface {
 	//	    seconds[i].render(spriteBatch);
 	//	for (int i = 0; i < smash.length; i++)
 	//	    smash[i].render(spriteBatch);
-	if (stage.session.combosCurrent > 1) {
+	if (stage.session.combosCurrent > 1 && !(stage instanceof FuryStageScreen)) {
 	    comboCount.render(spriteBatch);
 	    comboBonus.render(spriteBatch);
 	}

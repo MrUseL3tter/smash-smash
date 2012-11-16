@@ -276,33 +276,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	}
 	spriteBatch.end();
 	spriteBatch.setColor(1f, 1f, 1f, 1f);
-
-	// Check if 3 sec. has passed since the last successful hit. If so, the combos are cancelled.
-	if (session.stageSecondsElapsed - session.combosLastDelta >= COMBO_MAX_DURATION && session.combosCurrent > 0) {
-	    ui.showComboPrompt(session.combosCurrent);
-	    session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
-	    session.combosCurrent = 0;
-	}
-
-	// update streaks
-	streaks = 0;
-	for (int i = 0; i < pointers.length; i++)
-	    if (pointers[i])
-		streaks++;
-	if (streaks >= 2) {
-	    ui.showStreakPrompt(streaks);
-	    for (int i = 0; i < pointers.length; i++)
-		pointers[i] = false;
-	}
-
-	try {
-	    if (session.stageSecondsElapsed > 0 && Integer.parseInt(("" + session.stageSecondsElapsed).split(".")[1]) % 2 == 0) // .2 seconds has passed
-		for (int i = 0; i < pointers.length; i++)
-		    pointers[i] = false;
-	} catch (ArrayIndexOutOfBoundsException e) {
-	    //	    System.out.println("[SmashSmashStage#render(float): ArrayOutOfBoundsException");
-	}
-	//	System.out.println("[SmashSmashStage#render(float)] blackFill.color.a: " + bonusEffectBlackFill.getColor().a);
+	checkComboTime();
+	checkStreaks();
     }
 
     @Override
@@ -392,6 +367,35 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		break;
 	    }
 	return visible;
+    }
+
+    protected void checkComboTime() {
+	// Check if 3 sec. has passed since the last successful hit. If so, the combos are cancelled.
+	if (session.stageSecondsElapsed - session.combosLastDelta >= COMBO_MAX_DURATION && session.combosCurrent > 0) {
+	    ui.showComboPrompt(session.combosCurrent);
+	    session.combosMax = session.combosCurrent > session.combosMax ? session.combosCurrent : session.combosMax;
+	    session.combosCurrent = 0;
+	}
+    }
+
+    protected void checkStreaks() {
+	// update streaks
+	streaks = 0;
+	for (int i = 0; i < pointers.length; i++)
+	    if (pointers[i])
+		streaks++;
+	if (streaks >= 2) {
+	    ui.showStreakPrompt(streaks);
+	    for (int i = 0; i < pointers.length; i++)
+		pointers[i] = false;
+	}
+
+	try {
+	    if (session.stageSecondsElapsed > 0 && Integer.parseInt(("" + session.stageSecondsElapsed).split(".")[1]) % 2 == 0) // .2 seconds has passed
+		for (int i = 0; i < pointers.length; i++)
+		    pointers[i] = false;
+	} catch (ArrayIndexOutOfBoundsException e) {
+	}
     }
 
     protected int getVisibleAliens() {
