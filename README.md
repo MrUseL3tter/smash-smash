@@ -1,6 +1,6 @@
 Smash! Smash! is a no-brainer game for Android smartphones.
 
-2012-11-15
+2012-11-16
 
 NEW FEATURES: 
 
@@ -19,6 +19,12 @@ NEW FEATURES:
 	-added Hammer Time alien (Green Jelly)
 	
 	-added Score Frenzy alien (Weirdly Blue Jelly)
+	
+	-added a collision bounds for aliens not to overlap too much
+	
+	-changed sorcerer to not appear when a buffeffect alien is visible and/or in effect and vice versa
+	
+	-adjusted buff aliens' waiting state time to 1.25s
 	
 	
 BUG FIXES:
