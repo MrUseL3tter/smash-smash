@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.nullsys.smashsmash.Particles;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BonusEffect;
+import com.nullsys.smashsmash.bonuseffect.BuffEffect;
 
 public class Hammer {
 
@@ -61,14 +61,14 @@ public class Hammer {
     }
 
     public int getDiameter() {
-	if (User.hasEffect(BonusEffect.HAMMER_TIME))
+	if (User.hasEffect(BuffEffect.HAMMER_TIME))
 	    return HAMMER_TIME_DIAMETER;
 	else
 	    return NORMAL_DIAMETER;
     }
 
     public ParticleEffect getEffect() {
-	if (Settings.cheatHammerTime || User.hasEffect(BonusEffect.HAMMER_TIME))
+	if (Settings.cheatHammerTime || User.hasEffect(BuffEffect.HAMMER_TIME))
 	    return hammerTimeEffect;
 	else
 	    return normalEffect;

@@ -2,7 +2,7 @@ package com.nullsys.smashsmash.bonuseffect;
 
 import com.nullsys.smashsmash.User;
 
-public abstract class BonusEffect {
+public abstract class BuffEffect {
 
     protected static final int DEFAULT_DURATION = 1;
     public static final int HAMMER_TIME = 1;

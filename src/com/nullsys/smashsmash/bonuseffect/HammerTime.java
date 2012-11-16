@@ -2,7 +2,7 @@ package com.nullsys.smashsmash.bonuseffect;
 
 import com.nullsys.smashsmash.User;
 
-public class HammerTime extends BonusEffect {
+public class HammerTime extends BuffEffect {
 
     public HammerTime() {
 	type = HAMMER_TIME;

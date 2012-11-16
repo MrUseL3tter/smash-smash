@@ -24,7 +24,7 @@ import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Fonts;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BonusEffect;
+import com.nullsys.smashsmash.bonuseffect.BuffEffect;
 
 public class UserInterface {
 
@@ -121,7 +121,7 @@ public class UserInterface {
 	}
     }
 
-    public void showBonusEffectPrompt(int bonusEffect) {
+    public void showBuffEffectPrompt(final int buffEffect) {
 	DynamicText text = new DynamicText(Fonts.actionJackson115, "");
 	text.setPosition(-(Settings.SCREEN_WIDTH / 2), Settings.SCREEN_HEIGHT / 2);
 	text.setColor(1f, 1f, 1f, 0f);
@@ -140,19 +140,20 @@ public class UserInterface {
 	    public void onEvent(int type, BaseTween<?> source) {
 		if (type == TweenCallback.COMPLETE) {
 		    stage.resume();
+		    stage.showBuffEffect(buffEffect);
 		    textPool.remove(this);
 		}
 	    }
 	});
 	text.interpolateAlpha(0f, 500, true).delay(500).delay(2000);
-	switch (bonusEffect) {
-	    case BonusEffect.HAMMER_TIME:
+	switch (buffEffect) {
+	    case BuffEffect.HAMMER_TIME:
 		text.text = "HAMMER TIME!";
 		break;
-	    case BonusEffect.INVULNERABILITY:
+	    case BuffEffect.INVULNERABILITY:
 		text.text = "INVULNERABILITY!";
 		break;
-	    case BonusEffect.SCORE_FRENZY:
+	    case BuffEffect.SCORE_FRENZY:
 		text.text = "SCORE FRENZY!";
 		break;
 	    default:

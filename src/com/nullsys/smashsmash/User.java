@@ -2,7 +2,7 @@ package com.nullsys.smashsmash;
 
 import java.util.ArrayList;
 
-import com.nullsys.smashsmash.bonuseffect.BonusEffect;
+import com.nullsys.smashsmash.bonuseffect.BuffEffect;
 import com.nullsys.smashsmash.hammer.Hammer;
 
 public class User {
@@ -11,7 +11,7 @@ public class User {
 
     public static Hammer hammer;
 
-    public static ArrayList<BonusEffect> bonusEffects = new ArrayList<BonusEffect>();
+    public static ArrayList<BuffEffect> bonusEffects = new ArrayList<BuffEffect>();
 
     public static boolean hasEffect(int itemEffectType) {
 	for (int itemEffectIndex = 0; itemEffectIndex < bonusEffects.size(); itemEffectIndex++)
@@ -23,6 +23,6 @@ public class User {
 
     public static void init() {
 	hammer = new Hammer();
-	bonusEffects = new ArrayList<BonusEffect>();
+	bonusEffects = new ArrayList<BuffEffect>();
     }
 }

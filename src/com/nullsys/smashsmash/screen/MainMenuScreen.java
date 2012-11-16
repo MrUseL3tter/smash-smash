@@ -141,10 +141,10 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
 	    arcade.interpolateScaleXY(1f, 1f, Back.OUT, 250, true);
 	    endless.visible = true;
 	    endless.setScale(0f, 0f);
-	    endless.interpolateScaleXY(1f, 1f, Back.OUT, 250, true).delay(150);
+	    endless.interpolateScaleXY(1f, 1f, Back.OUT, 250, true).delay(100);
 	    fury.visible = true;
 	    fury.setScale(0f, 0f);
-	    fury.interpolateScaleXY(1f, 1f, Back.OUT, 250, true).delay(300);
+	    fury.interpolateScaleXY(1f, 1f, Back.OUT, 250, true).delay(150);
 	    title.interpolateAlpha(0f, 100, true);
 	    stats.interpolateY(stats.getY() - 200, 100, true);
 	    hammers.interpolateY(hammers.getY() - 200, 100, true);
@@ -191,9 +191,9 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
     }
 
     private void interpolateEnd() {
-	arcade.interpolateScaleXY(.5f, .5f, Back.IN, 500, true);
-	endless.interpolateScaleXY(.5f, .5f, Back.IN, 500, true);
-	fury.interpolateScaleXY(.5f, .5f, Back.IN, 500, true);
+	arcade.interpolateAlpha(0f, 250, true);
+	endless.interpolateAlpha(0f, 250, true);
+	fury.interpolateAlpha(0f, 250, true);
     }
 
 }

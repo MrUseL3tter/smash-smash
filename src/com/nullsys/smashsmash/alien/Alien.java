@@ -12,7 +12,7 @@ import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
-import com.nullsys.smashsmash.bonuseffect.BonusEffect;
+import com.nullsys.smashsmash.bonuseffect.BuffEffect;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
 
 public class Alien {
@@ -38,7 +38,8 @@ public class Alien {
     public AlienState state = AlienState.HIDDEN;
 
     protected SmashSmashStageCallback stage;
-    protected Rectangle bounds = new Rectangle();
+    protected Rectangle collisionBounds = new Rectangle(0, 0, 96, 276);
+    protected Rectangle hitBounds = new Rectangle(0, 0, 0, 0);
 
     public DynamicAnimationGroup risingState;
     public DynamicAnimationGroup waitingState;
@@ -75,7 +76,15 @@ public class Alien {
 	stage.onAlienAttack(this);
     }
 
-    public Rectangle getBounds() {
+    public boolean collides(Alien alien) {
+	collisionBounds.x = position.x - 48;
+	collisionBounds.y = position.y - 110;
+	alien.collisionBounds.x = alien.position.x - 48;
+	alien.collisionBounds.y = alien.position.y - 110;
+	return collisionBounds.overlaps(alien.getHitBounds());
+    }
+
+    public Rectangle getHitBounds() {
 	if (getStateAnimation() != null) {
 	    float scaleX = getStateAnimation().getLargestAreaDisplay().scale.x;
 	    float scaleY = getStateAnimation().getLargestAreaDisplay().scale.y;
@@ -83,9 +92,9 @@ public class Alien {
 	    float y = position.y;
 	    float width = getStateAnimation().getLargestAreaDisplay().getKeyFrame().getRegionWidth() * scaleX;
 	    float height = getStateAnimation().getLargestAreaDisplay().getKeyFrame().getRegionHeight() * scaleY;
-	    bounds.set(x, y, width, height);
+	    hitBounds.set(x, y, width, height);
 	}
-	return bounds;
+	return hitBounds;
     }
 
     public int getScore() {
@@ -120,6 +129,11 @@ public class Alien {
 	}
 	state = AlienState.HIDING;
 	upElapsedTime = 0;
+    }
+
+    public boolean hit(float x, float y) {
+	// TODO 
+	return false;
     }
 
     public boolean isHostile() {
@@ -205,7 +219,7 @@ public class Alien {
 	if (Settings.soundEnabled)
 	    SFXsmash.play();
 	hitPoints--;
-	if (User.hasEffect(BonusEffect.HAMMER_TIME) || hitPoints <= 0 && state != AlienState.SMASHED) { //alien dead
+	if (User.hasEffect(BuffEffect.HAMMER_TIME) || hitPoints <= 0 && state != AlienState.SMASHED) { //alien dead
 	    upElapsedTime = 0;
 	    hitPoints = hitPointsTotal;
 	    state = AlienState.SMASHED;
