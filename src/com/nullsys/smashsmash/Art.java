@@ -4,7 +4,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Art {
 
@@ -17,19 +16,6 @@ public class Art {
     public static TextureAtlas result;
     public static TextureAtlas goldbar;
 
-    public static Texture hud;
-    public static TextureRegion hudBuffEffectCoinRain;
-    public static TextureRegion hudBuffEffectHammerTime;
-    public static TextureRegion hudBuffEffectScoreFrenzy;
-    public static TextureRegion hudLifePoint;
-
-    public static Texture hammers;
-    public static TextureRegion hammerWooden;
-    public static TextureRegion hammerMetal;
-    public static TextureRegion hammerStarryNight;
-    public static TextureRegion hammerGoldDigger;
-    public static TextureRegion hammerMjolnir;
-
     public static Texture coins;
 
     public static Texture readyPrompt;
@@ -38,7 +24,6 @@ public class Art {
     public static Texture pinwheel2;
 
     public static void load(AssetManager assetManager) {
-	assetManager.load("data/gfx/SAMPLE_HUD.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_COINS.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_BACKGROUND1.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_BACKGROUND2.png", Texture.class);
@@ -63,15 +48,6 @@ public class Art {
 	pukes = assetManager.get("data/gfx/PUKES.pack", TextureAtlas.class);
 	result = assetManager.get("data/gfx/RESULT.pack", TextureAtlas.class);
 	goldbar = assetManager.get("data/gfx/GOLDBAR.pack", TextureAtlas.class);
-
-	hud = assetManager.get("data/gfx/SAMPLE_HUD.png", Texture.class);
-	hud.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-	hudBuffEffectScoreFrenzy = new TextureRegion(hud, 0, 99, 99, 99);
-	hudBuffEffectHammerTime = new TextureRegion(hud, 0, 0, 99, 99);
-	hudBuffEffectCoinRain = new TextureRegion(hud, 99, 0, 99, 99);
-	hudLifePoint = new TextureRegion(hud, 99, 99, 85, 78);
-
-	hammerWooden = new TextureRegion(hud, 297, 0, 182, 182);
 
 	coins = assetManager.get("data/gfx/SAMPLE_COINS.png", Texture.class);
 

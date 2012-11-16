@@ -12,6 +12,7 @@ import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,39 +26,34 @@ import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Fonts;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
+import com.nullsys.smashsmash.alien.AliensArt;
 import com.nullsys.smashsmash.buffeffect.BuffEffect;
 
 public class UserInterface {
 
-    public SmashSmashStage stage;
+    private SmashSmashStage stage;
+    private OrthographicCamera cam = new OrthographicCamera();
 
-    public DynamicSprite[] lifePoints = new DynamicSprite[3];
-    public DynamicSprite[] ready = new DynamicSprite[5];
-    public DynamicSprite[] seconds = new DynamicSprite[9];
-    public DynamicSprite[] smash = new DynamicSprite[6];
-    public DynamicText[] timer = new DynamicText[5];
+    private DynamicSprite[] lifePoints = new DynamicSprite[3];
+    private DynamicSprite[] ready = new DynamicSprite[5];
+    private DynamicSprite[] seconds = new DynamicSprite[9];
+    private DynamicSprite[] smash = new DynamicSprite[6];
+    private DynamicText[] timer = new DynamicText[5];
 
-    public DynamicSprite itemEffectCoinRain;
-    public DynamicSprite itemEffectHammerTime;
-    public DynamicSprite itemEffectScoreFrenzy;
+    private List<DynamicDisplay> textPool = new ArrayList<DynamicDisplay>();
+    private DynamicText flyout;
+    private DynamicText comboCount;
+    private DynamicText comboBonus;
+    private DynamicText comboName;
+    private DynamicText missLabel;
+    private DynamicText streakBonus;
+    private DynamicText streakName;
 
-    public List<DynamicDisplay> textPool = new ArrayList<DynamicDisplay>();
-    public DynamicText flyout;
-    public DynamicText comboCount;
-    public DynamicText comboBonus;
-    public DynamicText comboName;
-    public DynamicText missLabel;
-    public DynamicText streakBonus;
-    public DynamicText streakName;
-
-    public BitmapFont score;
-    public BitmapFont feed;
+    private BitmapFont score;
+    private BitmapFont feed;
 
     public UserInterface(SmashSmashStage stage) {
 	this.stage = stage;
-	itemEffectScoreFrenzy = new DynamicSprite(Art.hudBuffEffectScoreFrenzy, 0, 0);
-	itemEffectHammerTime = new DynamicSprite(Art.hudBuffEffectHammerTime, 0, 0);
-	itemEffectCoinRain = new DynamicSprite(Art.hudBuffEffectCoinRain, 0, 0);
 	score = Fonts.akaDylanCollage64;
 	comboCount = new DynamicText(Fonts.actionJackson115, "", HAlignment.LEFT);
 	comboCount.wrapWidth = 512;
@@ -79,14 +75,18 @@ public class UserInterface {
 	streakName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.RIGHT);
 	streakName.setRegistration(DynamicRegistration.RIGHT_CENTER);
 	missLabel = new DynamicText(Fonts.bdCartoonShoutx42, "", HAlignment.CENTER);
-	for (int i = 0; i < lifePoints.length; i++)
-	    lifePoints[i] = new DynamicSprite(Art.hudLifePoint, 55 + 97 * i, 749);
+	for (int i = 0; i < lifePoints.length; i++) {
+	    lifePoints[i] = new DynamicSprite(AliensArt.jellyShape, 55 + 97 * i, 749);
+	    lifePoints[i].setScale(.35f, .35f);
+	}
 	if (stage instanceof ArcadeStageScreen)
 	    initTimer();
 	initReadyPrompt();
     }
 
     public void render(SpriteBatch spriteBatch) {
+	cam.projection.setToOrtho2D(0f, 0f, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
+	spriteBatch.setProjectionMatrix(cam.projection);
 	renderTexts(spriteBatch);
 	if (stage instanceof EndlessStageScreen)
 	    renderLifePoints(spriteBatch);
