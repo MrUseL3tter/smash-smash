@@ -142,25 +142,15 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     @Override
     public void onAlienAttack(Alien alien) {
-	if (!User.hasBuffEffect(BuffEffect.INVULNERABILITY)) {
+	if (alien instanceof Bomb) {
 	    session.combosCurrent = 0;
 	    camera.shake();
 	    removeBonusEffects();
-	    if (!(alien instanceof Bomb)) {
-		// add 3-5 puke splashes into the screen
-		int count = (int) (3 + 1 * Math.random() * 3);
-		for (int i = 0; i < count; i++) {
-		    float x = (float) (300 + Math.random() * 680);
-		    float y = (float) (200 + Math.random() * 400);
-		    float targetScale = (float) (0.75f + Math.random() * 1.5f);
-		    DynamicSprite puke = new DynamicSprite(Art.pukes.findRegion("PUKE_GREEN"), x, y);
-		    puke.setScale(0f, 0f);
-		    puke.setRotation((float) (360 * Math.random()));
-		    puke.interpolateScaleXY(1f * targetScale, 1f * targetScale, 250, true).delay(i * 100);
-		    puke.interpolateAlpha(0f, 2000, true).delay(i * 100);
-		    pukes.add(puke);
-		}
-	    }
+	} else if (!User.hasBuffEffect(BuffEffect.INVULNERABILITY)) {
+	    session.combosCurrent = 0;
+	    camera.shake();
+	    removeBonusEffects();
+	    addPukes();
 	}
     }
 
@@ -370,6 +360,22 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	//	Array<ParticleEmitter> a = User.hammer.getEffect().getEmitters();
 	//	for (ParticleEmitter p : a)
 	//	    System.out.println(p.getDuration().getLowMax());
+    }
+
+    protected void addPukes() {
+	// add 3-5 puke splashes into the screen
+	int count = (int) (3 + 1 * Math.random() * 3);
+	for (int i = 0; i < count; i++) {
+	    float x = (float) (300 + Math.random() * 680);
+	    float y = (float) (200 + Math.random() * 400);
+	    float targetScale = (float) (0.75f + Math.random() * 1.5f);
+	    DynamicSprite puke = new DynamicSprite(Art.pukes.findRegion("PUKE_GREEN"), x, y);
+	    puke.setScale(0f, 0f);
+	    puke.setRotation((float) (360 * Math.random()));
+	    puke.interpolateScaleXY(1f * targetScale, 1f * targetScale, 250, true).delay(i * 100);
+	    puke.interpolateAlpha(0f, 2000, true).delay(i * 100);
+	    pukes.add(puke);
+	}
     }
 
     protected void addScore(Alien alien) {
