@@ -103,11 +103,11 @@ public class MainMenuScreen extends DynamicScreen implements DynamicButtonCallba
     @Override
     public void onEvent(int type, BaseTween<?> source) {
 	if (type == COMPLETE && source.equals(arcade.tween))
-	    game.setScreen(new ArcadeStageScreen(game));
+	    game.setScreen(new ArcadeStageScreen(game, false));
 	else if (type == COMPLETE && source.equals(endless.tween))
 	    game.setScreen(new EndlessStageScreen(game));
 	else if (type == COMPLETE && source.equals(fury.tween))
-	    game.setScreen(new FuryStageScreen(game));
+	    game.setScreen(new FuryStageScreen(game, false));
 
     }
 

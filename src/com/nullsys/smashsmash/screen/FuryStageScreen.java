@@ -19,8 +19,8 @@ public class FuryStageScreen extends ArcadeStageScreen {
 
     private static final int TIME_LIMIT = 120;
 
-    public FuryStageScreen(Game game) {
-	super(game);
+    public FuryStageScreen(Game game, boolean restart) {
+	super(game, restart);
 	elapsed = new DynamicValue(0, TIME_LIMIT, TIME_LIMIT * 1000, 0);
 	elapsed.tween.setCallback(this);
 	User.addBuffEffect(BuffEffect.HAMMER_TIME, TIME_LIMIT * 2);
@@ -52,7 +52,7 @@ public class FuryStageScreen extends ArcadeStageScreen {
     @Override
     public boolean keyUp(int keycode) {
 	if (keycode == Keys.CONTROL_LEFT || keycode == Keys.MENU)
-	    game.setScreen(new FuryStageScreen(game));
+	    game.setScreen(new FuryStageScreen(game, true));
 	return super.keyUp(keycode);
     }
 

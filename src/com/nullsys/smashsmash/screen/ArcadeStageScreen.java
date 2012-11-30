@@ -12,10 +12,14 @@ public class ArcadeStageScreen extends SmashSmashStage implements TweenCallback 
     private static final int TIME_LIMIT = 90;
     protected DynamicValue elapsed;
 
-    public ArcadeStageScreen(Game game) {
+    public ArcadeStageScreen(Game game, boolean restart) {
 	super(game);
 	elapsed = new DynamicValue(0, TIME_LIMIT, TIME_LIMIT * 1000, 0);
 	elapsed.tween.setCallback(this);
+	if (!restart) {
+	    pause();
+	    ui.showReadyPrompt();
+	}
     }
 
     public String[] getTimerValues() {
@@ -36,7 +40,7 @@ public class ArcadeStageScreen extends SmashSmashStage implements TweenCallback 
     @Override
     public boolean keyUp(int keycode) {
 	if (keycode == Keys.CONTROL_LEFT || keycode == Keys.MENU)
-	    game.setScreen(new ArcadeStageScreen(game));
+	    game.setScreen(new ArcadeStageScreen(game, true));
 	return super.keyUp(keycode);
     }
 

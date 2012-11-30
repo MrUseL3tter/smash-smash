@@ -76,7 +76,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	super(game, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
 	session = new Session();
 	initAliens();
-	initHUD();
+	initUI();
 
 	buffEffectBlackFill = new DynamicSprite(new TextureRegion(Art.blackFill), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
 	buffEffectBlackFill.scale.set(15f, 15f);
@@ -95,7 +95,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	Gdx.input.setCatchMenuKey(true);
 
 	User.init();
-	ui.showReadyPrompt();
     }
 
     public int getComboMultiplier() {
@@ -436,7 +435,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    aliens.get(i).setVisible(false);
     }
 
-    protected void initHUD() {
+    protected void initUI() {
 	ui = new UserInterface(this);
     }
 

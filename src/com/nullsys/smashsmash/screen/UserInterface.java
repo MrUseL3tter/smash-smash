@@ -185,128 +185,37 @@ public class UserInterface {
     }
 
     public void showReadyPrompt() {
-	int delay = 1250, duration = 1000;
-	seconds[0].color.a = 0f;
-	seconds[0].position.y -= 50;
-	seconds[0].interpolateXY(seconds[0].position.x, seconds[0].position.y + 50, Sine.OUT, 250, true);
-	seconds[0].interpolateXY(seconds[0].position.x, seconds[0].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[0].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[0].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[1].color.a = 0f;
-	seconds[1].position.y += 50;
-	seconds[1].interpolateXY(seconds[1].position.x, seconds[1].position.y - 50, Sine.OUT, 250, true);
-	seconds[1].interpolateXY(seconds[1].position.x, seconds[1].position.y - 150, Linear.INOUT, 250, true).delay(delay);
-	seconds[1].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[1].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[2].color.a = 0f;
-	seconds[2].position.y -= 50;
-	seconds[2].interpolateXY(seconds[2].position.x, seconds[2].position.y + 50, Back.OUT, 250, true);
-	seconds[2].interpolateXY(seconds[2].position.x, seconds[2].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[2].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[2].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[3].color.a = 0f;
-	seconds[3].position.y -= 50;
-	seconds[3].interpolateXY(seconds[3].position.x, seconds[3].position.y + 50, Back.OUT, 250, true).delay(50);
-	seconds[3].interpolateXY(seconds[3].position.x, seconds[3].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[3].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[3].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[4].color.a = 0f;
-	seconds[4].position.y -= 50;
-	seconds[4].interpolateXY(seconds[4].position.x, seconds[4].position.y + 50, Back.OUT, 250, true).delay(100);
-	seconds[4].interpolateXY(seconds[4].position.x, seconds[4].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[4].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[4].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[5].color.a = 0f;
-	seconds[5].position.y -= 50;
-	seconds[5].interpolateXY(seconds[5].position.x, seconds[5].position.y + 50, Back.OUT, 250, true).delay(150);
-	seconds[5].interpolateXY(seconds[5].position.x, seconds[5].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[5].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[5].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[6].color.a = 0f;
-	seconds[6].position.y -= 50;
-	seconds[6].interpolateXY(seconds[6].position.x, seconds[6].position.y + 50, Back.OUT, 250, true).delay(200);
-	seconds[6].interpolateXY(seconds[6].position.x, seconds[6].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[6].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[6].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[7].color.a = 0f;
-	seconds[7].position.y -= 50;
-	seconds[7].interpolateXY(seconds[7].position.x, seconds[7].position.y + 50, Back.OUT, 250, true).delay(250);
-	seconds[7].interpolateXY(seconds[7].position.x, seconds[7].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[7].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[7].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	delay += 50;
-	seconds[8].color.a = 0f;
-	seconds[8].position.y -= 50;
-	seconds[8].interpolateXY(seconds[8].position.x, seconds[8].position.y + 50, Back.OUT, 250, true).delay(300);
-	seconds[8].interpolateXY(seconds[8].position.x, seconds[8].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	seconds[8].interpolateAlpha(1f, Linear.INOUT, 250, true);
-	seconds[8].interpolateAlpha(0f, Linear.INOUT, 250, true).delay(delay);
-	ready[0].color.a = 0f;
-	ready[0].position.y += 50;
-	ready[0].interpolateXY(ready[0].position.x, ready[0].position.y - 50, Linear.INOUT, 250, true).delay(delay - 50);
-	ready[0].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay);
-	ready[0].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration - 50);
-	delay += 50;
-	ready[1].color.a = 0f;
-	ready[1].position.y += 50;
-	ready[1].interpolateXY(ready[1].position.x, ready[1].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	ready[1].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay);
-	ready[1].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration - 50);
-	delay += 50;
-	ready[2].color.a = 0f;
-	ready[2].position.y += 50;
-	ready[2].interpolateXY(ready[2].position.x, ready[2].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	ready[2].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay);
-	ready[2].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration - 50);
-	delay += 50;
-	ready[3].color.a = 0f;
-	ready[3].position.y += 50;
-	ready[3].interpolateXY(ready[3].position.x, ready[3].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	ready[3].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay);
-	ready[3].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration - 50);
-	delay += 50;
-	ready[4].color.a = 0f;
-	ready[4].position.y += 50;
-	ready[4].interpolateXY(ready[4].position.x, ready[4].position.y - 50, Linear.INOUT, 250, true).delay(delay);
-	ready[4].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay);
-	ready[4].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration - 50);
-	smash[0].color.a = 0f;
-	smash[0].position.x -= 500;
-	smash[0].interpolateXY(smash[0].position.x + 500, smash[0].position.y, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[0].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[0].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration * 2);
-	smash[1].color.a = 0f;
-	smash[1].position.x -= 250;
-	smash[1].interpolateXY(smash[1].position.x + 250, smash[1].position.y, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[1].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[1].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration * 2);
-	smash[2].color.a = 0f;
-	smash[2].position.x -= 125;
-	smash[2].interpolateXY(smash[2].position.x + 125, smash[2].position.y, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[2].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[2].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration * 2);
-	smash[3].color.a = 0f;
-	smash[3].position.x += 125;
-	smash[3].interpolateXY(smash[3].position.x - 125, smash[3].position.y, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[3].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[3].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration * 2);
-	smash[4].color.a = 0f;
-	smash[4].position.x += 250;
-	smash[4].interpolateXY(smash[4].position.x - 250, smash[4].position.y, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[4].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[4].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration * 2);
-	smash[5].color.a = 0f;
-	smash[5].position.x += 500;
-	smash[5].interpolateXY(smash[5].position.x - 500, smash[5].position.y, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[5].interpolateAlpha(1f, Linear.INOUT, 250, true).delay(delay + duration);
-	smash[5].interpolateAlpha(0f, Linear.INOUT, 150, true).delay(delay + duration * 2);
+	final DynamicText seconds = new DynamicText(Fonts.actionJackson115, "");
+	if (stage instanceof FuryStageScreen)
+	    seconds.text = "120 SECONDS";
+	else if (stage instanceof ArcadeStageScreen)
+	    seconds.text = "90 SECONDS";
+	seconds.setAlpha(0f);
+	seconds.setPosition(Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+	seconds.setScale(3f);
+	seconds.interpolateAlpha(1f, 250, true);
+	seconds.interpolateScaleXY(1f, 1f, Back.OUT, 250, true);
+	seconds.interpolateAlpha(0f, 100, true).delay(1000);
+
+	final DynamicText smash = new DynamicText(Fonts.actionJackson115, "SMASH!");
+	smash.setAlpha(0f);
+	smash.setPosition(Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+	smash.setScale(3f);
+	smash.interpolateAlpha(1f, 150, true).delay(1100);
+	smash.interpolateScaleXY(2f, 2f, Back.OUT, 150, true).delay(1100);
+	smash.interpolateAlpha(0f, 100, true).delay(2000).setCallback(new TweenCallback() {
+
+	    @Override
+	    public void onEvent(int type, BaseTween<?> source) {
+		if (type == TweenCallback.COMPLETE) {
+		    stage.resume();
+		    textPool.remove(seconds);
+		    textPool.remove(smash);
+		}
+	    }
+	});
+	textPool.add(seconds);
+	textPool.add(smash);
     }
 
     public void showStreakPrompt(int streaks) {

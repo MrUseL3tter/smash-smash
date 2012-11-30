@@ -129,9 +129,9 @@ public class PauseScreen extends DynamicScreen implements DynamicButtonCallback,
 		game.setScreen(stage);
 	    } else if (source.equals(retry.tween)) {
 		if (stage instanceof FuryStageScreen)
-		    game.setScreen(new FuryStageScreen(game));
+		    game.setScreen(new FuryStageScreen(game, true));
 		else if (stage instanceof ArcadeStageScreen)
-		    game.setScreen(new ArcadeStageScreen(game));
+		    game.setScreen(new ArcadeStageScreen(game, true));
 		else
 		    game.setScreen(new EndlessStageScreen(game));
 	    } else if (source.equals(menu.tween))

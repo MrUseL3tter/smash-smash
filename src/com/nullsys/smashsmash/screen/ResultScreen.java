@@ -117,9 +117,9 @@ public class ResultScreen extends DynamicScreen implements TweenCallback {
 	    game.setScreen(new MainMenuScreen(game));
 	else if (retry.getBounds().contains(x, y))
 	    if (stage instanceof FuryStageScreen)
-		game.setScreen(new FuryStageScreen(game));
+		game.setScreen(new FuryStageScreen(game, true));
 	    else if (stage instanceof ArcadeStageScreen)
-		game.setScreen(new ArcadeStageScreen(game));
+		game.setScreen(new ArcadeStageScreen(game, true));
 	    else
 		game.setScreen(new EndlessStageScreen(game));
     }
