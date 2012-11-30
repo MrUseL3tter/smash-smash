@@ -20,6 +20,7 @@ public class Art {
 
     public static Texture readyPrompt;
     public static Texture blackFill;
+    public static Texture whiteFill;
     public static Texture pinwheel;
     public static Texture pinwheel2;
 
@@ -31,6 +32,7 @@ public class Art {
 	assetManager.load("data/gfx/SAMPLE_PINWHEEL.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_PINWHEEL2.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
+	assetManager.load("data/gfx/SAMPLE_WHITEFILL.png", Texture.class);
 
 	assetManager.load("data/gfx/menu/MENU.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/PUKES.pack", TextureAtlas.class);
@@ -58,6 +60,6 @@ public class Art {
 	pinwheel2 = assetManager.get("data/gfx/SAMPLE_PINWHEEL2.png", Texture.class);
 	pinwheel2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	blackFill = assetManager.get("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
-	blackFill.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	whiteFill = assetManager.get("data/gfx/SAMPLE_WHITEFILL.png", Texture.class);
     }
 }

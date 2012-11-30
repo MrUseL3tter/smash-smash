@@ -2,7 +2,9 @@ package com.nullsys.smashsmash.screen;
 
 import java.util.ArrayList;
 
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 
@@ -145,6 +147,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	    session.combosCurrent = 0;
 	    camera.shake();
 	    removeBonusEffects();
+	    showWhiteFadeEffect();
 	} else if (!User.hasBuffEffect(BuffEffect.INVULNERABILITY)) {
 	    session.combosCurrent = 0;
 	    camera.shake();
@@ -672,5 +675,24 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		assert false;
 		break;
 	}
+    }
+
+    /** when a bomb is smashed */
+    protected void showWhiteFadeEffect() {
+	for (int i = 0; i < aliens.size(); i++)
+	    aliens.get(i).hide();
+	setAliensHostile(false);
+	DynamicSprite fill = new DynamicSprite(new TextureRegion(Art.whiteFill), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+	fill.setScale(15f, 15f);
+	fill.setAlpha(0f);
+	fill.interpolateAlpha(1f, 500, true);
+	fill.interpolateAlpha(0f, 1250, true).delay(500).setCallback(new TweenCallback() {
+
+	    @Override
+	    public void onEvent(int type, BaseTween<?> source) {
+		setAliensHostile(true);
+	    }
+	});
+	pukes.add(fill);
     }
 }
