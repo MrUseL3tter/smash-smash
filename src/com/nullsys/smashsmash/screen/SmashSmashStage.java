@@ -280,6 +280,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	spriteBatch.setColor(1f, 1f, 1f, 1f);
 	checkComboTime();
 	checkStreaks();
+
+	System.out.println("[SmashSmashStage#render(SpriteBatch)]: " + aliens.get(0).position);
     }
 
     @Override
@@ -613,8 +615,8 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     protected void setSpawnPositions() {
 	for (int i = 0; i < aliens.size(); i++) {
-	    float targetWidth = aliens.get(i).waitingState.getLargestAreaDisplay().getKeyFrame().getRegionWidth();
-	    float targetHeight = aliens.get(i).waitingState.getLargestAreaDisplay().getKeyFrame().getRegionHeight();
+	    float targetWidth = aliens.get(i).waitingState.getLargestAreaDisplay().getWidth();
+	    float targetHeight = aliens.get(i).waitingState.getLargestAreaDisplay().getHeight();
 	    aliens.get(i).getHitBounds().width = targetWidth;
 	    aliens.get(i).getHitBounds().height = targetHeight;
 	    if (!aliens.get(i).isVisible()) {
@@ -679,8 +681,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 
     /** when a bomb is smashed */
     protected void showWhiteFadeEffect() {
-	for (int i = 0; i < aliens.size(); i++)
-	    aliens.get(i).hide();
 	setAliensHostile(false);
 	DynamicSprite fill = new DynamicSprite(new TextureRegion(Art.whiteFill), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
 	fill.setScale(15f, 15f);

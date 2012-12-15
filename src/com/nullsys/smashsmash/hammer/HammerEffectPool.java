@@ -42,6 +42,8 @@ public class HammerEffectPool {
 		case Hammer.TWILIGHT:
 		    break;
 		case Hammer.WOODEN_HAMMER:
+		    duration = Particles.woodenHammerNormal.getEmitters().get(0).getDuration().getLowMax() / 1000;
+		    he = new HammerEffect(Particles.woodenHammerNormal, new Vector2(0, 0), duration, 0);
 		    break;
 		default:
 		    assert false;
@@ -83,6 +85,8 @@ public class HammerEffectPool {
 		case Hammer.TWILIGHT:
 		    break;
 		case Hammer.WOODEN_HAMMER:
+		    duration = Particles.woodenHammerHammerTime.getEmitters().get(0).getDuration().getLowMax() / 1000;
+		    he = new HammerEffect(Particles.woodenHammerHammerTime, new Vector2(0, 0), duration, 0);
 		    break;
 		default:
 		    assert false;

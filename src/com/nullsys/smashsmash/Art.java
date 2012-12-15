@@ -13,6 +13,7 @@ public class Art {
     public static Texture lawnBackground2;
     public static TextureAtlas menu;
     public static TextureAtlas pukes;
+    public static TextureAtlas hammers;
     public static TextureAtlas result;
     public static TextureAtlas goldbar;
 
@@ -35,6 +36,7 @@ public class Art {
 	assetManager.load("data/gfx/SAMPLE_WHITEFILL.png", Texture.class);
 
 	assetManager.load("data/gfx/menu/MENU.pack", TextureAtlas.class);
+	assetManager.load("data/gfx/HAMMERS.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/PUKES.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/RESULT.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/GOLDBAR.pack", TextureAtlas.class);
@@ -50,6 +52,7 @@ public class Art {
 	pukes = assetManager.get("data/gfx/PUKES.pack", TextureAtlas.class);
 	result = assetManager.get("data/gfx/RESULT.pack", TextureAtlas.class);
 	goldbar = assetManager.get("data/gfx/GOLDBAR.pack", TextureAtlas.class);
+	hammers = assetManager.get("data/gfx/HAMMERS.pack", TextureAtlas.class);
 
 	coins = assetManager.get("data/gfx/SAMPLE_COINS.png", Texture.class);
 

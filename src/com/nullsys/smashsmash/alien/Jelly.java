@@ -3,7 +3,8 @@ package com.nullsys.smashsmash.alien;
 import java.util.ArrayList;
 
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
-import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplay;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
@@ -39,12 +40,12 @@ public class Jelly extends Alien {
 	jellyWaitingMouthAnim.position.y = 66;
 	jellyWaitingMouthAnim.setRegistration(DynamicRegistration.BOTTOM_CENTER);
 
-	ArrayList<DynamicAnimation> waitingStateAnims = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> waitingStateAnims = new ArrayList<DynamicDisplay>();
 	waitingStateAnims.add(jellyShapeAnim);
 	waitingStateAnims.add(jellyWaitingEyeAnim);
 	waitingStateAnims.add(jellyWaitingMouthAnim);
 
-	attackingState = new DynamicAnimationGroup(waitingStateAnims);
+	attackingState = new DynamicDisplayGroup(waitingStateAnims);
 	attackingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
@@ -60,12 +61,12 @@ public class Jelly extends Alien {
 	jellyWaitingMouthAnim.position.y = 66;
 	jellyWaitingMouthAnim.setRegistration(DynamicRegistration.BOTTOM_CENTER);
 
-	ArrayList<DynamicAnimation> waitingStateAnims = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> waitingStateAnims = new ArrayList<DynamicDisplay>();
 	waitingStateAnims.add(jellyShapeAnim);
 	waitingStateAnims.add(jellyWaitingEyeAnim);
 	waitingStateAnims.add(jellyWaitingMouthAnim);
 
-	hidingState = new DynamicAnimationGroup(waitingStateAnims);
+	hidingState = new DynamicDisplayGroup(waitingStateAnims);
 	hidingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
@@ -81,12 +82,12 @@ public class Jelly extends Alien {
 	jellyWaitingMouthAnim.position.y = 66;
 	jellyWaitingMouthAnim.setRegistration(DynamicRegistration.BOTTOM_CENTER);
 
-	ArrayList<DynamicAnimation> waitingStateAnims = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> waitingStateAnims = new ArrayList<DynamicDisplay>();
 	waitingStateAnims.add(jellyShapeAnim);
 	waitingStateAnims.add(jellyWaitingEyeAnim);
 	waitingStateAnims.add(jellyWaitingMouthAnim);
 
-	risingState = new DynamicAnimationGroup(waitingStateAnims);
+	risingState = new DynamicDisplayGroup(waitingStateAnims);
 	risingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
@@ -101,12 +102,12 @@ public class Jelly extends Alien {
 	jellyStunnedMouthAnim.position.y = 66;
 	jellyStunnedMouthAnim.setRegistration(DynamicRegistration.BOTTOM_CENTER);
 
-	ArrayList<DynamicAnimation> stunnedStateAnims = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> stunnedStateAnims = new ArrayList<DynamicDisplay>();
 	stunnedStateAnims.add(jellyShapeAnim);
 	stunnedStateAnims.add(jellyStunnedEyeAnim);
 	stunnedStateAnims.add(jellyStunnedMouthAnim);
 
-	smashedState = new DynamicAnimationGroup(stunnedStateAnims);
+	smashedState = new DynamicDisplayGroup(stunnedStateAnims);
 	smashedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
@@ -121,12 +122,12 @@ public class Jelly extends Alien {
 	jellyStunnedMouthAnim.position.y = 66;
 	jellyStunnedMouthAnim.setRegistration(DynamicRegistration.BOTTOM_CENTER);
 
-	ArrayList<DynamicAnimation> stunnedStateAnims = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> stunnedStateAnims = new ArrayList<DynamicDisplay>();
 	stunnedStateAnims.add(jellyShapeAnim);
 	stunnedStateAnims.add(jellyStunnedEyeAnim);
 	stunnedStateAnims.add(jellyStunnedMouthAnim);
 
-	stunnedState = new DynamicAnimationGroup(stunnedStateAnims);
+	stunnedState = new DynamicDisplayGroup(stunnedStateAnims);
 	stunnedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
@@ -142,12 +143,12 @@ public class Jelly extends Alien {
 	jellyWaitingMouthAnim.position.y = 66;
 	jellyWaitingMouthAnim.setRegistration(DynamicRegistration.BOTTOM_CENTER);
 
-	ArrayList<DynamicAnimation> waitingStateAnims = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> waitingStateAnims = new ArrayList<DynamicDisplay>();
 	waitingStateAnims.add(jellyShapeAnim);
 	waitingStateAnims.add(jellyWaitingEyeAnim);
 	waitingStateAnims.add(jellyWaitingMouthAnim);
 
-	waitingState = new DynamicAnimationGroup(waitingStateAnims);
+	waitingState = new DynamicDisplayGroup(waitingStateAnims);
 	waitingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 

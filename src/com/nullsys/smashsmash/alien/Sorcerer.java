@@ -7,8 +7,9 @@ import aurelienribon.tweenengine.equations.Bounce;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
-import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
+import com.noobs2d.tweenengine.utils.DynamicDisplay;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.User;
@@ -75,44 +76,44 @@ public class Sorcerer extends Alien {
     }
 
     private void initAttackingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.sorcererAttack));
-	attackingState = new DynamicAnimationGroup(list);
+	attackingState = new DynamicDisplayGroup(list);
 	attackingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initHidingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.sorcererHiding));
-	hidingState = new DynamicAnimationGroup(list);
+	hidingState = new DynamicDisplayGroup(list);
 	hidingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initRisingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.sorcererRising));
-	risingState = new DynamicAnimationGroup(list);
+	risingState = new DynamicDisplayGroup(list);
 	risingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initSmashedState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.sorcererSmashed));
-	smashedState = new DynamicAnimationGroup(list);
+	smashedState = new DynamicDisplayGroup(list);
 	smashedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initStunnedState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.sorcererStunned));
-	stunnedState = new DynamicAnimationGroup(list);
+	stunnedState = new DynamicDisplayGroup(list);
 	stunnedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initWaitingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.sorcererWaiting));
-	waitingState = new DynamicAnimationGroup(list);
+	waitingState = new DynamicDisplayGroup(list);
 	waitingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 

@@ -16,7 +16,7 @@ public class Settings {
     public static int arcadeHighscore = 0;
     public static int endlessHighscore = 0;
 
-    public static int hammerType = Hammer.FIERY_SMASH;
+    public static int hammerType = Hammer.WOODEN_HAMMER;
 
     public static boolean musicEnabled = false;
     public static boolean soundEnabled = false;

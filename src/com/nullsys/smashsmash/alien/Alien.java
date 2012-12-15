@@ -8,7 +8,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
 import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
 import com.nullsys.smashsmash.Settings;
 import com.nullsys.smashsmash.User;
@@ -41,12 +41,12 @@ public class Alien {
     protected Rectangle collisionBounds = new Rectangle(0, 0, 96, 276);
     protected Rectangle hitBounds = new Rectangle(0, 0, 0, 0);
 
-    public DynamicAnimationGroup risingState;
-    public DynamicAnimationGroup waitingState;
-    public DynamicAnimationGroup attackingState;
-    public DynamicAnimationGroup stunnedState;
-    public DynamicAnimationGroup smashedState;
-    public DynamicAnimationGroup hidingState;
+    public DynamicDisplayGroup risingState;
+    public DynamicDisplayGroup waitingState;
+    public DynamicDisplayGroup attackingState;
+    public DynamicDisplayGroup stunnedState;
+    public DynamicDisplayGroup smashedState;
+    public DynamicDisplayGroup hidingState;
 
     public Vector2 position = new Vector2(0, 0);
     public Sound SFXattack;
@@ -88,10 +88,10 @@ public class Alien {
 	if (getStateAnimation() != null) {
 	    float scaleX = getStateAnimation().getLargestAreaDisplay().scale.x;
 	    float scaleY = getStateAnimation().getLargestAreaDisplay().scale.y;
-	    float x = position.x - getStateAnimation().getLargestAreaDisplay().getKeyFrame().getRegionWidth() * scaleX / 2;
+	    float x = position.x - getStateAnimation().getLargestAreaDisplay().getWidth() * scaleX / 2;
 	    float y = position.y;
-	    float width = getStateAnimation().getLargestAreaDisplay().getKeyFrame().getRegionWidth() * scaleX;
-	    float height = getStateAnimation().getLargestAreaDisplay().getKeyFrame().getRegionHeight() * scaleY;
+	    float width = getStateAnimation().getLargestAreaDisplay().getWidth() * scaleX;
+	    float height = getStateAnimation().getLargestAreaDisplay().getHeight() * scaleY;
 	    hitBounds.set(x, y, width, height);
 	}
 	return hitBounds;
@@ -101,7 +101,7 @@ public class Alien {
 	return 1;
     }
 
-    public DynamicAnimationGroup getStateAnimation() {
+    public DynamicDisplayGroup getStateAnimation() {
 	if (state == AlienState.ATTACKING)
 	    return attackingState;
 	else if (state == AlienState.HIDING)

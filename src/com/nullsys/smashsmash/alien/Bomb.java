@@ -24,7 +24,7 @@ public class Bomb extends Jelly {
 	stunnedState.setColor(Color.RED);
 	smashedState.setColor(Color.RED);
 	hidingState.setColor(Color.RED);
-	setHostile(false);
+	super.setHostile(false);
     }
 
     @Override
@@ -33,6 +33,11 @@ public class Bomb extends Jelly {
 	    spawnDelay = 5f + MathUtils.random(15f);
 	    super.rise(delay, volume);
 	}
+    }
+
+    @Override
+    public void setHostile(boolean hostile) {
+	// negate
     }
 
     @Override

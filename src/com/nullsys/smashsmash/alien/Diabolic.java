@@ -3,7 +3,8 @@ package com.nullsys.smashsmash.alien;
 import java.util.ArrayList;
 
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
-import com.noobs2d.tweenengine.utils.DynamicAnimationGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
+import com.noobs2d.tweenengine.utils.DynamicDisplay;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.nullsys.smashsmash.Sounds;
 import com.nullsys.smashsmash.screen.SmashSmashStageCallback;
@@ -35,44 +36,44 @@ public class Diabolic extends Alien {
     }
 
     private void initAttackingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.diabolicAttack));
-	attackingState = new DynamicAnimationGroup(list);
+	attackingState = new DynamicDisplayGroup(list);
 	attackingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initHidingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.diabolicHiding));
-	hidingState = new DynamicAnimationGroup(list);
+	hidingState = new DynamicDisplayGroup(list);
 	hidingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initRisingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.diabolicRising));
-	risingState = new DynamicAnimationGroup(list);
+	risingState = new DynamicDisplayGroup(list);
 	risingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initSmashedState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.diabolicSmashed));
-	smashedState = new DynamicAnimationGroup(list);
+	smashedState = new DynamicDisplayGroup(list);
 	smashedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initStunnedState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.diabolicStunned));
-	stunnedState = new DynamicAnimationGroup(list);
+	stunnedState = new DynamicDisplayGroup(list);
 	stunnedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
     private void initWaitingState() {
-	ArrayList<DynamicAnimation> list = new ArrayList<DynamicAnimation>();
+	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
 	list.add(new DynamicAnimation(AliensArt.diabolicWaiting));
-	waitingState = new DynamicAnimationGroup(list);
+	waitingState = new DynamicDisplayGroup(list);
 	waitingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 }
