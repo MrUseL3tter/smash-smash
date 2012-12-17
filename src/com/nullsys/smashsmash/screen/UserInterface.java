@@ -58,22 +58,22 @@ public class UserInterface {
 	comboCount = new DynamicText(Fonts.actionJackson115, "", HAlignment.LEFT);
 	comboCount.wrapWidth = 512;
 	comboCount.position.set(0, 515);
-	comboCount.setRegistration(DynamicRegistration.LEFT_CENTER);
+	comboCount.setRegistration(DynamicRegistration.CENTER_LEFT);
 	comboBonus = new DynamicText(Fonts.actionJackson115, "", HAlignment.LEFT);
 	comboBonus.wrapWidth = 512;
 	comboBonus.setPosition(0, 435);
 	comboBonus.setScale(.25f, .25f);
-	comboBonus.setRegistration(DynamicRegistration.LEFT_CENTER);
+	comboBonus.setRegistration(DynamicRegistration.CENTER_LEFT);
 	comboName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.LEFT);
 	comboName.position.set(0, 590);
-	comboName.setRegistration(DynamicRegistration.LEFT_CENTER);
+	comboName.setRegistration(DynamicRegistration.CENTER_LEFT);
 	feed = new BitmapFont();
 	feed.scale(.5f);
 	flyout = new DynamicText(Fonts.goodGirlx32, "", HAlignment.CENTER);
 	streakBonus = new DynamicText(Fonts.bdCartoonShoutx23orange, "", HAlignment.RIGHT);
-	streakBonus.setRegistration(DynamicRegistration.RIGHT_CENTER);
+	streakBonus.setRegistration(DynamicRegistration.CENTER_RIGHT);
 	streakName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.RIGHT);
-	streakName.setRegistration(DynamicRegistration.RIGHT_CENTER);
+	streakName.setRegistration(DynamicRegistration.CENTER_RIGHT);
 	missLabel = new DynamicText(Fonts.bdCartoonShoutx42, "", HAlignment.CENTER);
 	for (int i = 0; i < lifePoints.length; i++) {
 	    lifePoints[i] = new DynamicSprite(AliensArt.jellyShape, 55 + 97 * i, 749);

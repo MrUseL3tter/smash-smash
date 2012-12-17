@@ -85,7 +85,7 @@ public class StageLoadingScreen extends DynamicScreen {
 	    Sounds.retrieve(assetManager);
 
 	    if (stageScreen == null)
-		game.setScreen(new ArcadeStageScreen(game, false));
+		game.setScreen(new HammerSelectionScreen(game));//ArcadeStageScreen(game, false));
 	    else
 		game.setScreen(stageScreen);
 	}

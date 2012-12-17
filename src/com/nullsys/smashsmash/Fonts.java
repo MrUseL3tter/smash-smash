@@ -11,8 +11,11 @@ public class Fonts {
     public static BitmapFont arialNarrow32Italic;
     public static BitmapFont goodGirlx32;
     public static BitmapFont bdCartoonShoutx42;
+    public static BitmapFont bdCartoonShoutx50GrayStroke;
     public static BitmapFont bdCartoonShoutx23orange;
     public static BitmapFont bdCartoonShoutx32orange;
+    public static BitmapFont berlinSansx32GrayStroke;
+    public static BitmapFont berlinSansx32OrangeStroke;
 
     public static void load(AssetManager assetManager) {
 	//	assetManager.load("data/fonts/ACTION_JACKSON_115.png", Texture.class);
@@ -35,6 +38,9 @@ public class Fonts {
 	assetManager.load("data/fonts/BD_CARTOON_SHOUT_42.fnt", BitmapFont.class);
 	assetManager.load("data/fonts/BD_CARTOON_SHOUT_23_ORANGE.fnt", BitmapFont.class);
 	assetManager.load("data/fonts/BD_CARTOON_SHOUT_32_ORANGE.fnt", BitmapFont.class);
+	assetManager.load("data/fonts/BD-CARTOON-32-GRAYSTROKE.fnt", BitmapFont.class);
+	assetManager.load("data/fonts/BERLIN-SANS-32-GRAYSTROKE.fnt", BitmapFont.class);
+	assetManager.load("data/fonts/BERLIN-SANS-32-ORANGESTROKE.fnt", BitmapFont.class);
     }
 
     public static void retrieve(AssetManager assetManager) {
@@ -52,6 +58,12 @@ public class Fonts {
 	bdCartoonShoutx42.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	bdCartoonShoutx32orange = assetManager.get("data/fonts/BD_CARTOON_SHOUT_32_ORANGE.fnt", BitmapFont.class);
 	bdCartoonShoutx32orange.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	bdCartoonShoutx50GrayStroke = assetManager.get("data/fonts/BD-CARTOON-32-GRAYSTROKE.fnt", BitmapFont.class);
+	bdCartoonShoutx50GrayStroke.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	berlinSansx32GrayStroke = assetManager.get("data/fonts/BERLIN-SANS-32-GRAYSTROKE.fnt", BitmapFont.class);
+	berlinSansx32GrayStroke.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	berlinSansx32OrangeStroke = assetManager.get("data/fonts/BERLIN-SANS-32-ORANGESTROKE.fnt", BitmapFont.class);
+	berlinSansx32OrangeStroke.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	//	Texture texture;
 	//	texture = assetManager.get("data/fonts/ACTION_JACKSON_115.png", Texture.class);
 	//	texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);

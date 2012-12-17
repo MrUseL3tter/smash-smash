@@ -29,8 +29,6 @@ public class HammerEffectPool {
 		    duration = Particles.frostBiteNormal.getEmitters().get(0).getDuration().getLowMax() / 1000;
 		    he = new HammerEffect(Particles.frostBiteNormal, new Vector2(0, 0), duration, 0);
 		    break;
-		case Hammer.GOLD_DIGGER:
-		    break;
 		case Hammer.METAL_HEAD:
 		    break;
 		case Hammer.MJOLNIR:
@@ -71,8 +69,6 @@ public class HammerEffectPool {
 		case Hammer.FROST_BITE:
 		    duration = Particles.frostBiteHammerTime.getEmitters().get(0).getDuration().getLowMax() / 1000;
 		    he = new HammerEffect(Particles.frostBiteHammerTime, new Vector2(0, 0), duration, 0);
-		    break;
-		case Hammer.GOLD_DIGGER:
 		    break;
 		case Hammer.METAL_HEAD:
 		    break;
