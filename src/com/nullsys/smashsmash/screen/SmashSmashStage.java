@@ -259,29 +259,29 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     @Override
     public void render(float delta) {
 	getCamera().update();
-	spriteBatch.setProjectionMatrix(camera.projection);
+	batch.setProjectionMatrix(camera.projection);
 
 	delta = paused ? 0 : delta;
 
 	session.stageSecondsElapsed += delta;
 
-	spriteBatch.begin();
-	renderStage(spriteBatch, delta);
-	renderAliens(spriteBatch, delta);
-	renderCoinsAndGoldBars(spriteBatch, delta);
-	renderHammerEffects(spriteBatch, delta);
-	renderPukes(spriteBatch, delta);
-	renderStageEffects(spriteBatch, delta);
+	batch.begin();
+	renderStage(batch, delta);
+	renderAliens(batch, delta);
+	renderCoinsAndGoldBars(batch, delta);
+	renderHammerEffects(batch, delta);
+	renderPukes(batch, delta);
+	renderStageEffects(batch, delta);
 	if (showUI) {
-	    ui.render(spriteBatch);
+	    ui.render(batch);
 	    ui.update(delta);
 	}
-	spriteBatch.end();
-	spriteBatch.setColor(1f, 1f, 1f, 1f);
+	batch.end();
+	batch.setColor(1f, 1f, 1f, 1f);
 	checkComboTime();
 	checkStreaks();
 
-	System.out.println("[SmashSmashStage#render(SpriteBatch)]: " + aliens.get(0).position);
+	//	System.out.println("[SmashSmashStage#render(SpriteBatch)]: " + aliens.get(0).position);
     }
 
     @Override

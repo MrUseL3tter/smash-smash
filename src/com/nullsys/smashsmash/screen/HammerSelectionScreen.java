@@ -2,11 +2,14 @@ package com.nullsys.smashsmash.screen;
 
 import java.util.ArrayList;
 
+import aurelienribon.tweenengine.equations.Linear;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.tweenengine.utils.DynamicButton;
 import com.noobs2d.tweenengine.utils.DynamicButton.DynamicButtonCallback;
@@ -15,6 +18,7 @@ import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
 import com.noobs2d.tweenengine.utils.DynamicScreen;
 import com.noobs2d.tweenengine.utils.DynamicSprite;
 import com.noobs2d.tweenengine.utils.DynamicText;
+import com.noobs2d.tweenengine.utils.DynamicValue;
 import com.nullsys.smashsmash.Art;
 import com.nullsys.smashsmash.Fonts;
 import com.nullsys.smashsmash.Settings;
@@ -23,8 +27,12 @@ import com.nullsys.smashsmash.hammer.Hammer.Descriptions;
 
 public class HammerSelectionScreen extends DynamicScreen implements GestureListener, DynamicButtonCallback {
 
-    private DynamicSprite test;
+    private DynamicButton back;
+    private DynamicText goldText;
+    private DynamicValue goldValue = new DynamicValue(Settings.gold);
     private ArrayList<DynamicButton> buttons = new ArrayList<DynamicButton>();
+    private DynamicDisplayGroup logo = new DynamicDisplayGroup();
+    private DynamicDisplayGroup goldPane = new DynamicDisplayGroup();
     private DynamicDisplayGroup woodenHammerPane = new DynamicDisplayGroup();
     private DynamicDisplayGroup metalHeadPane = new DynamicDisplayGroup();
     private DynamicDisplayGroup fierySmashPane = new DynamicDisplayGroup();
@@ -34,27 +42,42 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     private DynamicDisplayGroup starryNightPane = new DynamicDisplayGroup();
     private DynamicDisplayGroup spaceBlasterPane = new DynamicDisplayGroup();
     private DynamicDisplayGroup bubblesPane = new DynamicDisplayGroup();
-
-    private float velX, velY;
-
-    private boolean flinging = false;
-
-    private boolean panning = false;
-
     private DynamicDisplayGroup mjolnirPane = new DynamicDisplayGroup();
+
+    private float paneMoveSpeed = 27f;
+    private float firstItemY = 480;
+    private float flingVelocityX, flingVelocityY;
+    private boolean flinging = false;
+    private boolean panning = false;
 
     public HammerSelectionScreen(Game game) {
 	super(game, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
-	test = new DynamicSprite(Art.pukes.findRegion("PUKE_GREEN"), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
 	initPanels();
+	initGoldPane();
+
+	TextureRegion upstate, hoverstate, downstate;
+	upstate = Art.menu.findRegion("BACK-UPSTATE");
+	downstate = Art.menu.findRegion("BACK-DOWNSTATE");
+	hoverstate = Art.menu.findRegion("BACK-UPSTATE");
+	back = new DynamicButton(upstate, hoverstate, downstate, 15, 15);
+	back.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	back.setName("BACK");
+	back.setCallback(this);
+	buttons.add(back);
+
+	DynamicSprite title = new DynamicSprite(Art.hammers.findRegion("STORE-LOGO"), Settings.SCREEN_WIDTH / 2, 750);
+	title.setScale(.65f);
+	DynamicSprite tag = new DynamicSprite(Art.hammers.findRegion("STORE-SUBLOGO"), Settings.SCREEN_WIDTH / 2, 699);
+	tag.setScale(.65f);
+	logo.add(title);
+	logo.add(tag);
     }
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-	//	System.out.println("FLING");
 	flinging = true;
-	velX = velocityX * 0.5f;
-	velY = velocityY * 0.5f;
+	flingVelocityX = velocityX * 0.5f;
+	flingVelocityY = velocityY * 0.5f;
 	return false;
     }
 
@@ -66,104 +89,119 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     @Override
     public void onButtonEvent(DynamicButton button, int eventType) {
 	if (eventType == UP)
-	    if (button.getName().equals("METALHEAD-BUY")) {
+	    if (button.getName().equals("BACK"))
+		game.setScreen(new MainMenuScreen(game));
+	    else if (button.getName().equals("METALHEAD-BUY")) {
 		if (Settings.buyHammer(Hammer.METAL_HEAD)) {
 		    metalHeadPane.removeByName("METALHEAD-BUY");
 		    metalHeadPane.removeByName("PRICE");
 		    removeButtonByName("METALHEAD-BUY");
 		    addMetalHeadEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("FIERY-SMASH-BUY")) {
 		if (Settings.buyHammer(Hammer.FIERY_SMASH)) {
 		    fierySmashPane.removeByName("FIERY-SMASH-BUY");
 		    fierySmashPane.removeByName("PRICE");
 		    removeButtonByName("FIERY-SMASH-BUY");
 		    addFierySmashEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("FROST-BITE-BUY")) {
 		if (Settings.buyHammer(Hammer.FROST_BITE)) {
 		    frostBitePane.removeByName("FROST-BITE-BUY");
 		    frostBitePane.removeByName("PRICE");
 		    removeButtonByName("FROST-BITE-BUY");
 		    addFrostBiteEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("DUSK-BUY")) {
 		if (Settings.buyHammer(Hammer.DUSK)) {
 		    duskPane.removeByName("DUSK-BUY");
 		    duskPane.removeByName("PRICE");
 		    removeButtonByName("DUSK-BUY");
 		    addDuskEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("TWILIGHT-BUY")) {
 		if (Settings.buyHammer(Hammer.TWILIGHT)) {
 		    twilightPane.removeByName("TWILIGHT-BUY");
 		    twilightPane.removeByName("PRICE");
 		    removeButtonByName("TWILIGHT-BUY");
 		    addTwilightEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("STARRY-NIGHT-BUY")) {
 		if (Settings.buyHammer(Hammer.STARRY_NIGHT)) {
 		    starryNightPane.removeByName("STARRY-NIGHT-BUY");
 		    starryNightPane.removeByName("PRICE");
 		    removeButtonByName("STARRY-NIGHT-BUY");
 		    addStarryNightEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("SPACE-BLASTER-BUY")) {
 		if (Settings.buyHammer(Hammer.SPACE_BLASTER)) {
 		    spaceBlasterPane.removeByName("SPACE-BLASTER-BUY");
 		    spaceBlasterPane.removeByName("PRICE");
 		    removeButtonByName("SPACE-BLASTER-BUY");
 		    addSpaceBlasterEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("BUBBLES-BUY")) {
 		if (Settings.buyHammer(Hammer.BUBBLES)) {
 		    bubblesPane.removeByName("BUBBLES-BUY");
 		    bubblesPane.removeByName("PRICE");
-		    removeButtonByName("BUBBLES-BUY-BUY");
+		    removeButtonByName("BUBBLES-BUY");
 		    addBubblesEquipButton();
-		    // TODO show purchase successful
-		} else {
-		    // TODO show insufficient balance watever
-		}
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
+	    } else if (button.getName().equals("MJOLNIR-BUY")) {
+		if (Settings.buyHammer(Hammer.MJOLNIR)) {
+		    bubblesPane.removeByName("MJOLNIR-BUY");
+		    bubblesPane.removeByName("PRICE");
+		    removeButtonByName("MJOLNIR-BUY");
+		    addBubblesEquipButton();
+		    interpolateGoldValue(Settings.gold);
+		} else
+		    game.setScreen(new PromptScreen(game, null, this, PromptScreen.OK, "INSUFFICIENT GOLD!"));
 	    } else if (button.getName().equals("METALHEAD-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.METAL_HEAD);
 	    } else if (button.getName().equals("FIERY-SMASH-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.FIERY_SMASH);
 	    } else if (button.getName().equals("FROST-BITE-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.FROST_BITE);
 	    } else if (button.getName().equals("DUSK-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.DUSK);
 	    } else if (button.getName().equals("TWILIGHT-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.TWILIGHT);
 	    } else if (button.getName().equals("STARRY-NIGHT-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.STARRY_NIGHT);
 	    } else if (button.getName().equals("SPACE-BLASTER-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.SPACE_BLASTER);
 	    } else if (button.getName().equals("BUBBLES-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.BUBBLES);
 	    } else if (button.getName().equals("WOODEN-HAMMER-EQUIP")) {
-
+		unequipHammer();
+		equipHammer(Hammer.WOODEN_HAMMER);
+	    } else if (button.getName().equals("MJOLNIR-EQUIP")) {
+		unequipHammer();
+		equipHammer(Hammer.MJOLNIR);
 	    }
     }
 
@@ -186,6 +224,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	starryNightPane.setY(starryNightPane.getY() - deltaY);
 	spaceBlasterPane.setY(spaceBlasterPane.getY() - deltaY);
 	bubblesPane.setY(bubblesPane.getY() - deltaY);
+	mjolnirPane.setY(mjolnirPane.getY() - deltaY);
 
 	return false;
     }
@@ -199,20 +238,22 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     public void render(float delta) {
 	super.render(delta);
 
-	Gdx.gl10.glClearColor(0.25f, 1f, 0.25f, 1f);
+	//	Gdx.gl10.glClearColor(0.25f, 1f, 0.25f, 1f);
 
-	spriteBatch.begin();
-	test.render(spriteBatch);
-	test.update(delta);
-	duskPane.render(spriteBatch);
-	fierySmashPane.render(spriteBatch);
-	frostBitePane.render(spriteBatch);
-	woodenHammerPane.render(spriteBatch);
-	metalHeadPane.render(spriteBatch);
-	twilightPane.render(spriteBatch);
-	starryNightPane.render(spriteBatch);
-	spaceBlasterPane.render(spriteBatch);
-	bubblesPane.render(spriteBatch);
+	batch.begin();
+
+	batch.draw(Art.hammers.findRegion("FILL-GRAY"), 61, -25, 1158, 850);
+
+	duskPane.render(batch);
+	fierySmashPane.render(batch);
+	frostBitePane.render(batch);
+	woodenHammerPane.render(batch);
+	metalHeadPane.render(batch);
+	twilightPane.render(batch);
+	starryNightPane.render(batch);
+	spaceBlasterPane.render(batch);
+	bubblesPane.render(batch);
+	mjolnirPane.render(batch);
 
 	duskPane.update(delta);
 	fierySmashPane.update(delta);
@@ -223,28 +264,60 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	starryNightPane.update(delta);
 	spaceBlasterPane.update(delta);
 	bubblesPane.update(delta);
-	spriteBatch.end();
+	mjolnirPane.update(delta);
+
+	// TOP MASK
+	for (int i = 0; i < 47; i++)
+	    for (int j = 0; j < 5; j++)
+		batch.draw(Art.hammers.findRegion("FILL-GRAY"), 76 + i * 24, 776 - 24 * j, 26, 26);
+	for (int i = 0; i < 47; i++)
+	    for (int j = 0; j < 5; j++)
+		batch.draw(Art.hammers.findRegion("FILL-GRAY"), 76 + i * 24, 776 - 24 * j, 26, 26);
+
+	// BOTTOM MASK
+	for (int i = 0; i < 47; i++)
+	    for (int j = 0; j < 2; j++)
+		batch.draw(Art.hammers.findRegion("FILL-GRAY"), 76 + i * 24, 0 + 24 * j, 26, 26);
+	for (int i = 0; i < 47; i++)
+	    for (int j = 0; j < 2; j++)
+		batch.draw(Art.hammers.findRegion("FILL-GRAY"), 76 + i * 24, 0 + 24 * j, 26, 26);
+
+	batch.draw(Art.hammers.findRegion("FILL-LEFT"), 61, -25, 26, 850);
+	batch.draw(Art.hammers.findRegion("FILL-RIGHT"), 1193, -25, 26, 850);
+	logo.render(batch);
+	logo.update(delta);
+
+	goldPane.render(batch);
+	goldPane.update(delta);
+	goldText.setText("" + (int) goldValue.value);
+	goldValue.update(delta);
+
+	back.render(batch);
+	back.update(delta);
+
+	batch.end();
 
 	if (flinging) {
 	    //	    System.out.println("FLINGING ~ " + test.getY());
-	    velX *= 0.98f;
-	    velY *= 0.98f;
+	    flingVelocityX *= 0.98f;
+	    flingVelocityY *= 0.98f;
 	    //	    float increase = test.getY() - velY * delta;
 	    //	    if (test.getY() + increase <= 800 && test.getY() - increase >= 00)
 	    //	    test.setY(increase);
-	    woodenHammerPane.setY(woodenHammerPane.getY() - velY * delta);
-	    metalHeadPane.setY(metalHeadPane.getY() - velY * delta);
-	    fierySmashPane.setY(fierySmashPane.getY() - velY * delta);
-	    frostBitePane.setY(frostBitePane.getY() - velY * delta);
-	    duskPane.setY(duskPane.getY() - velY * delta);
-	    twilightPane.setY(twilightPane.getY() - velY * delta);
-	    starryNightPane.setY(starryNightPane.getY() - velY * delta);
-	    spaceBlasterPane.setY(spaceBlasterPane.getY() - velY * delta);
-	    bubblesPane.setY(bubblesPane.getY() - velY * delta);
-	    if (Math.abs(velX) < 0.01f)
-		velX = 0;
-	    if (Math.abs(velY) < 0.01f)
-		velY = 0;
+	    woodenHammerPane.setY(woodenHammerPane.getY() - flingVelocityY * delta);
+	    metalHeadPane.setY(metalHeadPane.getY() - flingVelocityY * delta);
+	    fierySmashPane.setY(fierySmashPane.getY() - flingVelocityY * delta);
+	    frostBitePane.setY(frostBitePane.getY() - flingVelocityY * delta);
+	    duskPane.setY(duskPane.getY() - flingVelocityY * delta);
+	    twilightPane.setY(twilightPane.getY() - flingVelocityY * delta);
+	    starryNightPane.setY(starryNightPane.getY() - flingVelocityY * delta);
+	    spaceBlasterPane.setY(spaceBlasterPane.getY() - flingVelocityY * delta);
+	    bubblesPane.setY(bubblesPane.getY() - flingVelocityY * delta);
+	    mjolnirPane.setY(mjolnirPane.getY() - flingVelocityY * delta);
+	    if (Math.abs(flingVelocityX) < 0.01f)
+		flingVelocityX = 0;
+	    if (Math.abs(flingVelocityY) < 0.01f)
+		flingVelocityY = 0;
 	}
 
 	//	if (!panning && test.getY() >= 800) {
@@ -255,28 +328,33 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	//	    test.setY(test.getY() + 10f);
 	//	}
 
-	if (!panning && woodenHammerPane.getY() >= 1650) {
+	float roof = firstItemY + 200 * 7.75f;
+	if (!panning && woodenHammerPane.getY() >= roof) {
 	    flinging = false;
-	    woodenHammerPane.setY(woodenHammerPane.getY() - 10f);
-	    metalHeadPane.setY(metalHeadPane.getY() - 10f);
-	    fierySmashPane.setY(fierySmashPane.getY() - 10f);
-	    frostBitePane.setY(frostBitePane.getY() - 10f);
-	    duskPane.setY(duskPane.getY() - 10f);
-	    twilightPane.setY(twilightPane.getY() - 10f);
-	    starryNightPane.setY(starryNightPane.getY() - 10f);
-	    spaceBlasterPane.setY(spaceBlasterPane.getY() - 10f);
-	    bubblesPane.setY(bubblesPane.getY() - 10f);
-	} else if (!panning && woodenHammerPane.getY() <= 594) {
+	    float y = woodenHammerPane.getY() - roof < paneMoveSpeed ? woodenHammerPane.getY() - roof : paneMoveSpeed;
+	    woodenHammerPane.setY(woodenHammerPane.getY() - y);
+	    metalHeadPane.setY(metalHeadPane.getY() - y);
+	    fierySmashPane.setY(fierySmashPane.getY() - y);
+	    frostBitePane.setY(frostBitePane.getY() - y);
+	    duskPane.setY(duskPane.getY() - y);
+	    twilightPane.setY(twilightPane.getY() - y);
+	    starryNightPane.setY(starryNightPane.getY() - y);
+	    spaceBlasterPane.setY(spaceBlasterPane.getY() - y);
+	    bubblesPane.setY(bubblesPane.getY() - y);
+	    mjolnirPane.setY(mjolnirPane.getY() - y);
+	} else if (!panning && woodenHammerPane.getY() <= firstItemY) {
 	    flinging = false;
-	    woodenHammerPane.setY(woodenHammerPane.getY() + 10f);
-	    metalHeadPane.setY(metalHeadPane.getY() + 10f);
-	    fierySmashPane.setY(fierySmashPane.getY() + 10f);
-	    frostBitePane.setY(frostBitePane.getY() + 10f);
-	    duskPane.setY(duskPane.getY() + 10f);
-	    twilightPane.setY(twilightPane.getY() + 10f);
-	    starryNightPane.setY(starryNightPane.getY() + 10f);
-	    spaceBlasterPane.setY(spaceBlasterPane.getY() + 10f);
-	    bubblesPane.setY(bubblesPane.getY() + 10f);
+	    float y = firstItemY - woodenHammerPane.getY() > paneMoveSpeed ? paneMoveSpeed : firstItemY - woodenHammerPane.getY();
+	    woodenHammerPane.setY(woodenHammerPane.getY() + y);
+	    metalHeadPane.setY(metalHeadPane.getY() + y);
+	    fierySmashPane.setY(fierySmashPane.getY() + y);
+	    frostBitePane.setY(frostBitePane.getY() + y);
+	    duskPane.setY(duskPane.getY() + y);
+	    twilightPane.setY(twilightPane.getY() + y);
+	    starryNightPane.setY(starryNightPane.getY() + y);
+	    spaceBlasterPane.setY(spaceBlasterPane.getY() + y);
+	    bubblesPane.setY(bubblesPane.getY() + y);
+	    mjolnirPane.setY(mjolnirPane.getY() + y);
 	}
     }
 
@@ -290,8 +368,15 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 		System.out.println("UP");
 		x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
 		y = (Gdx.graphics.getHeight() * camera.zoom - y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
-		for (int i = 0; i < buttons.size(); i++)
-		    buttons.get(i).inputUp(x, y);
+
+		Rectangle topMaskBounds = new Rectangle(75, 670, 1129, 130);
+		Rectangle bottomMaskBounds = new Rectangle(75, 0, 1129, 50);
+		boolean hitsMasks = topMaskBounds.contains(x, y) || bottomMaskBounds.contains(x, y);
+
+		if (!hitsMasks)
+		    for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).inputUp(x, y))
+			    break;
 		panning = false;
 		return true;
 	    }
@@ -313,8 +398,14 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	System.out.println("DOWN");
 	x *= (float) Settings.SCREEN_WIDTH / Gdx.graphics.getWidth();
 	y = (Gdx.graphics.getHeight() * camera.zoom - y) * Settings.SCREEN_HEIGHT / Gdx.graphics.getHeight();
-	for (int i = 0; i < buttons.size(); i++)
-	    buttons.get(i).inputDown(x, y);
+
+	Rectangle topMaskBounds = new Rectangle(75, 670, 1129, 130);
+	Rectangle bottomMaskBounds = new Rectangle(75, 0, 1129, 50);
+	boolean hitsMasks = topMaskBounds.contains(x, y) || bottomMaskBounds.contains(x, y);
+
+	if (!hitsMasks)
+	    for (int i = 0; i < buttons.size(); i++)
+		buttons.get(i).inputDown(x, y);
 	flinging = false;
 	return false;
     }
@@ -326,9 +417,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addBubblesEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	bubblesPane.add(soldOut);
+	if (bubblesPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    bubblesPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -337,13 +430,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - bubblesPane.getX(), y - bubblesPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - bubblesPane.getX(), y - bubblesPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - bubblesPane.getX(), y - bubblesPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - bubblesPane.getX(), y - bubblesPane.getY());
 	    }
 
 	};
@@ -354,9 +447,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addDuskEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	duskPane.add(soldOut);
+	if (duskPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    duskPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -365,13 +460,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - duskPane.getX(), y - duskPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - duskPane.getX(), y - duskPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - duskPane.getX(), y - duskPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - duskPane.getX(), y - duskPane.getY());
 	    }
 
 	};
@@ -382,9 +477,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addFierySmashEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	fierySmashPane.add(soldOut);
+	if (fierySmashPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    fierySmashPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -393,13 +490,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - fierySmashPane.getX(), y - fierySmashPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - fierySmashPane.getX(), y - fierySmashPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - fierySmashPane.getX(), y - fierySmashPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - fierySmashPane.getX(), y - fierySmashPane.getY());
 	    }
 
 	};
@@ -410,9 +507,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addFrostBiteEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	frostBitePane.add(soldOut);
+	if (frostBitePane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    frostBitePane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -421,26 +520,28 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - frostBitePane.getX(), y - frostBitePane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - frostBitePane.getX(), y - frostBitePane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - frostBitePane.getX(), y - frostBitePane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - frostBitePane.getX(), y - frostBitePane.getY());
 	    }
 
 	};
-	equip.setName("FROST-EQUIP");
+	equip.setName("FROST-BITE-EQUIP");
 	equip.setCallback(this);
 	buttons.add(equip);
 	frostBitePane.add(equip);
     }
 
     private void addMetalHeadEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	metalHeadPane.add(soldOut);
+	if (metalHeadPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    metalHeadPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -449,13 +550,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - metalHeadPane.getX(), y - metalHeadPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - metalHeadPane.getX(), y - metalHeadPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - metalHeadPane.getX(), y - metalHeadPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - metalHeadPane.getX(), y - metalHeadPane.getY());
 	    }
 
 	};
@@ -463,6 +564,36 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	equip.setCallback(this);
 	buttons.add(equip);
 	metalHeadPane.add(equip);
+    }
+
+    private void addMjolnirEquipButton() {
+	if (mjolnirPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    mjolnirPane.add(soldOut);
+	}
+
+	TextureRegion upstate, downstate, hoverstate;
+	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
+	downstate = Art.hammers.findRegion("EQUIP-DOWNSTATE");
+	hoverstate = Art.hammers.findRegion("EQUIP-UPSTATE");
+	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
+
+	    @Override
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - mjolnirPane.getX(), y - mjolnirPane.getY());
+	    }
+
+	    @Override
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - mjolnirPane.getX(), y - mjolnirPane.getY());
+	    }
+
+	};
+	equip.setName("MJOLNIR-EQUIP");
+	equip.setCallback(this);
+	buttons.add(equip);
+	mjolnirPane.add(equip);
     }
 
     private void addPaneComponents(DynamicDisplayGroup group, String title, String description) {
@@ -485,9 +616,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addSpaceBlasterEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	spaceBlasterPane.add(soldOut);
+	if (spaceBlasterPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    spaceBlasterPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -496,13 +629,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
 	    }
 
 	};
@@ -513,9 +646,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addStarryNightEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	starryNightPane.add(soldOut);
+	if (starryNightPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    starryNightPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -524,13 +659,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - starryNightPane.getX(), y - starryNightPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - starryNightPane.getX(), y - starryNightPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - starryNightPane.getX(), y - starryNightPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - starryNightPane.getX(), y - starryNightPane.getY());
 	    }
 
 	};
@@ -541,9 +676,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addTwilightEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	twilightPane.add(soldOut);
+	if (twilightPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    twilightPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -552,13 +689,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - twilightPane.getX(), y - twilightPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - twilightPane.getX(), y - twilightPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - twilightPane.getX(), y - twilightPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - twilightPane.getX(), y - twilightPane.getY());
 	    }
 
 	};
@@ -569,9 +706,11 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
     }
 
     private void addWoodenHammerEquipButton() {
-	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
-	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
-	woodenHammerPane.add(soldOut);
+	if (woodenHammerPane.getByName("SOLD-OUT") == null) {
+	    DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	    soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	    woodenHammerPane.add(soldOut);
+	}
 
 	TextureRegion upstate, downstate, hoverstate;
 	upstate = Art.hammers.findRegion("EQUIP-UPSTATE");
@@ -580,13 +719,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	DynamicButton equip = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 	    @Override
-	    public void inputDown(float x, float y) {
-		super.inputDown(x - woodenHammerPane.getX(), y - woodenHammerPane.getY());
+	    public boolean inputDown(float x, float y) {
+		return super.inputDown(x - woodenHammerPane.getX(), y - woodenHammerPane.getY());
 	    }
 
 	    @Override
-	    public void inputUp(float x, float y) {
-		super.inputUp(x - woodenHammerPane.getX(), y - woodenHammerPane.getY());
+	    public boolean inputUp(float x, float y) {
+		return super.inputUp(x - woodenHammerPane.getX(), y - woodenHammerPane.getY());
 	    }
 
 	};
@@ -594,6 +733,63 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	equip.setCallback(this);
 	buttons.add(equip);
 	woodenHammerPane.add(equip);
+    }
+
+    private void equipHammer(int hammerType) {
+	switch (hammerType) {
+	    case Hammer.BUBBLES:
+		Settings.hammerType = Hammer.BUBBLES;
+		removeButtonByName("BUBBLES-EQUIP");
+		bubblesPane.removeByName("BUBBLES-EQUIP");
+		break;
+	    case Hammer.DUSK:
+		Settings.hammerType = Hammer.DUSK;
+		removeButtonByName("DUSK-EQUIP");
+		duskPane.removeByName("DUSK-EQUIP");
+		break;
+	    case Hammer.FIERY_SMASH:
+		Settings.hammerType = Hammer.FIERY_SMASH;
+		removeButtonByName("FIERY-SMASH-EQUIP");
+		fierySmashPane.removeByName("FIERY-SMASH-EQUIP");
+		break;
+	    case Hammer.FROST_BITE:
+		Settings.hammerType = Hammer.FROST_BITE;
+		removeButtonByName("FROST-BITE-EQUIP");
+		frostBitePane.removeByName("FROST-BITE-EQUIP");
+		break;
+	    case Hammer.METAL_HEAD:
+		Settings.hammerType = Hammer.METAL_HEAD;
+		removeButtonByName("METAL-HEAD-EQUIP");
+		metalHeadPane.removeByName("METALHEAD-EQUIP");
+		break;
+	    case Hammer.MJOLNIR:
+		Settings.hammerType = Hammer.MJOLNIR;
+		removeButtonByName("MJOLNIR-EQUIP");
+		mjolnirPane.removeByName("MJOLNIR-EQUIP");
+		break;
+	    case Hammer.SPACE_BLASTER:
+		Settings.hammerType = Hammer.SPACE_BLASTER;
+		removeButtonByName("SPACE-BLASTER-EQUIP");
+		spaceBlasterPane.removeByName("SPACE-BLASTER-EQUIP");
+		break;
+	    case Hammer.STARRY_NIGHT:
+		Settings.hammerType = Hammer.STARRY_NIGHT;
+		removeButtonByName("STARRY-NIGHT-EQUIP");
+		starryNightPane.removeByName("STARRY-NIGHT-EQUIP");
+		break;
+	    case Hammer.TWILIGHT:
+		Settings.hammerType = Hammer.TWILIGHT;
+		removeButtonByName("TWILIGHT-EQUIP");
+		twilightPane.removeByName("TWILIGHT-EQUIP");
+		break;
+	    case Hammer.WOODEN_HAMMER:
+		Settings.hammerType = Hammer.WOODEN_HAMMER;
+		removeButtonByName("WOODEN-HAMMER-EQUIP");
+		woodenHammerPane.removeByName("WOODEN-HAMMER-EQUIP");
+		break;
+	    default:
+		assert false;
+	}
     }
 
     private void initBubblesPane() {
@@ -608,13 +804,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - bubblesPane.getX(), y - bubblesPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - bubblesPane.getX(), y - bubblesPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - bubblesPane.getX(), y - bubblesPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - bubblesPane.getX(), y - bubblesPane.getY());
 		}
 	    };
 	    buy.setName("BUBBLES-BUY");
@@ -630,7 +826,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    bubblesPane.add(price);
 	}
 	bubblesPane.setX(129);
-	bubblesPane.setY(-1046);
+	bubblesPane.setY(firstItemY - 200 * 8);
     }
 
     private void initDuskPane() {
@@ -645,13 +841,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - duskPane.getX(), y - duskPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - duskPane.getX(), y - duskPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - duskPane.getX(), y - duskPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - duskPane.getX(), y - duskPane.getY());
 		}
 	    };
 	    buy.setName("DUSK-BUY");
@@ -667,7 +863,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    duskPane.add(price);
 	}
 	duskPane.setX(129);
-	duskPane.setY(-226);
+	duskPane.setY(firstItemY - 200 * 4);
     }
 
     private void initFierySmashPane() {
@@ -682,13 +878,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - fierySmashPane.getX(), y - fierySmashPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - fierySmashPane.getX(), y - fierySmashPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - fierySmashPane.getX(), y - fierySmashPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - fierySmashPane.getX(), y - fierySmashPane.getY());
 		}
 	    };
 	    buy.setName("FIERY-SMASH-BUY");
@@ -704,7 +900,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    fierySmashPane.add(price);
 	}
 	fierySmashPane.setX(129);
-	fierySmashPane.setY(184);
+	fierySmashPane.setY(firstItemY - 200 * 2);
     }
 
     private void initFrostBitePane() {
@@ -719,13 +915,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - frostBitePane.getX(), y - frostBitePane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - frostBitePane.getX(), y - frostBitePane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - frostBitePane.getX(), y - frostBitePane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - frostBitePane.getX(), y - frostBitePane.getY());
 		}
 	    };
 	    buy.setName("FROST-BITE-BUY");
@@ -741,7 +937,20 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    frostBitePane.add(price);
 	}
 	frostBitePane.setX(129);
-	frostBitePane.setY(-21);
+	frostBitePane.setY(firstItemY - 200 * 3);
+    }
+
+    private void initGoldPane() {
+
+	DynamicSprite pane = new DynamicSprite(Art.hammers.findRegion("GOLD-PANE"), 1265, 15);
+	pane.setRegistration(DynamicRegistration.BOTTOM_RIGHT);
+	goldPane.add(pane);
+
+	goldText = new DynamicText(Fonts.berlinSansx32OrangeStroke, "" + Settings.gold);
+	goldText.setPosition(1240, 65);
+	goldText.setScale(.65f);
+	goldText.setRegistration(DynamicRegistration.CENTER_RIGHT);
+	goldPane.add(goldText);
     }
 
     private void initMetalheadPane() {
@@ -763,13 +972,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - metalHeadPane.getX(), y - metalHeadPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - metalHeadPane.getX(), y - metalHeadPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - metalHeadPane.getX(), y - metalHeadPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - metalHeadPane.getX(), y - metalHeadPane.getY());
 		}
 	    };
 	    buy.setName("METALHEAD-BUY");
@@ -778,7 +987,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    metalHeadPane.add(buy);
 	}
 	metalHeadPane.setX(129);
-	metalHeadPane.setY(389);
+	metalHeadPane.setY(firstItemY - 200 * 1);
     }
 
     private void initMjolnirPane() {
@@ -793,13 +1002,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - mjolnirPane.getX(), y - mjolnirPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - mjolnirPane.getX(), y - mjolnirPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - mjolnirPane.getX(), y - mjolnirPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - mjolnirPane.getX(), y - mjolnirPane.getY());
 		}
 	    };
 	    buy.setName("MJOLNIR-BUY");
@@ -815,7 +1024,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    mjolnirPane.add(price);
 	}
 	mjolnirPane.setX(129);
-	mjolnirPane.setY(-841);
+	mjolnirPane.setY(firstItemY - 200 * 9);
     }
 
     private void initPanels() {
@@ -843,13 +1052,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - spaceBlasterPane.getX(), y - spaceBlasterPane.getY());
 		}
 	    };
 	    buy.setName("SPACE-BLASTER-BUY");
@@ -865,7 +1074,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    spaceBlasterPane.add(price);
 	}
 	spaceBlasterPane.setX(129);
-	spaceBlasterPane.setY(-841);
+	spaceBlasterPane.setY(firstItemY - 200 * 7);
     }
 
     private void initStarryNightPane() {
@@ -880,13 +1089,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - starryNightPane.getX(), y - starryNightPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - starryNightPane.getX(), y - starryNightPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - starryNightPane.getX(), y - starryNightPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - starryNightPane.getX(), y - starryNightPane.getY());
 		}
 	    };
 	    buy.setName("STARRY-NIGHT-BUY");
@@ -902,7 +1111,7 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    starryNightPane.add(price);
 	}
 	starryNightPane.setX(129);
-	starryNightPane.setY(-636);
+	starryNightPane.setY(firstItemY - 200 * 6);
     }
 
     private void initTwilightPane() {
@@ -917,13 +1126,13 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    DynamicButton buy = new DynamicButton(upstate, hoverstate, downstate, new Vector2(842, 97)) {
 
 		@Override
-		public void inputDown(float x, float y) {
-		    super.inputDown(x - twilightPane.getX(), y - twilightPane.getY());
+		public boolean inputDown(float x, float y) {
+		    return super.inputDown(x - twilightPane.getX(), y - twilightPane.getY());
 		}
 
 		@Override
-		public void inputUp(float x, float y) {
-		    super.inputUp(x - twilightPane.getX(), y - twilightPane.getY());
+		public boolean inputUp(float x, float y) {
+		    return super.inputUp(x - twilightPane.getX(), y - twilightPane.getY());
 		}
 	    };
 	    buy.setName("TWILIGHT-BUY");
@@ -939,20 +1148,65 @@ public class HammerSelectionScreen extends DynamicScreen implements GestureListe
 	    twilightPane.add(price);
 	}
 	twilightPane.setX(129);
-	twilightPane.setY(-431);
+	twilightPane.setY(firstItemY - 200 * 5);
     }
 
     private void initWoodenHammerPane() {
 	addPaneComponents(woodenHammerPane, "WOODEN HAMMER", Descriptions.WOODEN_HAMMER);
+	DynamicSprite soldOut = new DynamicSprite(Art.hammers.findRegion("SOLD-OUT"), 181, 35);
+	soldOut.setRegistration(DynamicRegistration.BOTTOM_LEFT);
+	woodenHammerPane.add(soldOut);
 	if (Settings.hammerType != Hammer.WOODEN_HAMMER)
 	    addWoodenHammerEquipButton();
 	woodenHammerPane.setX(129);
-	woodenHammerPane.setY(594);
+	woodenHammerPane.setY(firstItemY);
+    }
+
+    private void interpolateGoldValue(float target) {
+	goldValue.getTweenManager().update(1000);
+	goldValue.interpolate(target, Linear.INOUT, 500, true);
     }
 
     private void removeButtonByName(String name) {
 	for (int i = 0; i < buttons.size(); i++)
 	    if (buttons.get(i).getName().equals(name))
 		buttons.remove(i);
+    }
+
+    private void unequipHammer() {
+	switch (Settings.hammerType) {
+	    case Hammer.BUBBLES:
+		addBubblesEquipButton();
+		break;
+	    case Hammer.DUSK:
+		addDuskEquipButton();
+		break;
+	    case Hammer.FIERY_SMASH:
+		addFierySmashEquipButton();
+		break;
+	    case Hammer.FROST_BITE:
+		addFrostBiteEquipButton();
+		break;
+	    case Hammer.METAL_HEAD:
+		addMetalHeadEquipButton();
+		break;
+	    case Hammer.MJOLNIR:
+		addMjolnirEquipButton();
+		break;
+	    case Hammer.SPACE_BLASTER:
+		addSpaceBlasterEquipButton();
+		break;
+	    case Hammer.STARRY_NIGHT:
+		addStarryNightEquipButton();
+		break;
+	    case Hammer.TWILIGHT:
+		addTwilightEquipButton();
+		break;
+	    case Hammer.WOODEN_HAMMER:
+		addWoodenHammerEquipButton();
+		break;
+	    default:
+		assert false;
+	}
     }
 }

@@ -5,6 +5,8 @@ import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.noobs2d.tweenengine.utils.DynamicDisplay;
@@ -12,10 +14,15 @@ import com.nullsys.smashsmash.screen.StageLoadingScreen;
 
 public class SmashSmash extends Game {
 
+    private BitmapFont debugFeed;
+    private SpriteBatch spriteBatch;
     private float timeElapsed = 0f;
 
     @Override
     public void create() {
+	debugFeed = new BitmapFont();
+	debugFeed.setScale(2f);
+	spriteBatch = new SpriteBatch();
 	initTween();
 	init();
     }
@@ -29,6 +36,12 @@ public class SmashSmash extends Game {
 	if (getScreen() != null) {
 	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 	    getScreen().render(Gdx.graphics.getDeltaTime());
+	}
+
+	if (Settings.debugMode) {
+	    spriteBatch.begin();
+	    debugFeed.drawWrapped(spriteBatch, Gdx.graphics.getFramesPerSecond() + "fps\n", 0f, 800f, 600, HAlignment.LEFT);
+	    spriteBatch.end();
 	}
     }
 

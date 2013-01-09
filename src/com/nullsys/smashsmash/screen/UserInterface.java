@@ -54,7 +54,8 @@ public class UserInterface {
 
     public UserInterface(SmashSmashStage stage) {
 	this.stage = stage;
-	score = Fonts.akaDylanCollage64;
+	score = Fonts.KRONIKA_BLACKSTROKE;
+	score.setScale(1.14f);
 	comboCount = new DynamicText(Fonts.actionJackson115, "", HAlignment.LEFT);
 	comboCount.wrapWidth = 512;
 	comboCount.position.set(0, 515);
@@ -69,7 +70,7 @@ public class UserInterface {
 	comboName.setRegistration(DynamicRegistration.CENTER_LEFT);
 	feed = new BitmapFont();
 	feed.scale(.5f);
-	flyout = new DynamicText(Fonts.goodGirlx32, "", HAlignment.CENTER);
+	flyout = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.CENTER);
 	streakBonus = new DynamicText(Fonts.bdCartoonShoutx23orange, "", HAlignment.RIGHT);
 	streakBonus.setRegistration(DynamicRegistration.CENTER_RIGHT);
 	streakName = new DynamicText(Fonts.bdCartoonShoutx32orange, "", HAlignment.RIGHT);
@@ -273,23 +274,23 @@ public class UserInterface {
     }
 
     private void initTimer() {
-	float offsetX = 28f;
-	float y = 773f;
-	timer[0] = new DynamicText(Fonts.bdCartoonShoutx23orange, "0", HAlignment.CENTER);
-	timer[0].setPosition(Settings.SCREEN_WIDTH / 2 - offsetX * 2, y);
-	timer[0].setScale(2f, 2f);
-	timer[1] = new DynamicText(Fonts.bdCartoonShoutx23orange, "0", HAlignment.CENTER);
-	timer[1].setPosition(Settings.SCREEN_WIDTH / 2 - offsetX, y);
-	timer[1].setScale(2f, 2f);
-	timer[2] = new DynamicText(Fonts.bdCartoonShoutx23orange, ":", HAlignment.CENTER);
+	float offsetX = 35f;
+	float y = 765f;
+	timer[0] = new DynamicText(Fonts.KRONIKA_BLACKSTROKE, "0", HAlignment.CENTER);
+	timer[0].setPosition(Settings.SCREEN_WIDTH / 2 - offsetX * 2 + 10, y);
+	timer[0].setScale(.7f, .7f);
+	timer[1] = new DynamicText(Fonts.KRONIKA_BLACKSTROKE, "0", HAlignment.CENTER);
+	timer[1].setPosition(Settings.SCREEN_WIDTH / 2 - offsetX + 10, y);
+	timer[1].setScale(.7f, .7f);
+	timer[2] = new DynamicText(Fonts.KRONIKA_BLACKSTROKE, ":", HAlignment.CENTER);
 	timer[2].setPosition(Settings.SCREEN_WIDTH / 2, y);
-	timer[2].setScale(2f, 2f);
-	timer[3] = new DynamicText(Fonts.bdCartoonShoutx23orange, "0", HAlignment.CENTER);
-	timer[3].setPosition(Settings.SCREEN_WIDTH / 2 + offsetX, y);
-	timer[3].setScale(2f, 2f);
-	timer[4] = new DynamicText(Fonts.bdCartoonShoutx23orange, "0", HAlignment.CENTER);
-	timer[4].setPosition(Settings.SCREEN_WIDTH / 2 + offsetX * 2, y);
-	timer[4].setScale(2f, 2f);
+	timer[2].setScale(.7f, .7f);
+	timer[3] = new DynamicText(Fonts.KRONIKA_BLACKSTROKE, "0", HAlignment.CENTER);
+	timer[3].setPosition(Settings.SCREEN_WIDTH / 2 + offsetX - 10, y);
+	timer[3].setScale(.7f, .7f);
+	timer[4] = new DynamicText(Fonts.KRONIKA_BLACKSTROKE, "0", HAlignment.CENTER);
+	timer[4].setPosition(Settings.SCREEN_WIDTH / 2 + offsetX * 2 - 10, y);
+	timer[4].setScale(.7f, .7f);
     }
 
     private void renderLifePoints(SpriteBatch spriteBatch) {

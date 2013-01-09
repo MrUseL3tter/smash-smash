@@ -165,22 +165,22 @@ public class PauseScreen extends DynamicScreen implements DynamicButtonCallback,
 	super.render(delta);
 	stage.render(delta);
 
-	spriteBatch.begin();
-	blackFill.render(spriteBatch);
+	batch.begin();
+	blackFill.render(batch);
 	blackFill.update(delta);
-	resume.render(spriteBatch);
+	resume.render(batch);
 	resume.update(delta);
-	retry.render(spriteBatch);
+	retry.render(batch);
 	retry.update(delta);
-	menu.render(spriteBatch);
+	menu.render(batch);
 	menu.update(delta);
-	music.render(spriteBatch);
+	music.render(batch);
 	music.update(delta);
-	sound.render(spriteBatch);
+	sound.render(batch);
 	sound.update(delta);
-	pauseLabel.render(spriteBatch);
+	pauseLabel.render(batch);
 	pauseLabel.update(delta);
-	spriteBatch.end();
+	batch.end();
     }
 
     private void interpolateEnd() {

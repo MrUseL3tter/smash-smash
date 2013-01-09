@@ -130,25 +130,25 @@ public class ResultScreen extends DynamicScreen implements TweenCallback {
 	scoreValue.update(delta);
 
 	stage.render(delta);
-	spriteBatch.begin();
-	blackFill.render(spriteBatch);
+	batch.begin();
+	blackFill.render(batch);
 	blackFill.update(delta);
-	stageEndLabel.render(spriteBatch);
+	stageEndLabel.render(batch);
 	stageEndLabel.update(delta);
-	yourScore.render(spriteBatch);
+	yourScore.render(batch);
 	yourScore.update(delta);
-	score.render(spriteBatch);
+	score.render(batch);
 	score.update(delta);
 	score.text = "" + (int) scoreValue.value;
-	newHighscore.render(spriteBatch);
+	newHighscore.render(batch);
 	newHighscore.update(delta);
-	hammers.render(spriteBatch);
+	hammers.render(batch);
 	hammers.update(delta);
-	retry.render(spriteBatch);
+	retry.render(batch);
 	retry.update(delta);
-	menu.render(spriteBatch);
+	menu.render(batch);
 	menu.update(delta);
-	spriteBatch.end();
+	batch.end();
 
 	//	System.out.println("[ResultScreen#render(float)] blackFill.color.a: " + blackFill.getColor().a);
     }

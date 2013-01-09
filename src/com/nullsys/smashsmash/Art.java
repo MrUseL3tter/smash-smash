@@ -12,6 +12,7 @@ public class Art {
     public static Texture lawnBackground1;
     public static Texture lawnBackground2;
     public static TextureAtlas menu;
+    public static TextureAtlas modes;
     public static TextureAtlas pukes;
     public static TextureAtlas hammers;
     public static TextureAtlas result;
@@ -35,7 +36,8 @@ public class Art {
 	assetManager.load("data/gfx/SAMPLE_BLACKFILL.png", Texture.class);
 	assetManager.load("data/gfx/SAMPLE_WHITEFILL.png", Texture.class);
 
-	assetManager.load("data/gfx/menu/MENU.pack", TextureAtlas.class);
+	assetManager.load("data/gfx/MENU.pack", TextureAtlas.class);
+	assetManager.load("data/gfx/MODES.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/HAMMERS.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/PUKES.pack", TextureAtlas.class);
 	assetManager.load("data/gfx/RESULT.pack", TextureAtlas.class);
@@ -48,7 +50,8 @@ public class Art {
 	lawnBackground2 = assetManager.get("data/gfx/SAMPLE_BACKGROUND2.png", Texture.class);
 	lawnBackground2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-	menu = assetManager.get("data/gfx/menu/MENU.pack", TextureAtlas.class);
+	menu = assetManager.get("data/gfx/MENU.pack", TextureAtlas.class);
+	modes = assetManager.get("data/gfx/MODES.pack", TextureAtlas.class);
 	pukes = assetManager.get("data/gfx/PUKES.pack", TextureAtlas.class);
 	result = assetManager.get("data/gfx/RESULT.pack", TextureAtlas.class);
 	goldbar = assetManager.get("data/gfx/GOLDBAR.pack", TextureAtlas.class);
