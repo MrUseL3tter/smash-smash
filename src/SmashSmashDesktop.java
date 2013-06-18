@@ -1,6 +1,6 @@
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.nullsys.smashsmash.Settings;
-import com.nullsys.smashsmash.SmashSmash;
+import com.noobs2d.smashsmash.Settings;
+import com.noobs2d.smashsmash.SmashSmash;
 
 public class SmashSmashDesktop {
 
