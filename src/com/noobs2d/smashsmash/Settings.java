@@ -8,25 +8,28 @@ import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resoluti
 import com.badlogic.gdx.graphics.Texture;
 import com.noobs2d.smashsmash.hammer.Hammer;
 import com.noobs2d.smashsmash.hammer.Hammer.Prices;
+import com.noobs2d.tweenengine.utils.DynamicDisplay;
 
 public class Settings {
 
     public static final int SCREEN_WIDTH = 1280;
-
     public static final int SCREEN_HEIGHT = 800;
-    public static final boolean DEBUG_MODE = true;
-    public static int arcadeHighscore = 0;
 
+    public static final boolean DEBUG_MODE = true;
+
+    private static float gameSpeed = 1f;
+
+    public static int arcadeHighscore = 0;
     public static int endlessHighscore = 0;
-    public static int gold = 0;//90000;
+
+    public static int gold = 0;
 
     public static int hammerType = Hammer.WOODEN_HAMMER;
 
     public static boolean musicEnabled = false;
-
     public static boolean soundEnabled = false;
-    public static boolean cheatHammerTime = false;
 
+    public static boolean cheatHammerTime = false;
     public static boolean cheatInvulnerability = false;
     public static boolean cheatScoreFrenzy = false;
     public static boolean hasWoodenHammer = true;
@@ -43,6 +46,7 @@ public class Settings {
     public static boolean hasMjolnir = false;
 
     public static boolean buyHammer(int hammerType) {
+	// FIXME why is this function on a datastructure class?
 	boolean bought = false;
 	switch (hammerType) {
 	    case Hammer.BUBBLES:
@@ -117,10 +121,19 @@ public class Settings {
 	return assetManager;
     }
 
+    public static float getGameSpeed() {
+	return gameSpeed;
+    }
+
     /** works only if on debug mode */
     public static void log(String className, String methodName, String message) {
 	if (DEBUG_MODE)
 	    System.out.println("[" + System.nanoTime() + " - " + className + "#" + methodName + "] " + message);
+    }
+
+    public static void setGameSpeed(float gameSpeed) {
+	DynamicDisplay.tweenSpeed = gameSpeed;
+	Settings.gameSpeed = gameSpeed;
     }
 
 }

@@ -46,7 +46,7 @@ import com.noobs2d.tweenengine.utils.DynamicSprite;
 /**
  * @author MrUseL3tter
  */
-public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCallback {
+public class SmashSmashStage extends DynamicScreen implements AlienEventListener {
 
     /** maximum duration before the combo expires in seconds. */
     public static final int COMBO_MAX_DURATION = 3;
@@ -171,10 +171,18 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
     }
 
     @Override
+    public void onAlienHit(Alien alien) {
+	addScore(alien);
+    }
+
+    @Override
     public void onAlienSmashed(Alien alien) {
-	if (!(alien instanceof Bomb)) {
+	boolean isNotBomb = !(alien instanceof Bomb);
+	if (isNotBomb) {
 	    addScore(alien);
 	    session.incrementSmashedAliens();
+
+	    // TODO add proper percentage calculation like on Alien.isCritical()
 	    // Add coin as per percentage
 	    int random = (int) (Math.random() * 1000);
 	    if (random <= 4)
@@ -290,8 +298,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 	batch.setColor(1f, 1f, 1f, 1f);
 	checkComboTime();
 	checkStreaks();
-
-	//	Settings.log("SmashSmashStage", "render(SpriteBatch)", "" + aliens.get(0).position);
     }
 
     @Override
@@ -474,7 +480,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		pointers[pointer] = false;
 		return true;
 	    } else if (hit) {
-		//		onAlienSmashed(aliens.get(i));
 		hitCount++;
 		session.incrementCurrentCombo();
 		session.setCombosLastDelta(session.getStageSecondsElapsed());
@@ -484,6 +489,7 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 		break;
 	    }
 	}
+	// FIXME check if actually needed
 	// Display a "x + 1!" message
 	//	if (hitCount >= 2) {
 	//	    DynamicText text = new DynamicText(Fonts.bdCartoonShoutx23orange, hitCount + " in 1!", HAlignment.CENTER);
@@ -573,10 +579,6 @@ public class SmashSmashStage extends DynamicScreen implements SmashSmashStageCal
 			    aliens.get(i).rise(spawnDelay, volume / 2);
 			else if (!buffAlien && !overlaps)
 			    aliens.get(i).rise(spawnDelay, volume / 2);
-			//			if (aliens.get(i) instanceof Sorcerer && !buffAliensVisible() && !overlaps || buffAlien && !isSorcererVisible() && !overlaps || !buffAlien && !overlaps) {
-			//			    float volume = getVisibleAliens() > 0 ? 1.1f - getVisibleAliens() / aliens.size() : 1f;
-			//			    aliens.get(i).rise(spawnDelay, volume / 2);
-			//			}
 		    }
 		    overlaps = false;
 		}
