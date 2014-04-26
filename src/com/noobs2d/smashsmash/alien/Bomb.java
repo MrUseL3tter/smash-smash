@@ -2,13 +2,13 @@ package com.noobs2d.smashsmash.alien;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import com.noobs2d.smashsmash.screen.SmashSmashStageCallback;
+import com.noobs2d.smashsmash.screen.AlienEventListener;
 
 public class Bomb extends Jelly {
 
     private float spawnDelay = 0;
 
-    public Bomb(SmashSmashStageCallback stage) {
+    public Bomb(AlienEventListener stage) {
 	super(stage);
 	risingState.setColor(Color.RED);
 	waitingState.setColor(Color.RED);

@@ -1,17 +1,33 @@
 package com.noobs2d.smashsmash.alien;
 
-import java.util.ArrayList;
-
-import com.noobs2d.smashsmash.screen.SmashSmashStageCallback;
-import com.noobs2d.tweenengine.utils.DynamicAnimation;
-import com.noobs2d.tweenengine.utils.DynamicDisplay;
+import com.noobs2d.smashsmash.screen.AlienEventListener;
 import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
-import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
+import com.noobs2d.tweenengine.utils.DynamicSprite;
 
+/**
+ * An alien that must only be hit while sleeping (eyes closed). 
+ * Hitting it while its eyes are open will cause it to attack.
+ * 
+ * @author Julious Cious Igmen <jcigmen@gmail.com>
+ */
 public class Golem extends Alien {
 
-    public Golem(SmashSmashStageCallback stage) {
-	super.stage = stage;
+    public static final String RESOURCE = "data/gfx/ALIENS.pack";
+    public static final String SHAPE = "GOLEM-SHAPE";
+    public static final String ATTACK_EYES = "GOLEM-ATTACK-EYES";
+    public static final String ATTACK_MOUTH = "GOLEM-ATTACK-MOUTH";
+    public static final String IDLE_EYES = "GOLEM-IDLE-EYES";
+    public static final String IDLE_MOUTH = "GOLEM-IDLE-MOUTH";
+    public static final String BLINK_EYES = "GOLEM-BLINK-EYES";
+    public static final String SMASHED_MOUTH = "GOLEM-SMASHED-MOUTH";
+    public static final String SMASHED_SHAPE = "GOLEM-SMASHED-SHAPE";
+    public static final String STUNNED_LEFT_EYE = "GOLEM-STUNNED-LEFTEYE";
+    public static final String STUNNED_RIGHT_EYE = "GOLEM-STUNNED-RIGHTEYE";
+    public static final String STUNNED_SHAPE = "GOLEM-STUNNED-SHAPE";
+    public static final String STUNNED_MOUTH = "GOLEM-STUNNED-MOUTH";
+
+    public Golem(AlienEventListener stage) {
+	super.callback = stage;
 	initAttackingState();
 	initHidingState();
 	initRisingState();
@@ -20,50 +36,103 @@ public class Golem extends Alien {
 	initWaitingState();
     }
 
+    /** Golem doesn't have an explosion state so we just divert explode into smashed state. */
+    @Override
+    public void explode() {
+	state = AlienState.SMASHED;
+	interpolateSmashed(true);
+    }
+
     @Override
     public int getScore() {
 	return state == AlienState.RISING ? 1 : state == AlienState.ATTACKING ? 2 : 1;
     }
 
-    private void initAttackingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.golemAttack));
-	attackingState = new DynamicDisplayGroup(list);
+    @Override
+    protected void initAttackingState() {
+	DynamicSprite shape, eyes, mouth;
+	shape = new DynamicSprite(AliensArt.golemShape, 0, 0, DynamicRegistration.BOTTOM_CENTER);
+	shape.setName(SHAPE);
+	eyes = new DynamicSprite(AliensArt.golemAttackEyes, 0, 143);
+	eyes.setName(ATTACK_EYES);
+	mouth = new DynamicSprite(AliensArt.golemAttackMouth, 0, 131);
+	mouth.setName(ATTACK_MOUTH);
+
+	attackingState.add(shape);
+	attackingState.add(eyes);
+	attackingState.add(mouth);
 	attackingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
     }
 
-    private void initHidingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.golemHiding));
-	hidingState = new DynamicDisplayGroup(list);
-	hidingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initExplodeState() {
+	// golem doesn't have explode state
     }
 
-    private void initRisingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.golemRising));
-	risingState = new DynamicDisplayGroup(list);
-	risingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initHidingState() {
+	// TODO add impl
     }
 
-    private void initSmashedState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.golemSmashed));
-	smashedState = new DynamicDisplayGroup(list);
-	smashedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initRisingState() {
+	// TODO add impl
     }
 
-    private void initStunnedState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.golemStunned));
-	stunnedState = new DynamicDisplayGroup(list);
-	stunnedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initSmashedState() {
+	// TODO add impl
     }
 
-    private void initWaitingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.golemWaiting));
-	waitingState = new DynamicDisplayGroup(list);
-	waitingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initStunnedState() {
+	// TODO add impl
+    }
+
+    @Override
+    protected void initWaitingState() {
+	// TODO add impl
+    }
+
+    @Override
+    protected void interpolateAttacking() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateExplode() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateHiding() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateRising(float delay) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateSmashed(boolean dead) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateStunned() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateWaiting() {
+	// TODO Auto-generated method stub
+
     }
 }

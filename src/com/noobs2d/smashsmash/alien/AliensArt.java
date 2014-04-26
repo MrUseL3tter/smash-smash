@@ -7,6 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.noobs2d.smashsmash.Settings;
 import com.noobs2d.tweenengine.utils.DynamicAnimation;
 
+/**
+ * Placeholder for the static Texture and related classes for the {@link Alien}s.
+ * The method {@link AliensArt#load(AssetManager)} is the one to invoke to start the loading,
+ * then {@link AliensArt#retrieve(AssetManager)}, which must be called after loading is finished,
+ * to start placing the loaded assets into the respective instances.
+ * 
+ * @author Julious Cious Igmen <jcigmen@gmail.com>
+ */
 public class AliensArt {
 
     public static Texture diabolic;
@@ -17,21 +25,31 @@ public class AliensArt {
     public static DynamicAnimation diabolicSmashed;
     public static DynamicAnimation diabolicStunned;
 
-    public static Texture fluff;
-    public static DynamicAnimation fluffAttack;
-    public static DynamicAnimation fluffHiding;
-    public static DynamicAnimation fluffWaiting;
-    public static DynamicAnimation fluffRising;
-    public static DynamicAnimation fluffSmashed;
-    public static DynamicAnimation fluffStunned;
+    public static TextureRegion fluffShape;
+    public static TextureRegion fluffAttackEyes;
+    public static TextureRegion fluffAttackMouth;
+    public static TextureRegion fluffIdleEyes;
+    public static TextureRegion fluffIdleMouth;
+    public static TextureRegion fluffBlinkEyes;
+    public static TextureRegion fluffSmashedMouth;
+    public static TextureRegion fluffSmashedShape;
+    public static TextureRegion fluffStunnedLeftEye;
+    public static TextureRegion fluffStunnedRightEye;
+    public static TextureRegion fluffStunnedShape;
+    public static TextureRegion fluffStunnedMouth;
 
-    public static Texture golem;
-    public static DynamicAnimation golemAttack;
-    public static DynamicAnimation golemHiding;
-    public static DynamicAnimation golemWaiting;
-    public static DynamicAnimation golemRising;
-    public static DynamicAnimation golemSmashed;
-    public static DynamicAnimation golemStunned;
+    public static TextureRegion golemShape;
+    public static TextureRegion golemAttackEyes;
+    public static TextureRegion golemAttackMouth;
+    public static TextureRegion golemIdleEyes;
+    public static TextureRegion golemIdleMouth;
+    public static TextureRegion golemBlinkEyes;
+    public static TextureRegion golemSmashedMouth;
+    public static TextureRegion golemSmashedShape;
+    public static TextureRegion golemStunnedLeftEye;
+    public static TextureRegion golemStunnedRightEye;
+    public static TextureRegion golemStunnedShape;
+    public static TextureRegion golemStunnedMouth;
 
     public static TextureRegion[] jellyExplode;
     public static TextureRegion jellyShape;
@@ -87,9 +105,6 @@ public class AliensArt {
 	retrieveTortoise(assetManager);
     }
 
-    public static void unloadTextures(AssetManager assetManager) {
-    }
-
     private static void retrieveDiabolic(AssetManager assetManager) {
 	diabolic = assetManager.get("data/gfx/SAMPLE_ALIENS_ALL.png", Texture.class);
 	diabolicAttack = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
@@ -101,24 +116,43 @@ public class AliensArt {
     }
 
     private static void retrieveFluff(AssetManager assetManager) {
-	fluff = assetManager.get("data/gfx/SAMPLE_ALIENS_ALL.png", Texture.class);
-	fluffAttack = new DynamicAnimation(0.1f, new TextureRegion(fluff, 174, 0, 223, 241));
-	fluffHiding = new DynamicAnimation(0.1f, new TextureRegion(fluff, 174, 0, 223, 241));
-	fluffWaiting = new DynamicAnimation(0.1f, new TextureRegion(fluff, 174, 0, 223, 241));
-	fluffRising = new DynamicAnimation(0.1f, new TextureRegion(fluff, 174, 0, 223, 241));
-	fluffSmashed = new DynamicAnimation(0.1f, new TextureRegion(fluff, 174, 0, 223, 241));
-	fluffStunned = new DynamicAnimation(0.1f, new TextureRegion(fluff, 174, 0, 223, 241));
+	try {
+	    TextureAtlas atlas = assetManager.get(Fluff.RESOURCE, TextureAtlas.class);
+	    fluffShape = atlas.findRegion(Fluff.SHAPE);
+	    fluffAttackEyes = atlas.findRegion(Fluff.ATTACK_EYES);
+	    fluffAttackMouth = atlas.findRegion(Fluff.ATTACK_MOUTH);
+	    fluffIdleEyes = atlas.findRegion(Fluff.IDLE_EYES);
+	    fluffIdleMouth = atlas.findRegion(Fluff.IDLE_MOUTH);
+	    fluffBlinkEyes = atlas.findRegion(Fluff.BLINK_EYES);
+	    fluffSmashedMouth = atlas.findRegion(Fluff.SMASHED_MOUTH);
+	    fluffSmashedShape = atlas.findRegion(Fluff.SMASHED_SHAPE);
+	    fluffStunnedLeftEye = atlas.findRegion(Fluff.STUNNED_LEFT_EYE);
+	    fluffStunnedRightEye = atlas.findRegion(Fluff.STUNNED_RIGHT_EYE);
+	    fluffStunnedShape = atlas.findRegion(Fluff.STUNNED_SHAPE);
+	    fluffStunnedMouth = atlas.findRegion(Fluff.STUNNED_MOUTH);
+	} catch (NullPointerException e) {
+	    Settings.log("AliensArt", "retrieveFluff(AssetManager)", " Fluff was not loaded due to " + e.toString());
+	}
     }
 
     private static void retrieveGolem(AssetManager assetManager) {
-	golem = assetManager.get("data/gfx/SAMPLE_ALIENS_ALL.png", Texture.class);
-	golemAttack = new DynamicAnimation(0.1f, new TextureRegion(golem, 367, 240, 207, 239));
-	golemHiding = new DynamicAnimation(0.1f, new TextureRegion(golem, 367, 240, 207, 239));
-	golemWaiting = new DynamicAnimation(0.1f, new TextureRegion(golem, 367, 240, 207, 239));
-	golemRising = new DynamicAnimation(0.1f, new TextureRegion(golem, 367, 240, 207, 239));
-	golemSmashed = new DynamicAnimation(0.1f, new TextureRegion(golem, 367, 240, 207, 239));
-	golemStunned = new DynamicAnimation(0.1f, new TextureRegion(golem, 367, 240, 207, 239));
-
+	try {
+	    TextureAtlas atlas = assetManager.get(Golem.RESOURCE, TextureAtlas.class);
+	    golemShape = atlas.findRegion(Golem.SHAPE);
+	    golemAttackEyes = atlas.findRegion(Golem.ATTACK_EYES);
+	    golemAttackMouth = atlas.findRegion(Golem.ATTACK_MOUTH);
+	    golemIdleEyes = atlas.findRegion(Golem.IDLE_EYES);
+	    golemIdleMouth = atlas.findRegion(Golem.IDLE_MOUTH);
+	    golemBlinkEyes = atlas.findRegion(Golem.BLINK_EYES);
+	    golemSmashedMouth = atlas.findRegion(Golem.SMASHED_MOUTH);
+	    golemSmashedShape = atlas.findRegion(Golem.SMASHED_SHAPE);
+	    golemStunnedLeftEye = atlas.findRegion(Golem.STUNNED_LEFT_EYE);
+	    golemStunnedRightEye = atlas.findRegion(Golem.STUNNED_RIGHT_EYE);
+	    golemStunnedShape = atlas.findRegion(Golem.STUNNED_SHAPE);
+	    golemStunnedMouth = atlas.findRegion(Golem.STUNNED_MOUTH);
+	} catch (NullPointerException e) {
+	    Settings.log("AliensArt", "retrieveGolem(AssetManager)", " Golem was not loaded due to " + e.toString());
+	}
     }
 
     private static void retrieveJelly(AssetManager assetManager) {

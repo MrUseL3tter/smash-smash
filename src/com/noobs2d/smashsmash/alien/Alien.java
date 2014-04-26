@@ -1,8 +1,5 @@
 package com.noobs2d.smashsmash.alien;
 
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.equations.Bounce;
-
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,16 +8,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.noobs2d.smashsmash.Settings;
 import com.noobs2d.smashsmash.User;
 import com.noobs2d.smashsmash.buffeffect.BuffEffect;
-import com.noobs2d.smashsmash.screen.SmashSmashStageCallback;
-import com.noobs2d.tweenengine.utils.DynamicCallback.ReturnValues;
+import com.noobs2d.smashsmash.screen.AlienEventListener;
 import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
 
 /**
  * The mother of all aliens. aw yiss
  * 
- * @author MrUseL3tter
+ * @author Julious Cious Igmen <jcigmen@gmail.com>
  */
 public abstract class Alien {
+
+    /** Maximum seconds that can be added to an alien's idle time. */
+    private static final int WAITING_TIME_INCREASE_MAX = 3;
 
     public enum AlienState {
 	ATTACKING, WAITING, RISING, HIDING, SMASHED, HIDDEN, STUNNED, EXPLODING
@@ -29,50 +28,79 @@ public abstract class Alien {
     public Vector2 position = new Vector2(0, 0);
 
     protected AlienState state = AlienState.HIDDEN;
-    protected DynamicDisplayGroup risingState;
-    protected DynamicDisplayGroup waitingState;
-    protected DynamicDisplayGroup attackingState;
-    protected DynamicDisplayGroup stunnedState;
-    protected DynamicDisplayGroup smashedState;
-    protected DynamicDisplayGroup hidingState;
-    protected DynamicDisplayGroup explodeState;
-    protected Rectangle collisionBounds = new Rectangle(0, 0, 96, 276);
-    protected Rectangle hitBounds = new Rectangle(0, 0, 0, 0);
-    protected SmashSmashStageCallback stage;
+    protected DynamicDisplayGroup risingState = new DynamicDisplayGroup();
+    protected DynamicDisplayGroup waitingState = new DynamicDisplayGroup();
+    protected DynamicDisplayGroup attackingState = new DynamicDisplayGroup();
+    protected DynamicDisplayGroup stunnedState = new DynamicDisplayGroup();
+    protected DynamicDisplayGroup smashedState = new DynamicDisplayGroup();
+    protected DynamicDisplayGroup hidingState = new DynamicDisplayGroup();
+    protected DynamicDisplayGroup explodeState = new DynamicDisplayGroup();
 
-    protected float risingStateTime = 1f;
-    protected float waitingStateTime = 1f;
+    /** Used for checking if this alien collides with other rectangles. */
+    protected Rectangle collisionBounds = new Rectangle(0, 0, 96, 276);
+
+    /** Used for checking whether this alien is hit. */
+    protected Rectangle hitBounds = new Rectangle(0, 0, 0, 0);
+
+    /** Event listener for Alien interactions. Will never be <code>null</code> because it must be set on every instantiation. */
+    protected AlienEventListener callback;
+
+    /** Duration in seconds an alien is rising. Must be the same duration as the animation itself. */
+    protected float risingStateTime = .5f;
+
+    /** Seconds an alien will remain idle and do nothing. By default, this
+     * value will be increased by a random value with a max of {@link Alien#WAITING_TIME_INCREASE_MAX}
+     * unless {@link Alien#rise(float, float)} is overriden. */
+    protected float waitingStateTime = 3f;
+
+    /** Duration in seconds an alien is attacking. Must be the same duration as the animation itself. */
     protected float attackingStateTime = 1f;
-    protected float explodeStateTime = 1f;
+
+    /** Duration in seconds an alien is exploding. Must be the same duration as the animation itself. */
+    protected float explodeStateTime = .3f;
+
+    /** Duration in seconds an alien remains stunned. */
     protected float stunnedStateTime = 3f;
-    protected float smashedStateTime = .95f;
-    protected float hidingStateTime = 1f;
+
+    /** Duration in seconds an alien remains smashed. */
+    protected float smashedStateTime = .3f;
+
+    /** Duration in seconds an alien is hiding. Must be the same duration as the animation itself. */
+    protected float hidingStateTime = .25f;
+
+    /** Smash remaining to be killed. If becomes zero, this alien is smashed successfully. */
     protected int hitPointsCurrent = 1;
+
+    /** Total smash to take before being killed. */
     protected int hitPointsTotal = 1;
-    protected int scoreValue = 1;
 
     private Sound attackSound;
     private Sound smashSound;
     private Sound spawnSound;
     private Sound stunSound;
 
-    private float upElapsedTime = 0f;
+    /** Elapsed seconds being visible. */
+    private float elapsedTimeVisible = 0f;
+
+    /** Delay before actually showing up. */
     private float riseDelay = 0f;
+
+    /** If this alien can attack. */
     private boolean hostile = true;
+
     private boolean visible = true;
 
-    protected Alien() {
-	risingState = new DynamicDisplayGroup();
-	waitingState = new DynamicDisplayGroup();
-	attackingState = new DynamicDisplayGroup();
-	stunnedState = new DynamicDisplayGroup();
-	smashedState = new DynamicDisplayGroup();
-	hidingState = new DynamicDisplayGroup();
-	explodeState = new DynamicDisplayGroup();
-    }
+    private boolean stunnable = true;
+
+    /** Set through {@link Alien#addRandomValueToWaitingTime()}. This needs to be kept track so it can be subtracted and avoid
+     * the waiting time to accumulate over time, causing the alien to idle/wait for a long time. */
+    private float previouslySecondsAddedToWaitingTime;
+
+    /** Percentage by which a critical may happen. 1-100. */
+    private int criticalChance = 10;
 
     public void attack() {
-	stage.onAlienAttack(this);
+	callback.onAlienAttack(this);
 	interpolateAttacking();
     }
 
@@ -84,8 +112,17 @@ public abstract class Alien {
 	return collisionBounds.overlaps(alien.getHitBounds());
     }
 
+    public void explode() {
+	state = AlienState.EXPLODING;
+	interpolateExplode();
+    }
+
     public float getAttackingStateTime() {
 	return attackingStateTime;
+    }
+
+    public int getCriticalChance() {
+	return criticalChance;
     }
 
     public float getExplodeStateTime() {
@@ -151,7 +188,7 @@ public abstract class Alien {
      * @return the upElapsedTime
      */
     public float getUpElapsedTime() {
-	return upElapsedTime;
+	return elapsedTimeVisible;
     }
 
     /**
@@ -164,7 +201,7 @@ public abstract class Alien {
     public void hide() {
 	interpolateHiding();
 	state = AlienState.HIDING;
-	upElapsedTime = 0;
+	elapsedTimeVisible = 0;
     }
 
     public boolean hit(Rectangle rectangle) {
@@ -173,6 +210,10 @@ public abstract class Alien {
 
     public boolean isHostile() {
 	return hostile;
+    }
+
+    public boolean isStunnable() {
+	return stunnable;
     }
 
     public boolean isVisible() {
@@ -196,14 +237,20 @@ public abstract class Alien {
 	}
     }
 
-    public void reset() {
-	upElapsedTime = 0f;
+    /** Resets all the animation states to beginning, {@link Alien#elapsedTimeVisible} to 0, and {@link Alien#hitPointsCurrent} 
+     * to {@link Alien#hitPointsTotal} if the parameter is <code>true</code>. */
+    public void reset(boolean restoreHP) {
 	attackingState.reset();
 	hidingState.reset();
 	risingState.reset();
 	stunnedState.reset();
 	smashedState.reset();
 	waitingState.reset();
+
+	elapsedTimeVisible = 0f;
+
+	if (restoreHP)
+	    hitPointsCurrent = hitPointsTotal;
     }
 
     public void resumeTween() {
@@ -215,19 +262,31 @@ public abstract class Alien {
 	hidingState.resumeTween();
     }
 
+    /** Shows this alien ONLY if it's state is {@link AlienState#HIDDEN}. <br>
+     * If so, these other methods will be invoked: <br> <br>
+     * 
+     *  {@link Alien#reset()} <br>
+     *  {@link Alien#interpolateRising(float)} <br>
+     *  {@link Alien#playRisingSound(float)} <br>
+     *  {@link Alien#addRandomValueToWaitingTime()} <br><br>
+     *  
+     *  It may be desired that {@link Alien#addRandomValueToWaitingTime()} not be invoked for some alien
+     *  (e.g., the alien must only have a fixed duration of idle time). If so, override it and don't add 
+     *  any waiting time manipulation or you know, leave it blank.
+     *
+     * @param riseDelay Seconds before actually showing up. 
+     * @param volume Needs to be manipulated so it can be lowered if there are multiple aliens showing up. 
+     */
     public void rise(float riseDelay, float volume) {
 	this.riseDelay = riseDelay;
 	if (state == AlienState.HIDDEN) {
-	    waitingStateTime = (float) (Math.random() * 3 + 2.5);
-	    upElapsedTime = 0;
-
 	    visible = true;
 	    state = AlienState.RISING;
 
-	    reset();
+	    addRandomValueToWaitingTime();
+	    reset(true);
 	    interpolateRising(riseDelay);
-	    if (Settings.soundEnabled)
-		spawnSound.play(volume);
+	    playRisingSound(volume);
 	}
     }
 
@@ -240,6 +299,12 @@ public abstract class Alien {
 
     public void setAttackSound(Sound attackSound) {
 	this.attackSound = attackSound;
+    }
+
+    /** Only accepts values from 1-100. */
+    public void setCriticalChance(int criticalChance) {
+	if (criticalChance > 0 && criticalChance < 101)
+	    this.criticalChance = criticalChance;
     }
 
     /**
@@ -282,6 +347,10 @@ public abstract class Alien {
 	this.spawnSound = spawnSound;
     }
 
+    public void setStunnable(boolean stunnable) {
+	this.stunnable = stunnable;
+    }
+
     /**
      * @param stunnedStateTime the stunnedStateTime to set
      */
@@ -305,44 +374,36 @@ public abstract class Alien {
     }
 
     public void smash() {
-	reset();
-	if (Settings.soundEnabled)
-	    smashSound.play();
+	reset(false);
+	playSmashSound();
+
 	hitPointsCurrent--;
-	if (User.hasBuffEffect(BuffEffect.HAMMER_TIME) || hitPointsCurrent <= 0 && state != AlienState.SMASHED && state != AlienState.EXPLODING) { //alien dead
-	    hitPointsCurrent = hitPointsTotal;
+
+	state = AlienState.SMASHED;
+
+	boolean hasHammerEffect = User.hasBuffEffect(BuffEffect.HAMMER_TIME);
+	boolean noMoreHP = hitPointsCurrent <= 0;
+	boolean notExploding = state != AlienState.EXPLODING;
+	boolean alienIsDead = hasHammerEffect || noMoreHP && notExploding;
+
+	if (alienIsDead) {
 	    boolean critical = isSmashCritical();
-	    if (state == AlienState.STUNNED) {
-		state = AlienState.EXPLODING;
-		interpolateExplode();
-	    } else if (critical) {
-		state = AlienState.STUNNED;
-		interpolateStunned();
-	    } else {
-		state = AlienState.SMASHED;
-		interpolateSmashed();
-	    }
+	    if (state == AlienState.STUNNED)
+		explode();
+	    else if (critical && stunnable)
+		stun();
+	    else
+		interpolateSmashed(true);
+	    callback.onAlienSmashed(this);
+	} else {
+	    interpolateSmashed(false);
+	    callback.onAlienHit(this);
 	}
-	stage.onAlienSmashed(this);
     }
 
     public void stun() {
-	Settings.log(getClass().getName(), "stun()", "");
-	if (state != AlienState.SMASHED) {
-	    upElapsedTime = 0;
-	    state = AlienState.STUNNED;
-	    for (int i = 0; i < stunnedState.displays.size(); i++) {
-		stunnedState.displays.get(i).interpolateXY(stunnedState.displays.get(i).position.x, stunnedState.displays.get(i).position.y, Bounce.OUT, 1000, true);
-		stunnedState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-		stunnedState.displays.get(i).setTweenCallback(new ReturnValues(stunnedState.displays.get(i)));
-		stunnedState.displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 1000, true);
-		stunnedState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-		stunnedState.displays.get(i).setTweenCallback(new ReturnValues(stunnedState.displays.get(i)));
-		stunnedState.displays.get(i).getTween().start(stunnedState.displays.get(i).getTweenManager());
-		stunnedState.displays.get(i).position.set(0, 0);
-		stunnedState.displays.get(i).scale.y = 0f;
-	    }
-	}
+	state = AlienState.STUNNED;
+	interpolateStunned();
     }
 
     public void update(float deltaTime) {
@@ -370,65 +431,64 @@ public abstract class Alien {
 		    updateExploding(deltaTime);
 		    break;
 	    }
-	    upElapsedTime += deltaTime;
+	    elapsedTimeVisible += deltaTime;
 	}
     }
 
-    protected void interpolateAttacking() {
-
+    private void playRisingSound(float volume) {
+	if (Settings.soundEnabled)
+	    spawnSound.play(volume);
     }
 
-    protected void interpolateExplode() {
-
+    /** Generate a random value between 0 and {@link Alien#WAITING_TIME_INCREASE_MAX} then add it to the waiting time. 
+     * That value is then subtracted the next time this method is invoked to avoid incrementing {@link Alien#waitingStateTime}.*/
+    protected void addRandomValueToWaitingTime() {
+	waitingStateTime -= previouslySecondsAddedToWaitingTime;
+	previouslySecondsAddedToWaitingTime = (float) (Math.random() * WAITING_TIME_INCREASE_MAX);
+	waitingStateTime += previouslySecondsAddedToWaitingTime;
     }
 
-    protected void interpolateHiding() {
-	for (int i = 0; i < hidingState.displays.size(); i++) {
-	    hidingState.displays.get(i).interpolateScaleXY(1f, 0f, Bounce.IN, 200, true);
-	    hidingState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-	    hidingState.displays.get(i).setTweenCallback(new ReturnValues(hidingState.displays.get(i)));
-	    hidingState.displays.get(i).interpolateXY(hidingState.displays.get(i).position.x, 0, Bounce.IN, 200, true);
-	    hidingState.displays.get(i).setTweenCallback(new ReturnValues(hidingState.displays.get(i)));
-	    hidingState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-	}
-    }
+    protected abstract void initAttackingState();
 
-    protected void interpolateRising(float delay) {
-	for (int i = 0; i < risingState.displays.size(); i++) {
-	    risingState.displays.get(i).interpolateXY(risingState.displays.get(i).position.x, risingState.displays.get(i).position.y, Bounce.OUT, 1000, true);
-	    risingState.displays.get(i).setTweenCallback(new ReturnValues(risingState.displays.get(i)));
-	    risingState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-	    risingState.displays.get(i).getTween().delay(delay);
-	    risingState.displays.get(i).interpolateScaleXY(1f, 1f, Bounce.OUT, 1000, true);
-	    risingState.displays.get(i).setTweenCallback(new ReturnValues(risingState.displays.get(i)));
-	    risingState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-	    risingState.displays.get(i).getTween().delay(delay);
-	    risingState.displays.get(i).position.set(0, 0);
-	    risingState.displays.get(i).scale.y = 0f;
-	}
-    }
+    protected abstract void initExplodeState();
 
-    protected void interpolateSmashed() {
-	for (int i = 0; i < smashedState.displays.size(); i++) {
-	    smashedState.displays.get(i).interpolateScaleXY(1f, 0f, Bounce.IN, 1000, true);
-	    smashedState.displays.get(i).setTweenCallback(new ReturnValues(smashedState.displays.get(i)));
-	    smashedState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-	    smashedState.displays.get(i).interpolateXY(smashedState.displays.get(i).position.x, 0, Bounce.IN, 1000, true);
-	    smashedState.displays.get(i).setTweenCallback(new ReturnValues(smashedState.displays.get(i)));
-	    smashedState.displays.get(i).setTweenCallbackTriggers(TweenCallback.COMPLETE);
-	}
-    }
+    protected abstract void initHidingState();
 
-    protected void interpolateStunned() {
+    protected abstract void initRisingState();
 
-    }
+    protected abstract void initSmashedState();
 
-    protected void interpolateWaiting() {
+    protected abstract void initStunnedState();
 
-    }
+    protected abstract void initWaitingState();
 
+    /** Do the attacking animation. It's a must that the animation duration matches {@link Alien#attackingStateTime}. */
+    protected abstract void interpolateAttacking();
+
+    /** Do the exploding animation. Not all aliens have an explosion animation. 
+     * It's a must that the animation duration matches {@link Alien#explodeStateTime}.*/
+    protected abstract void interpolateExplode();
+
+    /** Do the hiding (shrinking) animation. It's a must that the animation duration matches {@link Alien#hidingStateTime}.*/
+    protected abstract void interpolateHiding();
+
+    /** Do the rising animation. It's a must that the animation duration matches {@link Alien#risingStateTime}.*/
+    protected abstract void interpolateRising(float delay);
+
+    /** Do the smashed animation. */
+    protected abstract void interpolateSmashed(boolean dead);
+
+    /** Do the stunned animation. Take note that this must always be short; {@link Alien#stunnedStateTime} is not the duration
+     * of the stun-animation itself, but of the entire duration of being stunned. It's best to keep the animation duration to less than 500ms. */
+    protected abstract void interpolateStunned();
+
+    /**  Do the idling/waiting animation. */
+    protected abstract void interpolateWaiting();
+
+    /** Generate a random chance of getting a true based on {@link Alien#criticalChance}.
+     * @return <code>true</code> if the random gives it. */
     protected boolean isSmashCritical() {
-	return MathUtils.random(1, 3) == 1;
+	return MathUtils.random(1, 101) <= criticalChance;
     }
 
     protected void playAttackSound() {
@@ -453,63 +513,69 @@ public abstract class Alien {
 
     protected void updateAttacking(float deltaTime) {
 	attackingState.update(deltaTime);
-	if (upElapsedTime >= attackingStateTime)
+	if (elapsedTimeVisible >= attackingStateTime)
 	    hide();
     }
 
     protected void updateExploding(float deltaTime) {
 	explodeState.update(deltaTime);
-	if (upElapsedTime >= explodeStateTime) {
+	if (elapsedTimeVisible >= explodeStateTime) {
 	    visible = false;
 	    state = AlienState.HIDDEN;
-	    upElapsedTime = 0;
+	    elapsedTimeVisible = 0;
 	}
     }
 
     protected void updateHiding(float deltaTime) {
 	hidingState.update(deltaTime);
-	if (upElapsedTime >= hidingStateTime) {
+	if (elapsedTimeVisible >= hidingStateTime) {
 	    visible = false;
 	    state = AlienState.HIDDEN;
-	    upElapsedTime = 0;
-	    stage.onAlienEscaped(this);
+	    elapsedTimeVisible = 0;
+	    callback.onAlienEscaped(this);
 	}
     }
 
     protected void updateRising(float deltaTime) {
 	risingState.update(deltaTime);
-	if (upElapsedTime >= risingStateTime + riseDelay / 1000) {
+	if (elapsedTimeVisible >= risingStateTime + riseDelay / 1000) {
 	    interpolateWaiting();
 	    state = AlienState.WAITING;
-	    upElapsedTime = 0;
+	    elapsedTimeVisible = 0;
 	}
     }
 
     protected void updateSmashed(float deltaTime) {
 	smashedState.update(deltaTime);
-	if (upElapsedTime >= smashedStateTime) {
-	    visible = false;
-	    state = AlienState.HIDDEN;
-	    upElapsedTime = 0;
+	if (elapsedTimeVisible >= smashedStateTime) {
+	    elapsedTimeVisible = 0;
+	    if (hitPointsCurrent <= 0) { // alien is dead after being smashed
+		visible = false;
+		state = AlienState.HIDDEN;
+	    } else {
+		reset(false);
+		state = AlienState.WAITING;
+		interpolateWaiting();
+	    }
 	}
     }
 
     protected void updateStunned(float deltaTime) {
 	stunnedState.update(deltaTime);
-	if (upElapsedTime >= stunnedStateTime) {
+	if (elapsedTimeVisible >= stunnedStateTime) {
 	    state = AlienState.HIDING;
-	    upElapsedTime = 0;
+	    elapsedTimeVisible = 0;
 	    interpolateHiding();
 	}
     }
 
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
-	if (hostile && upElapsedTime >= waitingStateTime) {
+	if (hostile && elapsedTimeVisible >= waitingStateTime) {
 	    state = AlienState.ATTACKING;
-	    upElapsedTime = 0;
+	    elapsedTimeVisible = 0;
 	    attack();
-	} else if (upElapsedTime >= waitingStateTime)
+	} else if (elapsedTimeVisible >= waitingStateTime)
 	    hide();
     }
 }

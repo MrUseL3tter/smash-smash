@@ -1,17 +1,11 @@
 package com.noobs2d.smashsmash.alien;
 
-import java.util.ArrayList;
-
-import com.noobs2d.smashsmash.screen.SmashSmashStageCallback;
-import com.noobs2d.tweenengine.utils.DynamicAnimation;
-import com.noobs2d.tweenengine.utils.DynamicDisplay;
-import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
-import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
+import com.noobs2d.smashsmash.screen.AlienEventListener;
 
 public class Diabolic extends Alien {
 
-    public Diabolic(SmashSmashStageCallback stage) {
-	super.stage = stage;
+    public Diabolic(AlienEventListener stage) {
+	super.callback = stage;
 	initAttackingState();
 	initHidingState();
 	initRisingState();
@@ -31,45 +25,80 @@ public class Diabolic extends Alien {
 	super.rise(delay, volume);
     }
 
-    private void initAttackingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.diabolicAttack));
-	attackingState = new DynamicDisplayGroup(list);
-	attackingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initAttackingState() {
+	// TODO add impl
     }
 
-    private void initHidingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.diabolicHiding));
-	hidingState = new DynamicDisplayGroup(list);
-	hidingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initExplodeState() {
+	// TODO add impl
     }
 
-    private void initRisingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.diabolicRising));
-	risingState = new DynamicDisplayGroup(list);
-	risingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initHidingState() {
+	// TODO add impl
     }
 
-    private void initSmashedState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.diabolicSmashed));
-	smashedState = new DynamicDisplayGroup(list);
-	smashedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initRisingState() {
+	// TODO add impl
     }
 
-    private void initStunnedState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.diabolicStunned));
-	stunnedState = new DynamicDisplayGroup(list);
-	stunnedState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initSmashedState() {
+	// TODO add impl
     }
 
-    private void initWaitingState() {
-	ArrayList<DynamicDisplay> list = new ArrayList<DynamicDisplay>();
-	list.add(new DynamicAnimation(AliensArt.diabolicWaiting));
-	waitingState = new DynamicDisplayGroup(list);
-	waitingState.setRegistration(DynamicRegistration.BOTTOM_CENTER);
+    @Override
+    protected void initStunnedState() {
+	// TODO add impl
+    }
+
+    @Override
+    protected void initWaitingState() {
+	// TODO add impl
+    }
+
+    @Override
+    protected void interpolateAttacking() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateExplode() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateHiding() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateRising(float delay) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateSmashed(boolean dead) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateStunned() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void interpolateWaiting() {
+	// TODO Auto-generated method stub
+
     }
 }
