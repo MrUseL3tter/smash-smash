@@ -26,8 +26,9 @@ public class Golem extends Alien {
     public static final String STUNNED_SHAPE = "GOLEM-STUNNED-SHAPE";
     public static final String STUNNED_MOUTH = "GOLEM-STUNNED-MOUTH";
 
-    public Golem(AlienEventListener stage) {
-	super.callback = stage;
+    public Golem(AlienEventListener listener) {
+	setAlienEventListener(listener);
+
 	initAttackingState();
 	initHidingState();
 	initRisingState();

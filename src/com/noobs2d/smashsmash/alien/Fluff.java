@@ -30,8 +30,8 @@ public class Fluff extends Alien {
     public static final String STUNNED_SHAPE = "FLUFF-STUNNED-SHAPE";
     public static final String STUNNED_MOUTH = "FLUFF-STUNNED-MOUTH";
 
-    public Fluff(AlienEventListener stage) {
-	super.callback = stage;
+    public Fluff(AlienEventListener listener) {
+	setAlienEventListener(listener);
 
 	initAttackingState();
 	initHidingState();
@@ -43,7 +43,7 @@ public class Fluff extends Alien {
 	setAttackingStateTime(.75f);
 	setWaitingStateTime(2f);
 
-	hitPointsTotal = 25000;
+	setHitPointsTotal(2);
     }
 
     /** {@link Fluff} doesn't have an explosion state so we just divert explode into smashed state. */

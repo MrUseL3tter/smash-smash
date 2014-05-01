@@ -13,8 +13,9 @@ public class ScoreFrenzyJelly extends Jelly {
 
     private float spawnDelay = 0;
 
-    public ScoreFrenzyJelly(AlienEventListener stage) {
-	super(stage);
+    public ScoreFrenzyJelly(AlienEventListener listener) {
+	super(listener);
+
 	risingState.setColor(new Color(0f, 0f, .5f, 1f));
 	waitingState.setColor(new Color(0f, 0f, .5f, 1f));
 	attackingState.setColor(new Color(0f, 0f, .5f, 1f));
@@ -41,7 +42,7 @@ public class ScoreFrenzyJelly extends Jelly {
 
     @Override
     public void smash() {
-	callback.onBonusEffectTrigger(this, BuffEffect.SCORE_FRENZY);
+	getAlienEventListener().onBonusEffectTrigger(this, BuffEffect.SCORE_FRENZY);
 	super.smash();
     }
 

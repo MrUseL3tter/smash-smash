@@ -4,8 +4,9 @@ import com.noobs2d.smashsmash.screen.AlienEventListener;
 
 public class Diabolic extends Alien {
 
-    public Diabolic(AlienEventListener stage) {
-	super.callback = stage;
+    public Diabolic(AlienEventListener listener) {
+	setAlienEventListener(listener);
+
 	initAttackingState();
 	initHidingState();
 	initRisingState();

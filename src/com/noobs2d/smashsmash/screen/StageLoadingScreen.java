@@ -105,5 +105,4 @@ public class StageLoadingScreen extends DynamicScreen {
 		game.setScreen(stageScreen);
 	}
     }
-
 }

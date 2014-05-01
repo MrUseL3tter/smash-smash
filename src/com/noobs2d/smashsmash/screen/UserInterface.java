@@ -181,7 +181,6 @@ public class UserInterface {
     }
 
     public void showMissPrompt(float x, float y) {
-	Settings.log(getClass().getName(), "showMissPrompt(float,float)", "");
 	missLabel.getTweenManager().update(10000);
 	missLabel.color.a = 1f;
 	missLabel.position.set(x, y);

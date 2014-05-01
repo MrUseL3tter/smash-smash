@@ -20,8 +20,9 @@ public class Sorcerer extends Alien {
     protected static final int WAITING_STATE_TIME = 7;
     protected float spawnDelay = 0;
 
-    public Sorcerer(AlienEventListener stage) {
-	super.callback = stage;
+    public Sorcerer(AlienEventListener listener) {
+	setAlienEventListener(listener);
+
 	initAttackingState();
 	initHidingState();
 	initRisingState();

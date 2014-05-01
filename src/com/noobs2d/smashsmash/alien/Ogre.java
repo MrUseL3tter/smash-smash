@@ -4,8 +4,9 @@ import com.noobs2d.smashsmash.screen.AlienEventListener;
 
 public class Ogre extends Alien {
 
-    public Ogre(AlienEventListener stage) {
-	super.callback = stage;
+    public Ogre(AlienEventListener listener) {
+	setAlienEventListener(listener);
+
 	initAttackingState();
 	initHidingState();
 	initRisingState();

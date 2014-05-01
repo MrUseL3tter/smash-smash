@@ -613,8 +613,6 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 	    if (pukes.get(i).getTweenManager().getRunningTweensCount() == 0)
 		pukes.remove(i);
 	}
-	//	System.out.println("[SurvivalStageScreen#renderPukes(SpriteBatch,float)] recoveryDelay: " + recoveryDelay);
-	//	System.out.println("[SurvivalStageScreen#renderPukes(SpriteBatch,float)] Pukes count: " + pukes.size());
     }
 
     protected void renderStage(SpriteBatch spriteBatch, float delta) {
@@ -634,6 +632,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
     }
 
     protected void setSpawnPositions() {
+	// FIXME remove unneccessary codes
 	for (int i = 0; i < aliens.size(); i++)
 	    //	    aliens.get(i).getHitBounds().width = targetWidth;
 	    //	    aliens.get(i).getHitBounds().height = targetHeight;

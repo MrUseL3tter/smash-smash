@@ -13,8 +13,9 @@ public class HammerTimeJelly extends Jelly {
 
     private float spawnDelay = 0;
 
-    public HammerTimeJelly(AlienEventListener stage) {
-	super(stage);
+    public HammerTimeJelly(AlienEventListener listener) {
+	super(listener);
+
 	risingState.setColor(Color.GREEN);
 	waitingState.setColor(Color.GREEN);
 	attackingState.setColor(Color.GREEN);
@@ -41,7 +42,7 @@ public class HammerTimeJelly extends Jelly {
 
     @Override
     public void smash() {
-	callback.onBonusEffectTrigger(this, BuffEffect.HAMMER_TIME);
+	getAlienEventListener().onBonusEffectTrigger(this, BuffEffect.HAMMER_TIME);
 	super.smash();
     }
 

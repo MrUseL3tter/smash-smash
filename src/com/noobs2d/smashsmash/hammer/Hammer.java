@@ -8,7 +8,7 @@ import com.noobs2d.smashsmash.buffeffect.BuffEffect;
 
 public class Hammer {
 
-    private static final int NORMAL_DIAMETER = 100;
+    private static final int NORMAL_DIAMETER = 3;
 
     private static final int HAMMER_TIME_DIAMETER = 160;
     public static final int BUBBLES = 0x01;

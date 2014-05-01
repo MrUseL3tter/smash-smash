@@ -4,8 +4,9 @@ import com.noobs2d.smashsmash.screen.AlienEventListener;
 
 public class Tortoise extends Alien {
 
-    public Tortoise(AlienEventListener stage) {
-	super.callback = stage;
+    public Tortoise(AlienEventListener listener) {
+	setAlienEventListener(listener);
+
 	initAttackingState();
 	initHidingState();
 	initRisingState();

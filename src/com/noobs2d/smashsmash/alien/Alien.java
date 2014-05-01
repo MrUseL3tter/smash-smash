@@ -43,7 +43,7 @@ public abstract class Alien {
     protected Rectangle hitBounds = new Rectangle(0, 0, 0, 0);
 
     /** Event listener for Alien interactions. Will never be <code>null</code> because it must be set on every instantiation. */
-    protected AlienEventListener callback;
+    private AlienEventListener alienEventListener;
 
     /** Duration in seconds an alien is rising. Must be the same duration as the animation itself. */
     protected float risingStateTime = .5f;
@@ -69,10 +69,10 @@ public abstract class Alien {
     protected float hidingStateTime = .25f;
 
     /** Smash remaining to be killed. If becomes zero, this alien is smashed successfully. */
-    protected int hitPointsCurrent = 1;
+    private int hitPointsCurrent = 1;
 
     /** Total smash to take before being killed. */
-    protected int hitPointsTotal = 1;
+    private int hitPointsTotal = 1;
 
     private Sound attackSound;
     private Sound smashSound;
@@ -100,7 +100,8 @@ public abstract class Alien {
     private int criticalChance = 10;
 
     public void attack() {
-	callback.onAlienAttack(this);
+	state = AlienState.ATTACKING;
+	alienEventListener.onAlienAttack(this);
 	interpolateAttacking();
     }
 
@@ -117,12 +118,20 @@ public abstract class Alien {
 	interpolateExplode();
     }
 
+    public AlienEventListener getAlienEventListener() {
+	return alienEventListener;
+    }
+
     public float getAttackingStateTime() {
 	return attackingStateTime;
     }
 
     public int getCriticalChance() {
 	return criticalChance;
+    }
+
+    public float getElapsedTimeVisible() {
+	return elapsedTimeVisible;
     }
 
     public float getExplodeStateTime() {
@@ -144,6 +153,14 @@ public abstract class Alien {
 	    hitBounds.set(x, y, width, height);
 	}
 	return hitBounds;
+    }
+
+    public int getHitPointsCurrent() {
+	return hitPointsCurrent;
+    }
+
+    public int getHitPointsTotal() {
+	return hitPointsTotal;
     }
 
     public float getRisingStateTime() {
@@ -250,7 +267,7 @@ public abstract class Alien {
 	elapsedTimeVisible = 0f;
 
 	if (restoreHP)
-	    hitPointsCurrent = hitPointsTotal;
+	    setHitPointsCurrent(getHitPointsTotal());
     }
 
     public void resumeTween() {
@@ -290,6 +307,10 @@ public abstract class Alien {
 	}
     }
 
+    public void setAlienEventListener(AlienEventListener listener) {
+	alienEventListener = listener;
+    }
+
     /**
      * @param attackingStateTime the attackingStateTime to set
      */
@@ -307,6 +328,10 @@ public abstract class Alien {
 	    this.criticalChance = criticalChance;
     }
 
+    public void setElapsedTimeVisible(float elapsedTimeVisible) {
+	this.elapsedTimeVisible = elapsedTimeVisible;
+    }
+
     /**
      * @param explodeStateTime the explodeStateTime to set
      */
@@ -319,6 +344,14 @@ public abstract class Alien {
      */
     public void setHidingStateTime(float hidingStateTime) {
 	this.hidingStateTime = hidingStateTime;
+    }
+
+    public void setHitPointsCurrent(int hitPointsCurrent) {
+	this.hitPointsCurrent = hitPointsCurrent;
+    }
+
+    public void setHitPointsTotal(int hitPointsTotal) {
+	this.hitPointsTotal = hitPointsTotal;
     }
 
     public void setHostile(boolean hostile) {
@@ -373,16 +406,23 @@ public abstract class Alien {
 	this.waitingStateTime = waitingStateTime;
     }
 
+    /** This Alien is hit. Here's where the following is determined: <br><br>
+     * 
+     * 1. This Alien dies from this smash. <br>
+     * 2. This Alien is already stunned, then this smash will cause it to explode. <br>
+     * 3. This Alien will be stunned by this smash (must be critical and this alien is {@link Alien#stunnable}. <br>
+     * 4. This Alien is just normally hit (goes {@link AlienState#SMASHED} but returns to {@link AlienState#WAITING}. <br><br>
+     * 
+     * Everytime this is invoked, this Alien is reset and loses a single HP, unless the smash is a {@link BuffEffect#HAMMER_TIME}. 
+     **/
     public void smash() {
 	reset(false);
 	playSmashSound();
 
-	hitPointsCurrent--;
-
-	state = AlienState.SMASHED;
+	setHitPointsCurrent(getHitPointsCurrent() - 1);
 
 	boolean hasHammerEffect = User.hasBuffEffect(BuffEffect.HAMMER_TIME);
-	boolean noMoreHP = hitPointsCurrent <= 0;
+	boolean noMoreHP = getHitPointsCurrent() <= 0;
 	boolean notExploding = state != AlienState.EXPLODING;
 	boolean alienIsDead = hasHammerEffect || noMoreHP && notExploding;
 
@@ -392,12 +432,17 @@ public abstract class Alien {
 		explode();
 	    else if (critical && stunnable)
 		stun();
-	    else
+	    else {
+		state = AlienState.SMASHED;
 		interpolateSmashed(true);
-	    callback.onAlienSmashed(this);
+	    }
+	    alienEventListener.onAlienSmashed(this);
 	} else {
+	    // this alien has more HP left; just switch to SMASHED state, 
+	    // which will return to WAITING later on
+	    state = AlienState.SMASHED;
 	    interpolateSmashed(false);
-	    callback.onAlienHit(this);
+	    alienEventListener.onAlienHit(this);
 	}
     }
 
@@ -532,7 +577,7 @@ public abstract class Alien {
 	    visible = false;
 	    state = AlienState.HIDDEN;
 	    elapsedTimeVisible = 0;
-	    callback.onAlienEscaped(this);
+	    alienEventListener.onAlienEscaped(this);
 	}
     }
 
@@ -549,7 +594,7 @@ public abstract class Alien {
 	smashedState.update(deltaTime);
 	if (elapsedTimeVisible >= smashedStateTime) {
 	    elapsedTimeVisible = 0;
-	    if (hitPointsCurrent <= 0) { // alien is dead after being smashed
+	    if (getHitPointsCurrent() <= 0) { // alien is dead after being smashed
 		visible = false;
 		state = AlienState.HIDDEN;
 	    } else {
@@ -572,7 +617,6 @@ public abstract class Alien {
     protected void updateWaiting(float deltaTime) {
 	waitingState.update(deltaTime);
 	if (hostile && elapsedTimeVisible >= waitingStateTime) {
-	    state = AlienState.ATTACKING;
 	    elapsedTimeVisible = 0;
 	    attack();
 	} else if (elapsedTimeVisible >= waitingStateTime)
