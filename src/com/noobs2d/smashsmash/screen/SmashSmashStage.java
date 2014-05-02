@@ -62,10 +62,10 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 
     public boolean[] pointers = new boolean[4];
 
-    protected UserInterface ui = new UserInterface(this);
+    protected HeadsUpDisplay headsUpDisplay = new HeadsUpDisplay(this);
     private Session session = new Session();
 
-    private boolean showUI = true;
+    private boolean showHUD = true;
 
     private boolean allowSpawn = true;
     private boolean paused = false;
@@ -134,7 +134,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
     }
 
     public boolean isUIVisible() {
-	return showUI;
+	return showHUD;
     }
 
     @Override
@@ -199,21 +199,21 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 		case BuffEffect.HAMMER_TIME:
 		    showBuffEffect(buffEffects[i]);
 		    if (!(alien instanceof Sorcerer))
-			ui.showBuffEffectPrompt(BuffEffect.HAMMER_TIME, alien.position.x, alien.position.y);
+			headsUpDisplay.showBuffEffectPrompt(BuffEffect.HAMMER_TIME, alien.position.x, alien.position.y);
 		    else
 			User.addBuffEffect(BuffEffect.HAMMER_TIME);
 		    break;
 		case BuffEffect.INVULNERABILITY:
 		    showBuffEffect(buffEffects[i]);
 		    if (!(alien instanceof Sorcerer))
-			ui.showBuffEffectPrompt(BuffEffect.INVULNERABILITY, alien.position.x, alien.position.y);
+			headsUpDisplay.showBuffEffectPrompt(BuffEffect.INVULNERABILITY, alien.position.x, alien.position.y);
 		    else
 			User.addBuffEffect(BuffEffect.INVULNERABILITY);
 		    break;
 		case BuffEffect.SCORE_FRENZY:
 		    showBuffEffect(buffEffects[i]);
 		    if (!(alien instanceof Sorcerer))
-			ui.showBuffEffectPrompt(BuffEffect.SCORE_FRENZY, alien.position.x, alien.position.y);
+			headsUpDisplay.showBuffEffectPrompt(BuffEffect.SCORE_FRENZY, alien.position.x, alien.position.y);
 		    else
 			User.addBuffEffect(BuffEffect.SCORE_FRENZY);
 		    break;
@@ -227,8 +227,8 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 	//	Settings.log(getClass().getName(), "onSmashMissed(float,float)", "");
 	session.incrementMissedSmashes();
 	if (session.getCurrentCombo() > 1)
-	    ui.showMissPrompt(x, y);
-	ui.showComboPrompt();
+	    headsUpDisplay.showMissPrompt(x, y);
+	headsUpDisplay.showComboPrompt();
 	setHighestCombo();
 	session.resetCurrentCombo();
     }
@@ -290,9 +290,9 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 	renderHammerEffects(batch, delta);
 	renderPukes(batch, delta);
 	renderStageEffects(batch, delta);
-	if (showUI) {
-	    ui.render(batch);
-	    ui.update(delta);
+	if (showHUD) {
+	    headsUpDisplay.render(batch);
+	    headsUpDisplay.update(delta);
 	}
 	batch.end();
 	batch.setColor(1f, 1f, 1f, 1f);
@@ -325,7 +325,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
     }
 
     public void setUIVisible(boolean showUI) {
-	this.showUI = showUI;
+	this.showHUD = showUI;
     }
 
     private boolean hasComboDurationPassed() {
@@ -405,7 +405,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 
     protected void checkComboTime() {
 	if (hasComboDurationPassed()) {
-	    ui.showComboPrompt();
+	    headsUpDisplay.showComboPrompt();
 	    setHighestCombo();
 	    session.resetCurrentCombo();
 	}
@@ -418,7 +418,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 	    if (pointers[i])
 		streaks++;
 	if (streaks >= 2) {
-	    ui.showStreakPrompt(streaks);
+	    headsUpDisplay.showStreakPrompt(streaks);
 	    for (int i = 0; i < pointers.length; i++)
 		pointers[i] = false;
 	}
@@ -483,7 +483,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 		hitCount++;
 		session.incrementCurrentCombo();
 		session.setCombosLastDelta(session.getStageSecondsElapsed());
-		ui.shakeCombos();
+		headsUpDisplay.shakeCombos();
 		aliens.get(i).smash();
 		pointers[pointer] = true;
 		break;

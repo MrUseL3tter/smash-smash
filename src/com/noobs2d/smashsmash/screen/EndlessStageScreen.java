@@ -24,7 +24,7 @@ public class EndlessStageScreen extends SmashSmashStage {
     public void onAlienAttack(Alien alien) {
 	super.onAlienAttack(alien);
 	if (!User.hasBuffEffect(BuffEffect.INVULNERABILITY) && getSession().getLifepoints() > 0) {
-	    ui.shakeLifePoint();
+	    headsUpDisplay.shakeLifePoint();
 	    getSession().decrementLifepoints();
 	}
 	if (getSession().getLifepoints() <= 0) {

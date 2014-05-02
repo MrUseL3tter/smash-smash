@@ -29,7 +29,7 @@ import com.noobs2d.tweenengine.utils.DynamicDisplay.DynamicRegistration;
 import com.noobs2d.tweenengine.utils.DynamicSprite;
 import com.noobs2d.tweenengine.utils.DynamicText;
 
-public class UserInterface {
+public class HeadsUpDisplay {
 
     private SmashSmashStage stage;
     private OrthographicCamera cam = new OrthographicCamera();
@@ -52,7 +52,7 @@ public class UserInterface {
     private BitmapFont score;
     private BitmapFont feed;
 
-    public UserInterface(SmashSmashStage stage) {
+    public HeadsUpDisplay(SmashSmashStage stage) {
 	this.stage = stage;
 	score = Fonts.KRONIKA_BLACKSTROKE;
 	score.setScale(1.14f);

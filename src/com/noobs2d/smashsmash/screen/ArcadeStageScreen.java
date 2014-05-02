@@ -18,7 +18,7 @@ public class ArcadeStageScreen extends SmashSmashStage implements TweenCallback 
 	elapsed.setTweenCallback(this);
 	if (!restart) {
 	    pause();
-	    ui.showReadyPrompt();
+	    headsUpDisplay.showReadyPrompt();
 	}
     }
 
