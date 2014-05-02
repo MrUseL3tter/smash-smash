@@ -311,11 +311,11 @@ public class Fluff extends Alien {
 	DynamicAnimation eyes = (DynamicAnimation) waitingState.getByName(IDLE_EYES);
 	eyes.setY(190f);
 	eyes.killTween();
-	eyes.interpolateY(170f, tweenDuration, false).repeatYoyo(3, 0).start(eyes.getTweenManager());
+	eyes.interpolateY(eyes.getY() - 20, tweenDuration, false).repeatYoyo(3, 0).start(eyes.getTweenManager());
 
 	DynamicSprite mouth = (DynamicSprite) waitingState.getByName(IDLE_MOUTH);
 	mouth.setY(151f);
 	mouth.killTween();
-	mouth.interpolateY(131f, tweenDuration, false).repeatYoyo(3, 0).start(mouth.getTweenManager());
+	mouth.interpolateY(mouth.getY() - 20, tweenDuration, false).repeatYoyo(3, 0).start(mouth.getTweenManager());
     }
 }

@@ -419,30 +419,37 @@ public abstract class Alien {
 	reset(false);
 	playSmashSound();
 
-	setHitPointsCurrent(getHitPointsCurrent() - 1);
+	hitPointsCurrent--;
 
 	boolean hasHammerEffect = User.hasBuffEffect(BuffEffect.HAMMER_TIME);
-	boolean noMoreHP = getHitPointsCurrent() <= 0;
+	boolean noMoreHP = hitPointsCurrent <= 0;
 	boolean notExploding = state != AlienState.EXPLODING;
 	boolean alienIsDead = hasHammerEffect || noMoreHP && notExploding;
 
-	if (alienIsDead) {
-	    boolean critical = isSmashCritical();
-	    if (state == AlienState.STUNNED)
-		explode();
-	    else if (critical && stunnable)
-		stun();
-	    else {
-		state = AlienState.SMASHED;
-		interpolateSmashed(true);
-	    }
+	boolean stunningSmash = isSmashCritical() && stunnable;
+
+	// can be stunned on its last HP, so this is first checked
+	if (stunningSmash)
+	    stun();
+	// a stunned alien that is smashed will definitely explode
+	else if (state == AlienState.STUNNED)
+	    explode();
+	else if (alienIsDead) {
+	    // invoked the callback(s) first before changing state so getScore()
+	    // may still utilize the current state of the alien
 	    alienEventListener.onAlienSmashed(this);
+
+	    state = AlienState.SMASHED;
+	    interpolateSmashed(true);
 	} else {
+	    // invoked the callback(s) first before changing state so getScore()
+	    // may still utilize the current state of the alien
+	    alienEventListener.onAlienHit(this);
+
 	    // this alien has more HP left; just switch to SMASHED state, 
 	    // which will return to WAITING later on
 	    state = AlienState.SMASHED;
 	    interpolateSmashed(false);
-	    alienEventListener.onAlienHit(this);
 	}
     }
 

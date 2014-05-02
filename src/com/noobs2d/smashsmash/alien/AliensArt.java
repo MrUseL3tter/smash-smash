@@ -46,8 +46,7 @@ public class AliensArt {
     public static TextureRegion golemBlinkEyes;
     public static TextureRegion golemSmashedMouth;
     public static TextureRegion golemSmashedShape;
-    public static TextureRegion golemStunnedLeftEye;
-    public static TextureRegion golemStunnedRightEye;
+    public static TextureRegion golemStunnedEyes;
     public static TextureRegion golemStunnedShape;
     public static TextureRegion golemStunnedMouth;
 
@@ -146,8 +145,7 @@ public class AliensArt {
 	    golemBlinkEyes = atlas.findRegion(Golem.BLINK_EYES);
 	    golemSmashedMouth = atlas.findRegion(Golem.SMASHED_MOUTH);
 	    golemSmashedShape = atlas.findRegion(Golem.SMASHED_SHAPE);
-	    golemStunnedLeftEye = atlas.findRegion(Golem.STUNNED_LEFT_EYE);
-	    golemStunnedRightEye = atlas.findRegion(Golem.STUNNED_RIGHT_EYE);
+	    golemStunnedEyes = atlas.findRegion(Golem.STUNNED_EYES);
 	    golemStunnedShape = atlas.findRegion(Golem.STUNNED_SHAPE);
 	    golemStunnedMouth = atlas.findRegion(Golem.STUNNED_MOUTH);
 	} catch (NullPointerException e) {
