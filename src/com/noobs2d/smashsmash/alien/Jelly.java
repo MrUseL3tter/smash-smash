@@ -14,7 +14,6 @@ import com.noobs2d.tweenengine.utils.DynamicSprite;
  */
 public class Jelly extends Alien {
 
-    public static final String RESOURCE = "data/gfx/ALIENS.pack";
     public static final String SHAPE = "JELLY-SHAPE";
     public static final String ATTACK_EYES = "JELLY-ATTACK-EYES";
     public static final String ATTACK_MOUTH = "JELLY-ATTACK-MOUTH";

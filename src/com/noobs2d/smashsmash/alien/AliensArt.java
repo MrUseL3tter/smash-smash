@@ -17,13 +17,15 @@ import com.noobs2d.tweenengine.utils.DynamicAnimation;
  */
 public class AliensArt {
 
-    public static Texture diabolic;
-    public static DynamicAnimation diabolicAttack;
-    public static DynamicAnimation diabolicHiding;
-    public static DynamicAnimation diabolicWaiting;
-    public static DynamicAnimation diabolicRising;
-    public static DynamicAnimation diabolicSmashed;
-    public static DynamicAnimation diabolicStunned;
+    public static TextureRegion diabolicShape;
+    public static TextureRegion diabolicAttackEyes;
+    public static TextureRegion diabolicAttackMouth;
+    public static TextureRegion diabolicIdleEyes;
+    public static TextureRegion diabolicIdleMouth;
+    public static TextureRegion diabolicBlinkEyes;
+    public static TextureRegion diabolicSmashedMouth;
+    public static TextureRegion diabolicStunnedShape;
+    public static TextureRegion diabolicStunnedMouth;
 
     public static TextureRegion fluffShape;
     public static TextureRegion fluffAttackEyes;
@@ -105,18 +107,25 @@ public class AliensArt {
     }
 
     private static void retrieveDiabolic(AssetManager assetManager) {
-	diabolic = assetManager.get("data/gfx/SAMPLE_ALIENS_ALL.png", Texture.class);
-	diabolicAttack = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
-	diabolicHiding = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
-	diabolicWaiting = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
-	diabolicRising = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
-	diabolicSmashed = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
-	diabolicStunned = new DynamicAnimation(0.1f, new TextureRegion(diabolic, 205, 241, 162, 267));
+	try {
+	    TextureAtlas atlas = assetManager.get(Alien.RESOURCE, TextureAtlas.class);
+	    diabolicShape = atlas.findRegion(Diabolic.SHAPE);
+	    diabolicAttackEyes = atlas.findRegion(Diabolic.ATTACK_EYES);
+	    diabolicAttackMouth = atlas.findRegion(Diabolic.ATTACK_MOUTH);
+	    diabolicIdleEyes = atlas.findRegion(Diabolic.IDLE_EYES);
+	    diabolicIdleMouth = atlas.findRegion(Diabolic.IDLE_MOUTH);
+	    diabolicBlinkEyes = atlas.findRegion(Diabolic.BLINK_EYES);
+	    diabolicSmashedMouth = atlas.findRegion(Diabolic.SMASHED_MOUTH);
+	    diabolicStunnedShape = atlas.findRegion(Diabolic.STUNNED_SHAPE);
+	    diabolicStunnedMouth = atlas.findRegion(Diabolic.STUNNED_MOUTH);
+	} catch (NullPointerException e) {
+	    Settings.log("AliensArt", "retrieveDiabolic(AssetManager)", " Diabolic was not loaded due to " + e.toString());
+	}
     }
 
     private static void retrieveFluff(AssetManager assetManager) {
 	try {
-	    TextureAtlas atlas = assetManager.get(Fluff.RESOURCE, TextureAtlas.class);
+	    TextureAtlas atlas = assetManager.get(Alien.RESOURCE, TextureAtlas.class);
 	    fluffShape = atlas.findRegion(Fluff.SHAPE);
 	    fluffAttackEyes = atlas.findRegion(Fluff.ATTACK_EYES);
 	    fluffAttackMouth = atlas.findRegion(Fluff.ATTACK_MOUTH);
@@ -136,7 +145,7 @@ public class AliensArt {
 
     private static void retrieveGolem(AssetManager assetManager) {
 	try {
-	    TextureAtlas atlas = assetManager.get(Golem.RESOURCE, TextureAtlas.class);
+	    TextureAtlas atlas = assetManager.get(Alien.RESOURCE, TextureAtlas.class);
 	    golemShape = atlas.findRegion(Golem.SHAPE);
 	    golemAttackEyes = atlas.findRegion(Golem.ATTACK_EYES);
 	    golemAttackMouth = atlas.findRegion(Golem.ATTACK_MOUTH);
@@ -155,7 +164,7 @@ public class AliensArt {
 
     private static void retrieveJelly(AssetManager assetManager) {
 	try {
-	    TextureAtlas atlas = assetManager.get(Jelly.RESOURCE, TextureAtlas.class);
+	    TextureAtlas atlas = assetManager.get(Alien.RESOURCE, TextureAtlas.class);
 	    jellyShape = atlas.findRegion(Jelly.SHAPE);
 	    jellyAttackEyes = atlas.findRegion(Jelly.ATTACK_EYES);
 	    jellyAttackMouth = atlas.findRegion(Jelly.ATTACK_MOUTH);

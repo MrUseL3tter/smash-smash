@@ -16,7 +16,6 @@ import com.noobs2d.tweenengine.utils.DynamicSprite;
  */
 public class Fluff extends Alien {
 
-    public static final String RESOURCE = "data/gfx/ALIENS.pack";
     public static final String SHAPE = "FLUFF-SHAPE";
     public static final String ATTACK_EYES = "FLUFF-ATTACK-EYES";
     public static final String ATTACK_MOUTH = "FLUFF-ATTACK-MOUTH";

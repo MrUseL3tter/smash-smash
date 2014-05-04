@@ -21,8 +21,6 @@ import com.noobs2d.tweenengine.utils.DynamicSprite;
  */
 public class Golem extends Alien {
 
-    public static final String RESOURCE = "data/gfx/ALIENS.pack";
-
     public static final String SHAPE = "GOLEM-SHAPE";
     public static final String ATTACK_EYES = "GOLEM-ATTACK-EYES";
     public static final String ATTACK_MOUTH = "GOLEM-ATTACK-MOUTH";

@@ -18,6 +18,8 @@ import com.noobs2d.tweenengine.utils.DynamicDisplayGroup;
  */
 public abstract class Alien {
 
+    public static final String RESOURCE = "data/gfx/ALIENS.pack";
+
     /** Maximum seconds that can be added to an alien's idle time. */
     private static final int WAITING_TIME_INCREASE_MAX = 3;
 
