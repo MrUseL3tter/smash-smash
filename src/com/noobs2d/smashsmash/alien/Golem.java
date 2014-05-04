@@ -57,16 +57,10 @@ public class Golem extends Alien {
 	setHP();
     }
 
-    /** Golem doesn't have an explosion state so we just divert explode into smashed state. */
-    @Override
-    public void explode() {
-	state = AlienState.SMASHED;
-	interpolateSmashed(true);
-    }
-
+    /** Always 1 since a Golem already gives out many scores with its enormous HP. */
     @Override
     public int getScore() {
-	return state == AlienState.RISING ? 1 : state == AlienState.ATTACKING ? 2 : 1;
+	return 1;
     }
 
     @Override

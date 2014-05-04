@@ -36,6 +36,7 @@ public class Diabolic extends Alien {
 	initWaitingState();
 
 	setHitPointsTotal(2);
+	setWaitingStateTime(1.75f);
     }
 
     /** Doesn't have an explosion state so we just divert explode into smashed state. */
@@ -45,9 +46,10 @@ public class Diabolic extends Alien {
 	interpolateSmashed(true);
     }
 
+    /** 3 if 250ms before attacking or critical, otherwise 1. */
     @Override
     public int getScore() {
-	return state == AlienState.ATTACKING ? 1 : state == AlienState.RISING ? 2 : 1;
+	return state == AlienState.STUNNED || state == AlienState.WAITING && getElapsedTimeVisible() >= getWaitingStateTime() - .25f ? 3 : 1;
     }
 
     @Override

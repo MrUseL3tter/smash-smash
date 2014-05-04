@@ -9,10 +9,9 @@ import com.noobs2d.smashsmash.buffeffect.BuffEffect;
 public class Hammer {
 
     private static final int NORMAL_DIAMETER = 3;
+    private static final int HAMMER_TIME_DIAMETER = 20;
 
-    private static final int HAMMER_TIME_DIAMETER = 160;
     public static final int BUBBLES = 0x01;
-
     public static final int DUSK = 0x02;
     public static final int FIERY_SMASH = 0x03;
     public static final int FROST_BITE = 0x04;

@@ -40,10 +40,10 @@ public class Jelly extends Alien {
 	initHidingState();
     }
 
-    /** Always 1 no matter what the state is. */
+    /** Always 1 unless a critical, then 3. */
     @Override
     public int getScore() {
-	return 1;
+	return state == AlienState.STUNNED ? 3 : 1;
     }
 
     @Override

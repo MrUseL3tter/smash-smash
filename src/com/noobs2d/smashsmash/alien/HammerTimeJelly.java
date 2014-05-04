@@ -117,4 +117,10 @@ public class HammerTimeJelly extends Jelly {
     protected void interpolateWaiting() {
     }
 
+    /** Cannot be stunned. */
+    @Override
+    protected boolean isSmashCritical() {
+	return false;
+    }
+
 }

@@ -10,9 +10,6 @@ import com.noobs2d.smashsmash.alien.Diabolic;
 import com.noobs2d.smashsmash.alien.Fluff;
 import com.noobs2d.smashsmash.alien.Golem;
 import com.noobs2d.smashsmash.alien.Jelly;
-import com.noobs2d.smashsmash.alien.Ogre;
-import com.noobs2d.smashsmash.alien.Sorcerer;
-import com.noobs2d.smashsmash.alien.Tortoise;
 import com.noobs2d.smashsmash.buffeffect.BuffEffect;
 import com.noobs2d.tweenengine.utils.DynamicValue;
 
@@ -94,13 +91,6 @@ public class FuryStageScreen extends ArcadeStageScreen {
 	aliens.add(new Jelly(this));
 	aliens.add(new Jelly(this));
 	aliens.add(new Jelly(this));
-	aliens.add(new Ogre(this));
-	aliens.add(new Ogre(this));
-	aliens.add(new Ogre(this));
-	aliens.add(new Tortoise(this));
-	aliens.add(new Tortoise(this));
-	aliens.add(new Tortoise(this));
-	aliens.add(new Sorcerer(this));
 	for (int i = 0; i < aliens.size(); i++)
 	    aliens.get(i).setVisible(false);
 	setAliensHostile(false);
@@ -109,6 +99,6 @@ public class FuryStageScreen extends ArcadeStageScreen {
     @Override
     protected void setSpawnRate() {
 	if (isSpawnAllowed())
-	    spawnRate = (int) (Math.random() * (aliens.size() / 2));
+	    spawnRate = aliens.size() / 2;
     }
 }

@@ -45,16 +45,10 @@ public class Fluff extends Alien {
 	setHitPointsTotal(2);
     }
 
-    /** {@link Fluff} doesn't have an explosion state so we just divert explode into smashed state. */
-    @Override
-    public void explode() {
-	state = AlienState.SMASHED;
-	interpolateSmashed(true);
-    }
-
+    /** Always 1 unless a critical, then 3. */
     @Override
     public int getScore() {
-	return state == AlienState.RISING ? 1 : state == AlienState.WAITING || state == AlienState.ATTACKING ? 2 : 1;
+	return state == AlienState.STUNNED ? 3 : 1;
     }
 
     @Override
