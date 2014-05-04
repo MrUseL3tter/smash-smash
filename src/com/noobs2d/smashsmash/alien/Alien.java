@@ -105,6 +105,7 @@ public abstract class Alien {
 	state = AlienState.ATTACKING;
 	alienEventListener.onAlienAttack(this);
 	interpolateAttacking();
+	playAttackSound();
     }
 
     public boolean collides(Alien alien) {
@@ -431,12 +432,15 @@ public abstract class Alien {
 	boolean stunningSmash = isSmashCritical() && stunnable;
 
 	// can be stunned on its last HP, so this is first checked
-	if (stunningSmash)
+	if (stunningSmash) {
 	    stun();
+	    alienEventListener.onAlienHit(this);
+	}
 	// a stunned alien that is smashed will definitely explode
-	else if (state == AlienState.STUNNED)
+	else if (state == AlienState.STUNNED) {
 	    explode();
-	else if (alienIsDead) {
+	    interpolateSmashed(true);
+	} else if (alienIsDead) {
 	    // invoked the callback(s) first before changing state so getScore()
 	    // may still utilize the current state of the alien
 	    alienEventListener.onAlienSmashed(this);
@@ -458,6 +462,7 @@ public abstract class Alien {
     public void stun() {
 	state = AlienState.STUNNED;
 	interpolateStunned();
+	playStunSound();
     }
 
     public void update(float deltaTime) {
@@ -489,9 +494,24 @@ public abstract class Alien {
 	}
     }
 
+    private void playAttackSound() {
+	if (Settings.soundEnabled && attackSound != null)
+	    attackSound.play();
+    }
+
     private void playRisingSound(float volume) {
-	if (Settings.soundEnabled)
+	if (Settings.soundEnabled && spawnSound != null)
 	    spawnSound.play(volume);
+    }
+
+    private void playSmashSound() {
+	if (Settings.soundEnabled && smashSound != null)
+	    smashSound.play();
+    }
+
+    private void playStunSound() {
+	if (Settings.soundEnabled && stunSound != null)
+	    stunSound.play();
     }
 
     /** Generate a random value between 0 and {@link Alien#WAITING_TIME_INCREASE_MAX} then add it to the waiting time. 
@@ -543,26 +563,6 @@ public abstract class Alien {
      * @return <code>true</code> if the random gives it. */
     protected boolean isSmashCritical() {
 	return MathUtils.random(1, 101) <= criticalChance;
-    }
-
-    protected void playAttackSound() {
-	if (Settings.soundEnabled)
-	    attackSound.play();
-    }
-
-    protected void playSmashSound() {
-	if (Settings.soundEnabled)
-	    smashSound.play();
-    }
-
-    protected void playSpawnSound() {
-	if (Settings.soundEnabled)
-	    spawnSound.play();
-    }
-
-    protected void playStunSound() {
-	if (Settings.soundEnabled)
-	    stunSound.play();
     }
 
     protected void updateAttacking(float deltaTime) {
