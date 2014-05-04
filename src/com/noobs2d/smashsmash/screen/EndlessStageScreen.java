@@ -57,6 +57,7 @@ public class EndlessStageScreen extends SmashSmashStage {
 	else if (getSession().getStageSecondsElapsed() >= 90 && getSession().getStageSecondsElapsed() < 130)
 	    spawnRate = 5;
 	else if (getSession().getStageSecondsElapsed() >= 130)
+	    // FIXME not really a good idea IMO
 	    spawnRate = (int) (Math.random() * aliens.size());
     }
 }

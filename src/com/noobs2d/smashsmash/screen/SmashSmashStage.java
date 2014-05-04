@@ -31,10 +31,8 @@ import com.noobs2d.smashsmash.alien.Golem;
 import com.noobs2d.smashsmash.alien.HammerTimeJelly;
 import com.noobs2d.smashsmash.alien.InvulnerabilityJelly;
 import com.noobs2d.smashsmash.alien.Jelly;
-import com.noobs2d.smashsmash.alien.Ogre;
 import com.noobs2d.smashsmash.alien.ScoreFrenzyJelly;
 import com.noobs2d.smashsmash.alien.Sorcerer;
-import com.noobs2d.smashsmash.alien.Tortoise;
 import com.noobs2d.smashsmash.buffeffect.BuffEffect;
 import com.noobs2d.smashsmash.hammer.HammerEffect;
 import com.noobs2d.smashsmash.hammer.HammerEffectPool;
@@ -325,7 +323,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
     }
 
     public void setUIVisible(boolean showUI) {
-	this.showHUD = showUI;
+	showHUD = showUI;
     }
 
     private boolean hasComboDurationPassed() {
@@ -440,9 +438,10 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
     }
 
     protected void initAliens() {
-	aliens.add(new Bomb(this));
-	aliens.add(new Bomb(this));
-	aliens.add(new Bomb(this));
+	// TODO apply default count after finishing all alien impl	
+	//	aliens.add(new Bomb(this));
+	//	aliens.add(new Bomb(this));
+	//	aliens.add(new Bomb(this));
 	aliens.add(new Diabolic(this));
 	aliens.add(new Diabolic(this));
 	aliens.add(new Diabolic(this));
@@ -455,13 +454,13 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 	aliens.add(new Jelly(this));
 	aliens.add(new Jelly(this));
 	aliens.add(new Jelly(this));
-	aliens.add(new Ogre(this));
-	aliens.add(new Ogre(this));
-	aliens.add(new Ogre(this));
-	aliens.add(new Tortoise(this));
-	aliens.add(new Tortoise(this));
-	aliens.add(new Tortoise(this));
-	aliens.add(new Sorcerer(this));
+	//	aliens.add(new Ogre(this));
+	//	aliens.add(new Ogre(this));
+	//	aliens.add(new Ogre(this));
+	//	aliens.add(new Tortoise(this));
+	//	aliens.add(new Tortoise(this));
+	//	aliens.add(new Tortoise(this));
+	//	aliens.add(new Sorcerer(this));
 	aliens.add(new InvulnerabilityJelly(this));
 	aliens.add(new HammerTimeJelly(this));
 	aliens.add(new ScoreFrenzyJelly(this));
@@ -656,7 +655,7 @@ public class SmashSmashStage extends DynamicScreen implements AlienEventListener
 	    spawnRate = aliensCount;
 	else if (!allowSpawn)
 	    spawnRate = 0;
-	else if (session.getCurrentCombo() > 4 && session.getCurrentCombo() < 25)
+	else if (session.getCurrentCombo() >= 0 && session.getCurrentCombo() < 25)
 	    spawnRate = (int) (aliensCount * .10f);
 	else if (session.getCurrentCombo() > 24 && session.getCurrentCombo() < 40)
 	    spawnRate = (int) (aliensCount * .35f);
